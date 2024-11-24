@@ -10,7 +10,10 @@
 
     <artifactId>ShopmeBackend</artifactId>
     <name>ShopmeBackend</name>
-    <description>Shopme Admin Project</description>
+    <description>
+        The administrative backbone of the e-commerce platform, ShopmeBackEnd provides a robust and
+        secure interface for managing products, orders, users, and other critical business operations.
+    </description>
 
     <url/>
     <licenses>
@@ -30,8 +33,7 @@
     </properties>
 
     <!-- We don't need to choose any dependencies here because this project
-    will inherit dependencies declared in its parent project, which is
-    the ShopmeWebParent project-->
+    will inherit dependencies declared in its parent project, ShopmeWebParent project-->
     <dependencies>
     </dependencies>
 

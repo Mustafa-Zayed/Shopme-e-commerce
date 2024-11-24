@@ -10,7 +10,10 @@
 
     <artifactId>ShopmeFrontend</artifactId>
     <name>ShopmeFrontend</name>
-    <description>Shopme Website Application</description>
+    <description>
+        The customer-facing interface of the e-commerce platform, ShopmeFrontEnd delivers an intuitive and
+        engaging user experience, allowing customers to browse, search, and purchase products with ease.
+    </description>
 
     <url/>
     <licenses>

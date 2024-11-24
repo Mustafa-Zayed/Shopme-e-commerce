@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.3.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -17,8 +17,8 @@
     <packaging>pom</packaging>
 
     <description>
-        the root project for the two sub projects ShopmeBackEnd and ShopmeFrontEnd
-        and contain the common dependencies between the two sub projects.
+        A parent project for the ShopmeBackEnd and ShopmeFrontEnd sub-projects, containing shared
+        dependencies and configurations for the sub-projects.
     </description>
 
     <modules>
@@ -69,6 +69,7 @@
             <version>3.7.1</version>
         </dependency>
 
+        <!-- helps with locating WebJar resources in the application-->
         <!-- https://mvnrepository.com/artifact/org.webjars/webjars-locator-core -->
         <dependency>
             <groupId>org.webjars</groupId>
@@ -85,6 +86,29 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.shopme</groupId>
+            <artifactId>ShopmeCommon</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
