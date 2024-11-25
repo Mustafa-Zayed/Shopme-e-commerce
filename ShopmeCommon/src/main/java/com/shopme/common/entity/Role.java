@@ -8,7 +8,7 @@ import java.util.Objects;
 @Builder
 @Getter
 @Setter
-@ToString
+//@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -36,5 +36,10 @@ public class Role {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
