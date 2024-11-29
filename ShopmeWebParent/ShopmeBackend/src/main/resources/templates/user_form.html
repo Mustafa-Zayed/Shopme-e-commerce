@@ -45,14 +45,19 @@
             <h2>Manage Users | Create New User</h2>
         </div>
 
-        <form th:action="@{/users/save}" method="post" style="max-width: 700px; margin: 0 auto"
-              th:object="${user}">
+        <form method="post" onsubmit="return checkEmailUnique(this)" style="max-width: 700px; margin: 0 auto"
+              th:action="@{/users/save}"
+              th:object="${user}"
+        >
             <div class="border border-secondary rounded p-3">
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">E-mail:</label>
                     <div class="col-sm-8">
                         <input type="email" class="form-control" th:field="*{email}"
                                required minlength="8" maxlength="128" />
+                        <!--                        <div class="alert alert-danger mt-2" th:if="${emailError}" >-->
+                        <!--                            [[${emailError}]]-->
+                        <!--                        </div>-->
                     </div>
                 </div>
                 <div class="form-group row">
@@ -74,7 +79,7 @@
                     <label class="col-sm-4 col-form-label">Password:</label>
                     <div class="col-sm-8">
                         <input type="password" class="form-control" th:field="*{password}"
-                               required minlength="8" maxlength="20"></input>
+                               maxlength="20" minlength="8" required>
                     </div>
                 </div>
 
@@ -105,6 +110,73 @@
             </div>
         </form>
 
+        <!--
+        <!== Server-Side Rendering Approach:
+        Without using AJAX, This approach involves submitting the form to the "/users/save" endpoint.
+        If the email is found to be duplicated, the user is not saved. Instead, an emailError attribute
+        is added to the model to flag that email is duplicated. Then, Thymeleaf renders user_form with
+        the error message and JavaScript shows the modal.
+
+        Pros:- Simple Implementation, No need to use AJAX, SEO-Friendly
+        Cons:- Requires a full-page reload, Increased Server Load. ==>
+
+        <!== Error Modal Trigger ==>
+        <div th:if="${emailError}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modal = new bootstrap.Modal(document.getElementById('duplicateEmailModal'));
+                    modal.show();
+                });
+            </script>
+        </div>
+
+        <!== Error Modal ==>
+        <div class="modal fade" id="duplicateEmailModal" tabindex="-1" aria-labelledby="duplicateEmailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="duplicateEmailModalLabel">Duplicate Email</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p th:text="${emailError}"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
+
+        <!--
+        <!== AJAX-Based Approach:
+        This approach involves that form submission is intercepted by JavaScript. Then, email is sent
+        asynchronously to the server (i.e '/users/check_email' API) for validation.
+        If duplication is detected, a modal is displayed without reloading the page.
+        If no duplication exists, the form is submitted programmatically.
+
+        Pros:- Faster and Smoother User Experience: Avoids a full-page reload; only the necessary data
+        is exchanged, Reduced Server Load,
+        Cons:- Requires AJAX, Less SEO-Friendly ==>
+        -->
+        <div class="modal" id="modalDialog" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTitle">Warning</h5>
+                        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                    </div>
+                    <div class="modal-body">
+                        <span id="modalBody"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="text-center m-3">
             <p>Shopme Control Panel - Copyright &copy; Shopme</p>
         </div>
@@ -115,6 +187,45 @@
                 window.location = "[[@{/users}]]";
             });
         });
+
+        function checkEmailUnique(form) {
+            let url = "[[@{/users/check_email}]]";
+            let userEmail = $("#email").val();
+            let csrfValue = $("input[name='_csrf']").val(); //the server generates a unique CSRF token and sends it to the client (e.g., embedded in the HTML or as part of a response header).
+            let params = {email: userEmail, _csrf: csrfValue};
+
+            $.post(
+                url,
+                params,
+                function (response) {
+                    if (response === "OK")
+                        form.submit();
+                    else if (response === "Duplicated")
+                        showModalDialog("Warning", `The email: <b>${userEmail}</b> has been registered already.`);
+                    else
+                        show("Error", "An Error occurred.");
+                }
+            ).fail(function () { // in case it fails to connect to the server (i.e '/users/check_email' API)
+                    showModalDialog("Error", "Could not connect to server.")
+                }
+            )
+
+            return false;
+        }
+
+        function showModalDialog(title, message) {
+            $("#modalTitle").text(title);
+            $("#modalBody").html(message); // Use .html() to allow HTML tags in the message
+
+            // jQuery's .show() method, makes the modal visible without properly initializing it as
+            // a Bootstrap modal. To fix this, you need to initialize the modal using Bootstrap's
+            // JavaScript API instead of just making it visible with .show().
+            // This ensures that the modal is displayed and can be closed properly using the
+            // data-bs-dismiss attribute.
+            const modalElement = $("#modalDialog");
+            const modalInstance = new bootstrap.Modal(modalElement); // Create a Bootstrap modal instance
+            modalInstance.show();
+        }
     </script>
 </body>
 </html>

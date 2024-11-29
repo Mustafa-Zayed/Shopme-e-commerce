@@ -139,4 +139,19 @@ public class UserRepositoryTests {
         //Assert
         assertThat(optionalUser).isEmpty();
     }
+
+    @Test
+    public void UserRepository_FindByEmail_ReturnUser() {
+        //Act
+        User user1 = userRepository.findByEmail("mustafa@gmail.com");
+        User user2 = userRepository.findByEmail("a@a.com");
+
+        System.out.println(user1);
+        System.out.println(user2);
+
+        //Assert
+        assertThat(user1).isNotNull();
+        assertThat(user2).isNull();
+    }
+
 }
