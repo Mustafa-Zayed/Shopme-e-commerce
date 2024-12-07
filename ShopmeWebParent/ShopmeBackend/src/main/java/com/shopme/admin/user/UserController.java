@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -20,8 +21,6 @@ public class UserController {
     public String listAll(Model model) {
         List<User> listUsers = userService.listAll();
         model.addAttribute("listUsers", listUsers);
-        // get the message from the model of pre-redirect link and add to the model of users.html
-        model.addAttribute("message", model.getAttribute("message"));
         return "users";
     }
 
@@ -29,6 +28,7 @@ public class UserController {
     public String newUser(Model model) {
         model.addAttribute("user", User.builder().enabled(true).build());
         model.addAttribute("listRoles", userService.listRoles());
+        model.addAttribute("pageTitle", "Create New User");
         return "user_form";
     }
 
@@ -41,9 +41,27 @@ public class UserController {
 //            model.addAttribute("listRoles", userService.listRoles());
 //            return "user_form";
 //        }
-        User saved = userService.save(user);
-        redirectAttributes.addFlashAttribute("message", "User has been Created!");
+
+        userService.save(user);
+        if (user.getId() == 0) // new user
+            redirectAttributes.addFlashAttribute("message", "User has been Created!");
+        else
+            redirectAttributes.addFlashAttribute("message", "User has been saved successfully!");
         return "redirect:/users";
     }
 
+    @GetMapping("/users/edit/{id}")
+    public String editUser(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
+        User user;
+        try {
+            user = userService.findById(id);
+        } catch (UserNotFoundException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            return "redirect:/users";
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("listRoles", userService.listRoles());
+        model.addAttribute("pageTitle", "Edit User(ID: " + id + ")");
+        return "user_form";
+    }
 }

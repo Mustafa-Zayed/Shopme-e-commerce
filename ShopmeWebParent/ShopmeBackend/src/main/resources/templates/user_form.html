@@ -9,7 +9,7 @@
     <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
 
-    <title>Create New User</title>
+    <title>[[${pageTitle}]]</title>
 </head>
 <body>
     <div class="container-fluid">
@@ -42,13 +42,15 @@
         </nav>
 
         <div>
-            <h2>Manage Users | Create New User</h2>
+            <h2>Manage Users | [[${pageTitle}]]</h2>
         </div>
 
         <form method="post" onsubmit="return checkEmailUnique(this)" style="max-width: 700px; margin: 0 auto"
               th:action="@{/users/save}"
               th:object="${user}"
         >
+            <input th:field="*{id}" type="hidden"/>
+
             <div class="border border-secondary rounded p-3">
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">E-mail:</label>
@@ -78,8 +80,11 @@
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Password:</label>
                     <div class="col-sm-8">
-                        <input type="password" class="form-control" th:field="*{password}"
-                               maxlength="20" minlength="8" required>
+                        <input class="form-control" maxlength="20" minlength="8"
+                               required th:field="*{password}" th:if="${user.id == null}" type="password">
+                        <input class="form-control" maxlength="20" minlength="8"
+                               placeholder="Leave blank to keep the same" th:field="*{password}" th:if="${user.id != null}"
+                               type="password">
                     </div>
                 </div>
 
@@ -191,14 +196,16 @@
         function checkEmailUnique(form) {
             let url = "[[@{/users/check_email}]]";
             let userEmail = $("#email").val();
+            let userId = $("#id").val();
             let csrfValue = $("input[name='_csrf']").val(); //the server generates a unique CSRF token and sends it to the client (e.g., embedded in the HTML or as part of a response header).
-            let params = {email: userEmail, _csrf: csrfValue};
+            let params = {email: userEmail, id: userId, _csrf: csrfValue};
 
             $.post(
                 url,
                 params,
                 function (response) {
                     if (response === "OK")
+                        // alert("OK")
                         form.submit();
                     else if (response === "Duplicated")
                         showModalDialog("Warning", `The email: <b>${userEmail}</b> has been registered already.`);

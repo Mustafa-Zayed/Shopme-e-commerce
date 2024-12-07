@@ -12,7 +12,14 @@ public class UserRestController {
 
     // Consumed by Ajax call in user_form.html
     @PostMapping("/users/check_email")
-    public String checkDuplicateEmail(@RequestParam String email) {
-        return userService.isEmailUnique(email) ? "OK" : "Duplicated";
+    public String checkDuplicateEmail(@RequestParam String email,
+                                      @RequestParam(defaultValue = "") Integer id
+//                                      @RequestParam(defaultValue = "0") Integer id
+    ) {
+        // defaultValue = "0" means the default value of id is 0 if it is not specified in the request or
+        // sent as "&id=&" (i.e. In case of creating a new user, id sent as null). And, defaultValue = ""
+        // converts the id to null value if it is not specified in the request or sent as "&id=&".
+
+        return userService.isEmailUnique(email, id) ? "OK" : "Duplicated";
     }
 }

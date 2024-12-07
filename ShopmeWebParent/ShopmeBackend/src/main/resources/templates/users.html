@@ -67,8 +67,9 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="user : ${listUsers}">
-                <td>[[${user.id}]]</td>
+            <tr th:each="user, iterStat : ${listUsers}">
+                <!--<td>[[${user.id}]]</td>-->
+                <td>[[${iterStat.count}]]</td> <!--iterStat.index is zero-based -->
                 <td><span class="fa-solid fa-image-portrait fa-3x icon-silver"></span></td>
                 <td>[[${user.email}]]</td>
                 <td>[[${user.firstName}]]</td>
@@ -81,7 +82,8 @@
                        th:if="!${user.enabled}"></a>
                 </td>
                 <td>
-                    <a class="fa-solid fa-edit fa-2x text-decoration-none icon-blue" href=""></a>
+                    <a class="fas fa-edit fa-2x text-decoration-none icon-blue"
+                       th:href="@{/users/edit/{id}(id=${user.id})}" title="Edit this user"></a>
                     &nbsp;
                     <a class="fa-solid fa-trash fa-2x text-decoration-none icon-red" href=""></a>
                 </td>
