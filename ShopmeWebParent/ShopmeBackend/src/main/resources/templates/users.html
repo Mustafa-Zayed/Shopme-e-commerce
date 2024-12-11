@@ -85,16 +85,91 @@
                     <a class="fas fa-edit fa-2x text-decoration-none icon-blue"
                        th:href="@{/users/edit/{id}(id=${user.id})}" title="Edit this user"></a>
                     &nbsp;
-                    <a class="fa-solid fa-trash fa-2x text-decoration-none icon-red" href=""></a>
+
+                    <!--Approach one-->
+                    <!--<a class="fas fa-trash fa-2x text-decoration-none icon-red"
+                       th:data-user-id="${user.id}"
+                       th:data-user-fName="${user.firstName}"
+                       th:data-user-lName="${user.lastName}"
+                       onclick="showDeleteModal(this)"
+                       title="Delete this user"></a>-->
+
+                    <!--Approach two-->
+                    <a class="fas fa-trash fa-2x text-decoration-none icon-red link-delete"
+                       th:href="@{/users/delete/{id}(id=${user.id})}"
+                       th:userId="${user.id}" title="Delete this user"></a>
+
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
 
+    <div class="modal" id="modalDialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Confirmation</h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <span id="modalBody"></span>
+                </div>
+                <div class="modal-footer">
+                    <!--Approach one-->
+                    <!--<button class="btn btn-success" type="button"
+                    onclick="confirmDelete()">Yes</button>-->
+
+                    <!--Approach two-->
+                    <a class="btn btn-success" id="yesButton"
+                       type="button">Yes</a>
+
+                    <button class="btn btn-danger" data-bs-dismiss="modal" type="button">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="text-center m-3">
         <p>Shopme Control Panel - Copyright &copy; Shopme</p>
     </div>
 </div>
+<script type="text/javascript">
+    /*Approach one*/
+    // let deletedId;
+    // function showDeleteModal(element) {
+    //     const userId = element.getAttribute('data-user-id');
+    //     const userFName = element.getAttribute('data-user-fName');
+    //     const userLName = element.getAttribute('data-user-lName');
+    //     console.log(userId, userFName, userLName);
+    //     deletedId = userId;
+    //
+    //     $("#modalBody").html(`Are you sure you want to delete this user ID ${userId}: ${userFName} ${userLName}`)
+    //     const modalElement = $("#modalDialog");
+    //     const modalInstance = new bootstrap.Modal(modalElement);
+    //     modalInstance.show();
+    // }
+    //
+    // function confirmDelete(){
+    //     let url = "[[@{/users/delete/}]]" + deletedId;
+    //     console.log('deletedId: ' + deletedId);
+    //     console.log('url: ' + url);
+    //     window.location.href = url;
+    // }
+
+    /*Approach two*/
+    $(document).ready(function () {
+        $(".link-delete").on('click', function (e) {
+            e.preventDefault();
+            const deleteLink = $(this);
+            const id = deleteLink.attr('userId')
+            $("#yesButton").attr('href', deleteLink.attr('href')); // should remove data-bs-dismiss from the modal yes button
+            $("#modalBody").html(`Are you sure you want to delete this user ID: ${id}?`);
+            const modalElement = $("#modalDialog");
+            const modalInstance = new bootstrap.Modal(modalElement);
+            modalInstance.show();
+        });
+    })
+</script>
 </body>
 </html>

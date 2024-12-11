@@ -22,4 +22,16 @@ public class UserRestController {
 
         return userService.isEmailUnique(email, id) ? "OK" : "Duplicated";
     }
+
+//    @DeleteMapping("/users/delete/{id}")
+//    public String deleteUser(@PathVariable int id) {
+//        userService.delete(id);
+//
+//        try {
+//            userService.findById(id);
+//            return "OK";
+//        } catch (UserNotFoundException e) {
+//            return "Exception";
+//        }
+//    }
 }

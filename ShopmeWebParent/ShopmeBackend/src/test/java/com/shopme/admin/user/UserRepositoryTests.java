@@ -154,4 +154,16 @@ public class UserRepositoryTests {
         assertThat(user2).isNull();
     }
 
+    @Test
+    public void UserRepository_CountById_ReturnCount() {
+
+        Long count1 = userRepository.countById(1);
+        Long count2 = userRepository.countById(9999);
+
+        System.out.println(count1);
+        System.out.println(count2);
+
+        assertThat(count1).isNotNull().isGreaterThan(0);
+        assertThat(count2).isNotNull().isEqualTo(0);
+    }
 }
