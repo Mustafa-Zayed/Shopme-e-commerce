@@ -75,4 +75,23 @@ public class UserController {
         }
         return "redirect:/users";
     }
+
+    //    @GetMapping("/users/{id}/enabled")
+    @GetMapping("/users/{id}/enabled/{status}")
+    public String updateUserEnabledStatus(@PathVariable int id,
+                                          @PathVariable(value = "status") boolean statusBefore,
+//                                   @RequestParam(value = "status") boolean statusBefore,
+                                          RedirectAttributes redirectAttributes) {
+        try {
+            userService.updateUserEnabledStatus(id, !statusBefore);
+            if (statusBefore)
+                redirectAttributes.addFlashAttribute("message", "User ID " + id + " has been disabled");
+            else
+                redirectAttributes.addFlashAttribute("message", "User ID " + id + " has been enabled");
+        } catch (UserNotFoundException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+        }
+        return "redirect:/users";
+    }
+
 }

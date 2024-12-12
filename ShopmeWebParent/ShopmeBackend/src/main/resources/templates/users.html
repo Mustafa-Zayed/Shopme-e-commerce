@@ -76,10 +76,20 @@
                 <td>[[${user.lastName}]]</td>
                 <td>[[${user.roles}]]</td>
                 <td>
-                    <a class="fa-solid fa-circle-check fa-2x text-decoration-none icon-green" href=""
-                       th:if="${user.enabled}"></a>
-                    <a class="fa-solid fa-circle-check fa-2x text-decoration-none icon-dark" href=""
-                       th:if="!${user.enabled}"></a>
+                    <!--send status as a request parameter-->
+                    <!--th:href="@{/users/{id}/enabled(id=${user.id}, status=${user.enabled})}"-->
+                    <!---->
+                    <a class="fa-solid fa-circle-check fa-2x text-decoration-none icon-green"
+                       th:href="@{/users/{id}/enabled/{status}(id=${user.id}, status=${user.enabled})}"
+                       th:if="${user.enabled}"
+                       title="Disable this user"
+                    ></a>
+
+                    <a class="fa-solid fa-circle fa-2x text-decoration-none icon-dark"
+                       th:href="@{/users/{id}/enabled/{status}(id=${user.id}, status=${user.enabled})}"
+                       th:if="!${user.enabled}"
+                       title="Enable this user"
+                    ></a>
                 </td>
                 <td>
                     <a class="fas fa-edit fa-2x text-decoration-none icon-blue"

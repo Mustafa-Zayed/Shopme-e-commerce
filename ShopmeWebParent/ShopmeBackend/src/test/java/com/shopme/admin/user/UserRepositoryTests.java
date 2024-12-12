@@ -166,4 +166,14 @@ public class UserRepositoryTests {
         assertThat(count1).isNotNull().isGreaterThan(0);
         assertThat(count2).isNotNull().isEqualTo(0);
     }
+
+    @Test
+    public void UserRepository_EnableUserStatus_Void() {
+        userRepository.updateEnabledStatus(1, true);
+    }
+
+    @Test
+    public void UserRepository_DisableUserStatus_Void() {
+        userRepository.updateEnabledStatus(1, false);
+    }
 }

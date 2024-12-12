@@ -2,6 +2,7 @@ package com.shopme.admin.user;
 
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,5 +67,16 @@ public class UserService {
             throw new UserNotFoundException("Could not find any user with Id: " + id);
 
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updateUserEnabledStatus(int id, boolean status) throws UserNotFoundException {
+        // This approach is not recommended as it will update a full User object
+        /*User user = findById(id);
+        user.setEnabled(!user.isEnabled());
+        userRepository.save(user);*/
+
+        // Instead of updating the whole user, we can just update the user's status
+        userRepository.updateEnabledStatus(id, status);
     }
 }
