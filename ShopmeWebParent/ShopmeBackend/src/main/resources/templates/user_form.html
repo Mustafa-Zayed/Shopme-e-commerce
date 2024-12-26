@@ -48,6 +48,7 @@
         <form method="post" onsubmit="return checkEmailUnique(this)" style="max-width: 700px; margin: 0 auto"
               th:action="@{/users/save}"
               th:object="${user}"
+              enctype="multipart/form-data"
         >
             <input th:field="*{id}" type="hidden"/>
 
@@ -104,6 +105,25 @@
                     <label class="col-sm-4 col-form-label">Enabled:</label>
                     <div class="col-sm-8">
                         <input type="checkbox" th:field="*{enabled}" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Photos:</label>
+                    <div class="col-sm-8">
+                        <!-- In the edit mode, If the user does not upload a new file, this hidden input ensures the original
+                        value of the photos field is preserved and submitted. If the user does upload a new file,
+                        the controller can update the photos field with the path or identifier of the newly uploaded image. -->
+                        <input th:field="*{photos}" type="hidden">
+                        <input accept="image/png, image/jpeg" class="mb-2"
+                               id="imageFile" name="userImage"
+                               size="1024"
+                               type="file"/>
+
+                        <img alt="image preview"
+                             class="img-thumbnail"
+                             id="thumbnail"
+                             th:src="@{${user.photosImagePath}}">
                     </div>
                 </div>
 
@@ -187,11 +207,46 @@
         </div>
     </div>
     <script type="text/javascript">
+        let thumbnail = $("#thumbnail");
+        let prevSrcBeforeChanging = thumbnail.attr("src"); // the initial thumbnail source
+        console.log("prevSrcBeforeChanging: " + prevSrcBeforeChanging)
+
         $(document).ready(function () {
             $("#buttonCancel").on("click", function() {
                 window.location = "[[@{/users}]]";
             });
+
+            $("#imageFile").change(function () {
+                let fileSize = this.files[0]?.size || 0;
+                console.log(fileSize)
+
+                if (fileSize > 1048576) { // 1024 * 1024
+                    this.setCustomValidity("Image size must be less than 1MB! =)");
+                    this.reportValidity();
+                } else {
+                    this.setCustomValidity("");
+                    showImageThumbnail(this);
+                }
+            })
         });
+
+        function showImageThumbnail(fileInput) {
+            console.log(fileInput.files)
+            let file = fileInput.files[0];
+
+            if (file == null) { // If no image selected, return to the original one
+                thumbnail.removeAttr("src");
+                thumbnail.attr("src", prevSrcBeforeChanging);
+                return
+            }
+
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                thumbnail.attr("src", reader.result);
+                // console.log("reader.result: " + reader.result)
+            }
+        }
 
         function checkEmailUnique(form) {
             let url = "[[@{/users/check_email}]]";

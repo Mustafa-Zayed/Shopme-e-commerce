@@ -70,7 +70,14 @@
             <tr th:each="user, iterStat : ${listUsers}">
                 <!--<td>[[${user.id}]]</td>-->
                 <td>[[${iterStat.count}]]</td> <!--iterStat.index is zero-based -->
-                <td><span class="fa-solid fa-image-portrait fa-3x icon-silver"></span></td>
+                <td>
+                    <img alt="user image"
+                         class="img-thumbnail w-50"
+                         th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}">
+
+                    <span class="fa-solid fa-image-portrait fa-3x icon-silver"
+                          th:if="${user.photos == null}"></span>
+                </td>
                 <td>[[${user.email}]]</td>
                 <td>[[${user.firstName}]]</td>
                 <td>[[${user.lastName}]]</td>

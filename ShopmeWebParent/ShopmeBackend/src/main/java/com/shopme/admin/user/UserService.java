@@ -24,7 +24,7 @@ public class UserService {
         return (List<Role>) roleRepository.findAll();
     }
 
-    public void save(User user) {
+    public User save(User user) {
         // if editing user case and password field is empty => keep password
         // the same as the one in the database, not changed, not encoded again
         boolean isUpdatingUser = user.getId() != null;
@@ -35,7 +35,7 @@ public class UserService {
         } else
             encodePassword(user);
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     private void encodePassword(User user) {

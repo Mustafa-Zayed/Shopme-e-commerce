@@ -1,0 +1,49 @@
+package com.shopme.admin.utils;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+
+public class FileUploadUtil {
+    public static void saveFile(String uploadDir, String fileName, MultipartFile multipartFile)
+            throws IOException {
+        Path uploadPath = Path.of(uploadDir);
+        System.out.println("uploadPath " + uploadPath.toAbsolutePath());
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        } else { // Delete all previous files
+            cleanDir(uploadPath);
+        }
+
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            Path path = uploadPath.resolve(fileName);
+            System.out.println("FilePath: " + path.toAbsolutePath());
+            Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            throw new IOException("Could not save file: " + fileName, ex);
+        }
+    }
+
+    private static void cleanDir(Path uploadPath) throws IOException {
+        /*int count = 0; count++;  => This approach will get an error: Variable 'count' is accessed from within inner class, needs to be final or effectively final
+        The issue here is that the variable count is being accessed from within an inner class (the anonymous SimpleFileVisitor class) in a non-final way.
+        In Java, when an inner class accesses a variable from its outer class, that variable must be either final or "effectively final", meaning its value is never changed after initialization.
+        In this case, count is not final, and its value is being changed inside the inner class (count++;). This is not allowed, because the inner class may outlive the outer class instance, and the compiler cannot guarantee that the variable count will still exist when the inner class tries to access it.
+        To fix this issue, you can either declare count as final, or make it effectively final by not changing its value after initialization. However, since you are trying to change the value of count inside the inner class, declaring it as final is not an option.
+        A possible solution is to use an array of size 1 to hold the value of count. This way, you can change the value of count inside the inner class without violating the "effectively final" rule.*/
+        final int[] count = {0};
+        Files.walkFileTree(uploadPath, new SimpleFileVisitor<>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file); // Delete each file
+                count[0]++;
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        System.out.println("Deleted " + count[0] + " files");
+    }
+}
