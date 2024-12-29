@@ -3,6 +3,7 @@ package com.shopme.admin.user;
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -14,15 +15,35 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+import static com.shopme.admin.user.UserService.USERS_PER_PAGE;
+
 @RequiredArgsConstructor
 @Controller
 public class UserController {
     private final UserService userService;
 
     @GetMapping("/users")
-    public String listAll(Model model) {
-        List<User> listUsers = userService.listAll();
+    public String listFirstPage(Model model) {
+        return listByPage(1, model);
+    }
+
+    @GetMapping("/users/page/{pageNumber}")
+    public String listByPage(@PathVariable int pageNumber, Model model) {
+        Page<User> usersPage = userService.listByPage(pageNumber);
+        List<User> listUsers = usersPage.getContent();
+        int totalPages = usersPage.getTotalPages();
+        long totalItems = usersPage.getTotalElements();
+
+        long startCount = ((pageNumber - 1) * USERS_PER_PAGE) + 1;
+        long endCount = (startCount + USERS_PER_PAGE) - 1;
+        if (endCount > totalItems) endCount = totalItems;
+        model.addAttribute("startCount", startCount);
+        model.addAttribute("endCount", endCount);
+
         model.addAttribute("listUsers", listUsers);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalItems", totalItems);
         return "users";
     }
 

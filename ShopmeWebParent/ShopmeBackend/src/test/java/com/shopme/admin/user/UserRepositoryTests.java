@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@DataJpaTest
+@DataJpaTest(showSql = false)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Rollback(false)
 public class UserRepositoryTests {
@@ -175,5 +178,18 @@ public class UserRepositoryTests {
     @Test
     public void UserRepository_DisableUserStatus_Void() {
         userRepository.updateEnabledStatus(1, false);
+    }
+
+    @Test
+    public void UserRepository_PaginateUsers_ReturnUsers() {
+        int pageNo = 1, pageSize = 4;
+        Pageable pageRequest = PageRequest.of(pageNo, pageSize);
+        Page<User> userPage = userRepository.findAll(pageRequest);
+
+        List<User> userList = userPage.getContent();
+        userList.forEach(System.out::println);
+
+        assertThat(userList).isNotNull();
+        assertThat(userList.size()).isEqualTo(4);
     }
 }
