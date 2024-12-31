@@ -24,17 +24,32 @@ public class UserController {
 
     @GetMapping("/users")
     public String listFirstPage(Model model) {
-        return listByPage(1, model);
+        return listByPageWithSorting(1, "firstName", "asc", model);
     }
 
+//    @GetMapping("/users/page/{pageNumber}")
+//    public String listByPage(@PathVariable int pageNumber, Model model) {
+//        Page<User> usersPage = userService.listByPage(pageNumber);
+//        return addToModel(pageNumber, usersPage, model, "id", "asc");
+//    }
+
     @GetMapping("/users/page/{pageNumber}")
-    public String listByPage(@PathVariable int pageNumber, Model model) {
-        Page<User> usersPage = userService.listByPage(pageNumber);
+    public String listByPageWithSorting(
+            @PathVariable int pageNumber,
+            @RequestParam(name = "sortField", defaultValue = "firstName") String sortField,
+            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
+            Model model) {
+        Page<User> usersPage = userService.listByPageWithSorting(pageNumber, sortField, sortDir);
+        return addToModel(pageNumber, usersPage, sortField, sortDir, model);
+    }
+
+    private String addToModel(@PathVariable int pageNumber, Page<User> usersPage,
+                              String sortField, String sortDir, Model model) {
         List<User> listUsers = usersPage.getContent();
         int totalPages = usersPage.getTotalPages();
         long totalItems = usersPage.getTotalElements();
 
-        long startCount = ((pageNumber - 1) * USERS_PER_PAGE) + 1;
+        long startCount = ((long) (pageNumber - 1) * USERS_PER_PAGE) + 1;
         long endCount = (startCount + USERS_PER_PAGE) - 1;
         if (endCount > totalItems) endCount = totalItems;
         model.addAttribute("startCount", startCount);
@@ -44,6 +59,14 @@ public class UserController {
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalItems", totalItems);
+
+        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
+
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", reverseSortDir);
+
+
         return "users";
     }
 

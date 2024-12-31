@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
@@ -185,6 +186,24 @@ public class UserRepositoryTests {
         int pageNo = 1, pageSize = 4;
         Pageable pageRequest = PageRequest.of(pageNo, pageSize);
         Page<User> userPage = userRepository.findAll(pageRequest);
+
+        List<User> userList = userPage.getContent();
+        userList.forEach(System.out::println);
+
+        assertThat(userList).isNotNull();
+        assertThat(userList.size()).isEqualTo(4);
+    }
+
+    @Test
+    public void UserRepository_PaginateUsersWithSorting_ReturnUsers() {
+        int pageNo = 0, pageSize = 4;
+        String sortField = "firstName", sortDir = "asc";
+
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        Page<User> userPage = userRepository.findAll(pageable);
 
         List<User> userList = userPage.getContent();
         userList.forEach(System.out::println);
