@@ -22,22 +22,18 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<User> listAll() {
-        return (List<User>) userRepository.findAll();
-    }
-
-    public Page<User> listByPage(int pageNumber) {
-        // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
-        Pageable pageable = PageRequest.of(pageNumber - 1, USERS_PER_PAGE);
-        return userRepository.findAll(pageable);
-    }
-
-    public Page<User> listByPageWithSorting(int pageNumber, String sortField, String sortDir) {
+    public Page<User> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
+                                            String keyword) {
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
 
+        // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
         Pageable pageable = PageRequest.of(pageNumber - 1, USERS_PER_PAGE, sort);
-        return userRepository.findAll(pageable);
+
+        if (keyword.isEmpty())
+            return userRepository.findAll(pageable);
+
+        return userRepository.findAll(keyword, pageable);
     }
 
     public List<Role> listRoles() {

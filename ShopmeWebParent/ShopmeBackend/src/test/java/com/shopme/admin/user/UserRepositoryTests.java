@@ -196,7 +196,7 @@ public class UserRepositoryTests {
 
     @Test
     public void UserRepository_PaginateUsersWithSorting_ReturnUsers() {
-        int pageNo = 0, pageSize = 4;
+        int pageNo = 1, pageSize = 4;
         String sortField = "firstName", sortDir = "asc";
 
         Sort sort = Sort.by(sortField);
@@ -210,5 +210,24 @@ public class UserRepositoryTests {
 
         assertThat(userList).isNotNull();
         assertThat(userList.size()).isEqualTo(4);
+    }
+
+    @Test
+    public void UserRepository_PaginateUsersWithSortingAndFilter_ReturnUsers() {
+        int pageNo = 1, pageSize = 23;
+        String sortField = "id", sortDir = "asc", keyword = "gmail";
+
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        Page<User> userPage = userRepository.findAll(keyword, pageable);
+
+        List<User> userList = userPage.getContent();
+        userList.forEach(System.out::println);
+
+        assertThat(userList).isNotNull();
+        assertThat(userList.size()).isEqualTo(15);
+        assertThat(userList.size()).isGreaterThan(0);
     }
 }
