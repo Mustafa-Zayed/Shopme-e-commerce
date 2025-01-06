@@ -122,7 +122,11 @@ public class UserController {
 //            redirectAttributes.addFlashAttribute("message", "User has been saved successfully!");
 
         redirectAttributes.addFlashAttribute("message", message);
-        return "redirect:/users";
+
+        // We use the first part of the email address to filter for the updated user after redirecting.
+        String firstPartOfEmail = user.getEmail().split("@")[0];
+        System.out.println("keyword: " + firstPartOfEmail);
+        return "redirect:/users/page/1?sortField=id&sortDir=asc&keyword=" + firstPartOfEmail;
     }
 
     @GetMapping("/users/edit/{id}")
@@ -157,8 +161,13 @@ public class UserController {
                                           @PathVariable(value = "status") boolean statusBefore,
 //                                   @RequestParam(value = "status") boolean statusBefore,
                                           RedirectAttributes redirectAttributes) {
+        String firstPartOfEmail = "";
         try {
             userService.updateUserEnabledStatus(id, !statusBefore);
+            User user = userService.findById(id);
+            firstPartOfEmail = user.getEmail().split("@")[0];
+            System.out.println("keyword: " + firstPartOfEmail);
+
             if (statusBefore)
                 redirectAttributes.addFlashAttribute("message", "User ID " + id + " has been disabled");
             else
@@ -166,7 +175,8 @@ public class UserController {
         } catch (UserNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
         }
-        return "redirect:/users";
+        return "redirect:/users/page/1?sortField=id&sortDir=asc&keyword=" + firstPartOfEmail;
+//        return "redirect:/users";
     }
 
 }
