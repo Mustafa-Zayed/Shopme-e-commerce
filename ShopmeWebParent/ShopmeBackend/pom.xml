@@ -35,6 +35,11 @@
     <!-- We don't need to choose any dependencies here because this project
     will inherit dependencies declared in its parent project, ShopmeWebParent project-->
     <dependencies>
+        <dependency>
+            <groupId>net.sf.supercsv</groupId>
+            <artifactId>super-csv</artifactId>
+            <version>2.4.0</version>
+        </dependency>
     </dependencies>
 
     <build>

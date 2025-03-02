@@ -2,6 +2,7 @@ package com.shopme.admin.user;
 
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.User;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -179,4 +180,10 @@ public class UserController {
 //        return "redirect:/users";
     }
 
+    @GetMapping("/users/export/csv")
+    public void exportToCSV(HttpServletResponse response) throws IOException {
+        UserCsvExporter csvExporter = new UserCsvExporter();
+        List<User> userList = userService.listAll();
+        csvExporter.export(userList, response);
+    }
 }

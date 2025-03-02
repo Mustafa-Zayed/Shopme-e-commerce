@@ -22,6 +22,10 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public List<User> listAll() {
+        return (List<User>) userRepository.findAll(Sort.by("firstName").ascending());
+    }
+
     public Page<User> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
                                             String keyword) {
         Sort sort = Sort.by(sortField);
