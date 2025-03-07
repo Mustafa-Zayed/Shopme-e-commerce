@@ -35,11 +35,20 @@
     <!-- We don't need to choose any dependencies here because this project
     will inherit dependencies declared in its parent project, ShopmeWebParent project-->
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/net.sf.supercsv/super-csv -->
         <dependency>
             <groupId>net.sf.supercsv</groupId>
             <artifactId>super-csv</artifactId>
             <version>2.4.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
