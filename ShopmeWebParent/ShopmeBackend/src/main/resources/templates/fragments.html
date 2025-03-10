@@ -11,7 +11,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
 <!== th:href="@{/users/page/{pageNumber}( pageNumber=${currentPage}, sortField=${sortFieldName}, sortDir=${sortField == sortFieldName ? reverseSortDir : 'asc'}, keyword=${keyword})}"==>
 -->
 
-<th th:fragment="column_link(sortFieldName, columnLabel)">
+<th th:fragment="column_link(sortFieldName, columnLabel, removeTag)" th:remove="${removeTag}">
     <a class="text-decoration-none text-white"
        th:href="@{'/users/page/' + ${currentPage}
            + '?sortField=' + ${sortFieldName}
@@ -63,7 +63,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
 
     <div th:if="${totalPages > 1}"> <!-- hide pagination if it's only one page -->
         <nav>
-            <ul class="pagination justify-content-center">
+            <ul class="pagination justify-content-center flex-wrap">
                 <li th:class="${currentPage > 1 ? 'page-item':'page-item disabled'}">
                     <a class="page-link"
                        th:href="@{'/users/page/1'
