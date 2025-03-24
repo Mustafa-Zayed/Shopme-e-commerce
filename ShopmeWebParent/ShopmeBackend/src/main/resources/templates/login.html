@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/fontawesome/all.css}" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/style.css}" type="text/css">
+
+    <title>Login - Shopme Admin</title>
+</head>
+<body>
+<div class="container-fluid text-center">
+
+    <div>
+        <img class="img-fluid" th:src="@{/images/ShopmeAdminBig.png}"/>
+    </div>
+
+    <form method="post" style="max-width: 350px; margin: 0 auto"
+          th:action="@{/authenticateUser}">
+        <div th:if="${param.error}">
+            <p class="text-danger">
+                [[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
+            </p>
+        </div>
+        <div class="border border-secondary rounded p-3">
+            <p>Access to Shopme Control Panel</p>
+            <p>
+                <input class="form-control" name="email" placeholder="E-mail"
+                       required type="email"/>
+            </p>
+            <p>
+                <input class="form-control" name="password" placeholder="Password"
+                       required type="password"/>
+            </p>
+            <p>
+                <input name="remember-me" type="checkbox"/>&nbsp;Remember Me
+            </p>
+            <p>
+                <input class="btn btn-primary" type="submit" value="Login"/>
+            </p>
+        </div>
+    </form>
+
+    <div>
+        <p>Shopme Control Panel - Copyright &copy; Shopme</p>
+    </div>
+
+</div>
+</body>
+</html>
