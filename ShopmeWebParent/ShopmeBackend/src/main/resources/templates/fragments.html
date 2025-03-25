@@ -1,7 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="page_head(title)">
+    <meta charset="UTF-8" content="text/html" http-equiv="Content-Type">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0" name="viewport">
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/fontawesome/all.css}" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/style.css}" type="text/css">
+
+    <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}" type="text/javascript"></script>
+
+    <title>[[${title}]]</title>
 </head>
 <body>
 <!--
@@ -46,6 +57,21 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
                 <li class="nav-item"><a class="nav-link" th:href="@{/articles}">Articles</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/menus}">Menus</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/settings}">Settings</a></li>
+                <li class="nav-item">
+                    <span class="fa-solid fa-image-portrait fa-3x icon-silver"></span>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <!-- principal object represents our UserDetails (ShopmeUserDetails) -->
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
+                       sec:authentication="principal.fullName"></a>
+
+                    <div class="dropdown-menu">
+                        <form method="post" th:action="@{/logout}">
+                            <button class="dropdown-item" type="submit">Logout</button>
+                        </form>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>
@@ -114,5 +140,10 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
         </nav>
     </div>
 </div>
+
+<div class="text-center m-3" th:fragment="footer">
+    <p>Shopme Control Panel - Copyright &copy; Shopme</p>
+</div>
+
 </body>
 </html>
