@@ -46,4 +46,8 @@ public class ShopmeUserDetails implements UserDetails {
 
         return authorities;
     }
+
+    public String getFullName() {
+        return user.getFullName();
+    }
 }

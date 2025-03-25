@@ -39,6 +39,10 @@ public class WebSecurityConfig {
                                 .loginProcessingUrl("/authenticateUser")
                                 .usernameParameter("email")
                                 .permitAll()
+                )
+                .logout(
+                        (logout) -> logout
+                                .permitAll()
                 );
 
         return http.build();
