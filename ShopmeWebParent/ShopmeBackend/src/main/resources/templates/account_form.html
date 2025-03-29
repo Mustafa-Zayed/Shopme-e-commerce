@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: page_head(${'Your Account Details'})}"></head>
+<body>
+<div class="container-fluid">
+    <div th:replace="~{fragments :: top_navbar}"></div>
+
+    <div class="alert alert-success text-center m-2" th:if="${message != null}">
+        [[${message}]]
+    </div>
+
+    <form enctype="multipart/form-data" method="post"
+          style="max-width: 700px; margin: 0 auto"
+          th:action="@{/account/update}"
+          th:object="${user}"
+    >
+        <input th:field="*{id}" type="hidden"/>
+
+        <div class="text-center">
+            <h2>Your Account Details</h2>
+        </div>
+
+        <div class="border border-secondary rounded p-3">
+            <div class="form-group row mb-3">
+                <input th:field="*{email}" type="hidden">
+                <label class="col-sm-4 col-form-label">E-mail:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" disabled th:value="*{email}" type="email"/>
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-sm-4 col-form-label">First Name:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" maxlength="45" minlength="2"
+                           required th:field="*{firstName}" type="text"/>
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-sm-4 col-form-label">Last Name:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" maxlength="45" minlength="2"
+                           required th:field="*{lastName}" type="text"/>
+                </div>
+            </div>
+
+            <div class="form-group row mb-3">
+                <label class="col-sm-4 col-form-label">Password:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" maxlength="20" minlength="8"
+                           oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"
+                           placeholder="Leave blank to keep the same" th:field="*{password}"
+                           type="password">
+                </div>
+            </div>
+
+            <div class="form-group row mb-3">
+                <label class="col-sm-4 col-form-label">Confirm Password:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" id="confirmPassword" maxlength="20"
+                           minlength="8" oninput="checkPasswordMatch(this)"
+                           type="password"
+                    >
+                </div>
+            </div>
+
+            <input th:field="*{roles}" type="hidden"/>
+
+            <div class="form-group row mb-3">
+                <label class="col-sm-4 col-form-label">Assigned Roles:</label>
+                <div class="col-sm-8">
+                    <span><b>[[${user.roles}]]</b></span>
+                </div>
+            </div>
+
+            <input th:field="*{enabled}" type="hidden"/>
+
+            <div class="form-group row mb-3">
+                <label class="col-sm-4 col-form-label">Photos:</label>
+                <div class="col-sm-8">
+                    <!-- In the edit mode, If the user does not upload a new file, this hidden input ensures the original
+                    value of the photos field is preserved and submitted. If the user does upload a new file,
+                    the controller can update the photos field with the path or identifier of the newly uploaded image. -->
+                    <input th:field="*{photos}" type="hidden">
+                    <input accept="image/png, image/jpeg" class="mb-2"
+                           id="imageFile" name="userImage"
+                           size="1024"
+                           type="file"/>
+
+                    <img alt="image preview"
+                         class="img-thumbnail"
+                         id="thumbnail"
+                         th:src="@{${user.photosImagePath}}">
+                </div>
+            </div>
+
+            <div class="text-center">
+                <input class="btn btn-primary m-3" type="submit" value="Save"/>
+                <input class="btn btn-secondary" id="buttonCancel" type="button" value="Cancel"/>
+            </div>
+        </div>
+    </form>
+
+    <div class="modal" id="modalDialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Warning</h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <span id="modalBody"></span>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer}"></div>
+</div>
+<script type="text/javascript">
+    let thumbnail = $("#thumbnail");
+    let prevSrcBeforeChanging = thumbnail.attr("src"); // the initial thumbnail source
+    console.log("prevSrcBeforeChanging: " + prevSrcBeforeChanging)
+
+    $(document).ready(function () {
+        $("#buttonCancel").on("click", function () {
+            window.location = "[[@{/users}]]";
+        });
+
+        $("#imageFile").change(function () {
+            let fileSize = this.files[0]?.size || 0;
+            console.log(fileSize)
+
+            if (fileSize > 1048576) { // 1024 * 1024
+                this.setCustomValidity("Image size must be less than 1MB! =)");
+                this.reportValidity();
+            } else {
+                this.setCustomValidity("");
+                showImageThumbnail(this);
+            }
+        })
+    });
+
+    function showImageThumbnail(fileInput) {
+        console.log(fileInput.files)
+        let file = fileInput.files[0];
+
+        if (file == null) { // If no image selected, return to the original one
+            thumbnail.removeAttr("src");
+            thumbnail.attr("src", prevSrcBeforeChanging);
+            return
+        }
+
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            thumbnail.attr("src", reader.result);
+            // console.log("reader.result: " + reader.result)
+        }
+    }
+
+    function checkPasswordMatch(confirmPassword) {
+        if (confirmPassword.value !== $("#password").val())
+            confirmPassword.setCustomValidity("Passwords do not match!");
+        else
+            confirmPassword.setCustomValidity("");
+    }
+
+</script>
+</body>
+</html>

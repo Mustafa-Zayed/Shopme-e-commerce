@@ -1,10 +1,17 @@
 package com.shopme.admin.user;
 
+import com.shopme.admin.security.ShopmeUserDetails;
+import com.shopme.admin.user.export.UserCsvExporter;
+import com.shopme.admin.user.export.UserExcelExporter;
+import com.shopme.admin.user.export.UserPDFExporter;
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -86,43 +93,7 @@ public class UserController {
     public String saveUser(@ModelAttribute User user,
                            @RequestPart(value = "userImage") MultipartFile multipart,
                            RedirectAttributes redirectAttributes) throws IOException {
-//        // Server-Side Rendering Approach
-//        if (!userService.isEmailUnique(user.getEmail())) {
-//            model.addAttribute("emailError", "Email is already in use!");
-//            model.addAttribute("listRoles", userService.listRoles());
-//            return "user_form";
-//        }
-        // If we need to check for the id, we must do that before saving the user, as user object
-        // will be updated with the new id after saving.
-        String message;
-        message = user.getId() == null ?
-                "New User has been created!" : "User has been updated successfully!";
-
-        if (!multipart.isEmpty()) {
-            String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipart.getOriginalFilename()));
-            user.setPhotos(originalFilename);
-            User savedUser = userService.save(user); // user == savedUser: true
-            System.out.println("user.getId(): " + user.getId());
-            String uploadDir = "user-photos/" + savedUser.getId(); // user.getId() works as well, because the user and savedUser objects are the same.
-            FileUploadUtil.saveFile(uploadDir, originalFilename, multipart);
-        } else {
-            System.out.println("user.getPhotos(): " + user.getPhotos()); // user.getPhotos():
-            // In the create mode, if the user does not upload a new file, photos field will sent as
-            // empty string "", not null, because of <input type="hidden" th:field="*{photos}"> in the
-            // user_form, and that will cause a constraint violation in getPhotosImagePath() method in
-            // User class. So we must set photos to null.
-            if (user.getPhotos().isEmpty())
-                user.setPhotos(null);
-            userService.save(user);
-        }
-//        // Incorrect approach
-//        // user.getId() => will never be null, because the user gets a new ID when saved, so we need to check before saving.
-//        if (user.getId() == null) // new user
-//            redirectAttributes.addFlashAttribute("message", "User has been Created!");
-//        else // edit user
-//            redirectAttributes.addFlashAttribute("message", "User has been saved successfully!");
-
-        redirectAttributes.addFlashAttribute("message", message);
+        userService.saveUserAndImage(user, multipart, redirectAttributes);
 
         // We use the first part of the email address to filter for the updated user after redirecting.
         String firstPartOfEmail = user.getEmail().split("@")[0];

@@ -5,14 +5,15 @@
     <meta charset="UTF-8" content="text/html" http-equiv="Content-Type">
     <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0" name="viewport">
 
+    <title>[[${title}]]</title>
+
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" type="text/css"/>
     <link rel="stylesheet" th:href="@{/fontawesome/all.css}" type="text/css"/>
     <link rel="stylesheet" th:href="@{/style.css}" type="text/css">
 
     <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}" type="text/javascript"></script>
-
-    <title>[[${title}]]</title>
+    <script th:src="@{/js/common.js}" type="text/javascript"></script>
 </head>
 <body>
 <!--
@@ -64,6 +65,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
                 <li class="nav-item dropdown">
                     <!-- principal object represents our UserDetails (ShopmeUserDetails) -->
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
+                       th:href="@{/account}"
                        sec:authentication="principal.fullName"></a>
 
                     <div class="dropdown-menu">

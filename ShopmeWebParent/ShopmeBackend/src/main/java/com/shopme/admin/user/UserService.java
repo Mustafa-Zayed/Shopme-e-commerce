@@ -1,5 +1,6 @@
 package com.shopme.admin.user;
 
+import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 import jakarta.transaction.Transactional;
@@ -10,8 +11,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -21,6 +27,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 
     public List<User> listAll() {
         return (List<User>) userRepository.findAll(Sort.by("firstName").ascending());
@@ -56,6 +66,49 @@ public class UserService {
             encodePassword(user);
 
         return userRepository.save(user);
+    }
+
+    public void saveUserAndImage(User user,
+                                 MultipartFile multipart,
+                                 RedirectAttributes redirectAttributes) throws IOException {
+//        // Server-Side Rendering Approach
+//        if (!userService.isEmailUnique(user.getEmail())) {
+//            model.addAttribute("emailError", "Email is already in use!");
+//            model.addAttribute("listRoles", userService.listRoles());
+//            return "user_form";
+//        }
+
+        // If we need to check for the id, we must do that before saving the user, as user object
+        // will be updated with the new id after saving.
+        String message;
+        message = user.getId() == null ?
+                "New User has been created!" : "User has been updated successfully!";
+
+        if (!multipart.isEmpty()) {
+            String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipart.getOriginalFilename()));
+            user.setPhotos(originalFilename);
+            User savedUser = save(user); // user == savedUser: true
+            System.out.println("user.getId(): " + user.getId());
+            String uploadDir = "user-photos/" + savedUser.getId(); // user.getId() works as well, because the user and savedUser objects are the same.
+            FileUploadUtil.saveFile(uploadDir, originalFilename, multipart);
+        } else {
+            System.out.println("user.getPhotos(): " + user.getPhotos()); // user.getPhotos():
+            // In the create mode, if the user does not upload a new file, photos field will sent as
+            // empty string "", not null, because of <input type="hidden" th:field="*{photos}"> in the
+            // user_form, and that will cause a constraint violation in getPhotosImagePath() method in
+            // User class. So we must set photos to null.
+            if (user.getPhotos().isEmpty())
+                user.setPhotos(null);
+            save(user);
+        }
+//        // Incorrect approach
+//        // user.getId() => will never be null, because the user gets a new ID when saved, so we need to check before saving.
+//        if (user.getId() == null) // new user
+//            redirectAttributes.addFlashAttribute("message", "User has been Created!");
+//        else // edit user
+//            redirectAttributes.addFlashAttribute("message", "User has been saved successfully!");
+
+        redirectAttributes.addFlashAttribute("message", message);
     }
 
     private void encodePassword(User user) {
