@@ -47,23 +47,58 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
         </button>
         <div class="collapse navbar-collapse" id="topNavbar">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" th:href="@{/users}">Users</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/categories}">Categories</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/brands}">Brands</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/products}">Products</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/customers}">Customers</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/shipping}">Shipping</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/orders}">Orders</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/report}">Sales Reports</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/articles}">Articles</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/menus}">Menus</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/settings}">Settings</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('Admin')">
+                    <a class="nav-link" th:href="@{/users}">Users</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+                    <a class="nav-link" th:href="@{/categories}">Categories</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+                    <a class="nav-link" th:href="@{/brands}">Brands</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Editor', 'Salesperson', 'Shipper')">
+                    <a class="nav-link" th:href="@{/products}">Products</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+                    <a class="nav-link" th:href="@{/customers}">Customers</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+                    <a class="nav-link" th:href="@{/shipping}">Shipping</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Salesperson', 'Shipper')">
+                    <a class="nav-link" th:href="@{/orders}">Orders</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
+                    <a class="nav-link" th:href="@{/report}">Reports</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+                    <a class="nav-link" th:href="@{/articles}">Articles</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+                    <a class="nav-link" th:href="@{/menus}">Menus</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasAuthority('Admin')">
+                    <a class="nav-link" th:href="@{/settings}">Settings</a>
+                </li>
+            </ul>
+
+            <!-- Push user profile to the right -->
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <span class="fa-solid fa-image-portrait fa-3x icon-silver"></span>
                 </li>
 
                 <li class="nav-item dropdown">
-                    <!-- principal object represents our UserDetails (ShopmeUserDetails) -->
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                        th:href="@{/account}"
                        sec:authentication="principal.fullName"></a>
@@ -76,6 +111,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
                 </li>
             </ul>
         </div>
+
     </div>
 </nav>
 

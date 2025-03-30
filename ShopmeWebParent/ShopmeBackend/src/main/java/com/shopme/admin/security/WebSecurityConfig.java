@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,6 +30,17 @@ public class WebSecurityConfig {
                         (requests) -> requests
                                 .requestMatchers("/*.css", "/images/**", "/js/**", "/webjars/**", "/fontawesome/**", "/webfonts/**")
                                 .permitAll()
+                                .requestMatchers("/users/**").hasAuthority("Admin")
+                                .requestMatchers("/categories/**").hasAnyAuthority("Admin", "Editor")
+                                .requestMatchers("/brands/**").hasAnyAuthority("Admin", "Editor")
+                                .requestMatchers("/products/**").hasAnyAuthority("Admin", "Editor", "Salesperson", "Shipper")
+                                .requestMatchers("/customers/**").hasAnyAuthority("Admin", "Salesperson")
+                                .requestMatchers("/shipping/**").hasAnyAuthority("Admin", "Salesperson")
+                                .requestMatchers("/orders/**").hasAnyAuthority("Admin", "Salesperson", "Shipper")
+                                .requestMatchers("/reports/**").hasAnyAuthority("Admin", "Salesperson")
+                                .requestMatchers("/articles/**").hasAnyAuthority("Admin", "Editor")
+                                .requestMatchers("/menus/**").hasAnyAuthority("Admin", "Editor")
+                                .requestMatchers("/settings/**").hasAuthority("Admin")
                                 .anyRequest()
                                 .authenticated()
                 )
