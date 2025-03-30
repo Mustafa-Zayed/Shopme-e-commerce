@@ -76,7 +76,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
                 </li>
 
                 <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Salesperson')">
-                    <a class="nav-link" th:href="@{/report}">Reports</a>
+                    <a class="nav-link" th:href="@{/report}">Sales Report</a>
                 </li>
 
                 <li class="nav-item" sec:authorize="hasAnyAuthority('Admin', 'Editor')">

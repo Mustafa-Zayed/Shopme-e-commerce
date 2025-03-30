@@ -1,29 +1,24 @@
-package com.shopme.admin.user;
+package com.shopme.admin.user.controller;
 
-import com.shopme.admin.security.ShopmeUserDetails;
+import com.shopme.admin.user.exception.UserNotFoundException;
+import com.shopme.admin.user.service.UserService;
 import com.shopme.admin.user.export.UserCsvExporter;
 import com.shopme.admin.user.export.UserExcelExporter;
 import com.shopme.admin.user.export.UserPDFExporter;
-import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
-import static com.shopme.admin.user.UserService.USERS_PER_PAGE;
+import static com.shopme.admin.user.service.UserService.USERS_PER_PAGE;
 
 @RequiredArgsConstructor
 @Controller
@@ -77,7 +72,7 @@ public class UserController {
 
         model.addAttribute("keyword", keyword);
 
-        return "users";
+        return "users/users";
     }
 
     @GetMapping("/users/new")
@@ -85,7 +80,7 @@ public class UserController {
         model.addAttribute("user", User.builder().enabled(true).build());
         model.addAttribute("listRoles", userService.listRoles());
         model.addAttribute("pageTitle", "Create New User");
-        return "user_form";
+        return "users/user_form";
     }
 
     //RedirectAttributes is an interface used to pass attributes to a redirected request
@@ -113,7 +108,7 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("listRoles", userService.listRoles());
         model.addAttribute("pageTitle", "Edit User(ID: " + id + ")");
-        return "user_form";
+        return "users/user_form";
     }
 
     @GetMapping("/users/delete/{id}")

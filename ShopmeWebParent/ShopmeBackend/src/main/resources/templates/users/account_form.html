@@ -100,66 +100,10 @@
         </div>
     </form>
 
-    <div class="modal" id="modalDialog" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Warning</h5>
-                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-                </div>
-                <div class="modal-body">
-                    <span id="modalBody"></span>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div th:replace="~{fragments :: footer}"></div>
 </div>
 <script type="text/javascript">
-    let thumbnail = $("#thumbnail");
-    let prevSrcBeforeChanging = thumbnail.attr("src"); // the initial thumbnail source
-    console.log("prevSrcBeforeChanging: " + prevSrcBeforeChanging)
-
-    $(document).ready(function () {
-        $("#buttonCancel").on("click", function () {
-            window.location = "[[@{/users}]]";
-        });
-
-        $("#imageFile").change(function () {
-            let fileSize = this.files[0]?.size || 0;
-            console.log(fileSize)
-
-            if (fileSize > 1048576) { // 1024 * 1024
-                this.setCustomValidity("Image size must be less than 1MB! =)");
-                this.reportValidity();
-            } else {
-                this.setCustomValidity("");
-                showImageThumbnail(this);
-            }
-        })
-    });
-
-    function showImageThumbnail(fileInput) {
-        console.log(fileInput.files)
-        let file = fileInput.files[0];
-
-        if (file == null) { // If no image selected, return to the original one
-            thumbnail.removeAttr("src");
-            thumbnail.attr("src", prevSrcBeforeChanging);
-            return
-        }
-
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            thumbnail.attr("src", reader.result);
-            // console.log("reader.result: " + reader.result)
-        }
-    }
+    let moduleURL = "[[@{/}]]";
 
     function checkPasswordMatch(confirmPassword) {
         if (confirmPassword.value !== $("#password").val())
@@ -169,5 +113,6 @@
     }
 
 </script>
+<script th:src="@{/js/common_form.js}" type="text/javascript"></script>
 </body>
 </html>

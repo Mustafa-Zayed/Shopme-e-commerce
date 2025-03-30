@@ -1,6 +1,6 @@
 package com.shopme.admin.security;
 
-import com.shopme.admin.user.UserRepository;
+import com.shopme.admin.user.repository.UserRepository;
 import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

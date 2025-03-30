@@ -1,5 +1,8 @@
-package com.shopme.admin.user;
+package com.shopme.admin.user.service;
 
+import com.shopme.admin.user.repository.RoleRepository;
+import com.shopme.admin.user.exception.UserNotFoundException;
+import com.shopme.admin.user.repository.UserRepository;
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
