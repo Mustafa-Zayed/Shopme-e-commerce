@@ -1,5 +1,7 @@
 package com.shopme.admin.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -8,6 +10,8 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class FileUploadUtil {
+    private static final Logger logger = LoggerFactory.getLogger(FileUploadUtil.class);
+
     public static void saveFile(String uploadDir, String fileName, MultipartFile multipartFile)
             throws IOException {
         Path uploadPath = Path.of(uploadDir);
@@ -28,7 +32,7 @@ public class FileUploadUtil {
         }
     }
 
-    private static void cleanDir(Path uploadPath) throws IOException {
+    private static void cleanDir(Path uploadPath) {
         /*int count = 0; count++;  => This approach will get an error: Variable 'count' is accessed from within inner class, needs to be final or effectively final
         The issue here is that the variable count is being accessed from within an inner class (the anonymous SimpleFileVisitor class) in a non-final way.
         In Java, when an inner class accesses a variable from its outer class, that variable must be either final or "effectively final", meaning its value is never changed after initialization.
@@ -36,14 +40,20 @@ public class FileUploadUtil {
         To fix this issue, you can either declare count as final, or make it effectively final by not changing its value after initialization. However, since you are trying to change the value of count inside the inner class, declaring it as final is not an option.
         A possible solution is to use an array of size 1 to hold the value of count. This way, you can change the value of count inside the inner class without violating the "effectively final" rule.*/
         final int[] count = {0};
-        Files.walkFileTree(uploadPath, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file); // Delete each file
-                count[0]++;
-                return FileVisitResult.CONTINUE;
-            }
-        });
-        System.out.println("Deleted " + count[0] + " files");
+        try {
+            Files.walkFileTree(uploadPath, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file); // Delete each file
+                    count[0]++;
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+            System.out.println("Deleted " + count[0] + " files");
+            logger.info("Deleted {} files", count[0]);
+        } catch (IOException e) {
+            System.out.println("Error cleaning directory: " + uploadPath.toAbsolutePath());
+            logger.error("Error cleaning directory: {}", uploadPath.toAbsolutePath(), e);
+        }
     }
 }
