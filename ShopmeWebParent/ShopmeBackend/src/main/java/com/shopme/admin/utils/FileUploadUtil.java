@@ -49,7 +49,7 @@ public class FileUploadUtil {
                     return FileVisitResult.CONTINUE;
                 }
             });
-            System.out.println("Deleted " + count[0] + " files");
+             System.out.println("Deleted " + count[0] + " files");
             logger.info("Deleted {} files", count[0]);
         } catch (IOException e) {
             System.out.println("Error cleaning directory: " + uploadPath.toAbsolutePath());
