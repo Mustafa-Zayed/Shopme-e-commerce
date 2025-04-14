@@ -23,9 +23,9 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
 <!== th:href="@{/users/page/{pageNumber}( pageNumber=${currentPage}, sortField=${sortFieldName}, sortDir=${sortField == sortFieldName ? reverseSortDir : 'asc'}, keyword=${keyword})}"==>
 -->
 
-<th th:fragment="column_link(sortFieldName, columnLabel, removeTag)" th:remove="${removeTag}">
+<th th:fragment="column_link(path, sortFieldName, columnLabel, removeTag)" th:remove="${removeTag}">
     <a class="text-decoration-none text-white"
-       th:href="@{'/users/page/' + ${currentPage}
+       th:href="@{'/' + ${path} + '/page/' + ${currentPage}
            + '?sortField=' + ${sortFieldName}
            + '&sortDir=' + ${sortField == sortFieldName ? reverseSortDir : 'asc'}
            + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
@@ -95,7 +95,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
             <!-- Push user profile to the right -->
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <span class="fa-solid fa-image-portrait fa-3x icon-silver"></span>
+                    <span class="fa-solid fa-user fa-2x icon-silver"></span>
                 </li>
 
                 <li class="nav-item dropdown">
@@ -115,10 +115,10 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
     </div>
 </nav>
 
-<div th:fragment="pagination">
+<div th:fragment="pagination(path)">
     <div class="text-center m-1" th:if="${totalItems > 0}">
         <span>
-            Showing users # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]
+            Showing [[${path}]] # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]
         </span>
     </div>
     <div class="text-center m-1" th:unless="${totalItems > 0}">
@@ -130,7 +130,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
             <ul class="pagination justify-content-center flex-wrap">
                 <li th:class="${currentPage > 1 ? 'page-item':'page-item disabled'}">
                     <a class="page-link"
-                       th:href="@{'/users/page/1'
+                       th:href="@{'/' + ${path} + '/page/1'
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
                            + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
@@ -138,7 +138,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
                 </li>
                 <li th:class="${currentPage > 1 ? 'page-item':'page-item disabled'}">
                     <a class="page-link"
-                       th:href="@{'/users/page/' + ${currentPage - 1}
+                       th:href="@{'/' + ${path} + '/page/' +  ${currentPage - 1}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
                            + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
@@ -149,7 +149,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
                     th:each="i : ${#numbers.sequence(1, totalPages)}">
 
                     <a class="page-link"
-                       th:href="@{'/users/page/' + ${i}
+                       th:href="@{'/' + ${path} + '/page/' + ${i}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
                            + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
@@ -160,7 +160,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
 
                 <li th:class="${currentPage < totalPages ? 'page-item':'page-item disabled'}">
                     <a class="page-link"
-                       th:href="@{'/users/page/' + ${currentPage + 1}
+                       th:href="@{'/' + ${path} + '/page/' + ${currentPage + 1}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
                            + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
@@ -168,7 +168,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
                 </li>
                 <li th:class="${currentPage < totalPages ? 'page-item':'page-item disabled'}">
                     <a class="page-link"
-                       th:href="@{'/users/page/' + ${totalPages}
+                       th:href="@{'/' + ${path} + '/page/' + ${totalPages}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
                            + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
