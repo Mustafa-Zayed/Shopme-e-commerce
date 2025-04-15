@@ -13,8 +13,8 @@ $(document).ready(function () {
         let fileSize = this.files[0]?.size || 0;
         console.log(fileSize)
 
-        if (fileSize > 1048576) { // 1024 * 1024
-            this.setCustomValidity("Image size must be less than 1MB! =)");
+        if (fileSize > 102400) { // 1024 * 100
+            this.setCustomValidity("Image size must be less than 100KB! =)");
             this.reportValidity();
         } else {
             this.setCustomValidity("");

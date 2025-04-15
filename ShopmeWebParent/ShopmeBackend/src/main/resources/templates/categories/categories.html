@@ -14,6 +14,10 @@
            th:href="@{/categories/export/csv}"></a>
     </div>
 
+    <div class="alert alert-success text-center m-2" th:if="${message != null}">
+        [[${message}]]
+    </div>
+
     <form class="row g-2 align-items-center m-3" th:action="@{/categories/page/{pageNumber}(pageNumber=1)}">
         <input class="form-control" name="sortField" th:value="${sortField}" type="hidden"/>
         <input class="form-control" name="sortDir" th:value="${sortDir}" type="hidden"/>
@@ -58,7 +62,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="cat, iterStat : ${categories}">
+            <tr th:each="cat, iterStat : ${listCategories}">
                 <td class="hideable-column">[[${cat.id}]]</td>
                 <!-- <td>[[${iterStat.count}]]</td> <!==iterStat.index is zero-based ==>-->
                 <td>
@@ -111,7 +115,7 @@
     </div>
 
         <div class="less-details">
-            <div class="row m-1" th:each="cat : ${categories}">
+            <div class="row m-1" th:each="cat : ${listCategories}">
                 <div class="col-4">
 <!--                    <img alt="user image"-->
 <!--                         style="width: 100px"-->

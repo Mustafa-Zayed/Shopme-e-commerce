@@ -37,4 +37,10 @@ public class Category {
     @ToString.Exclude
     private Set<Category> children;
 
+    @Transient
+    public String getImagePath() {
+        if (image == null || id == null)
+            return "/images/image-thumbnail.png";
+        return "/category-photos/" + id + "/" + image;
+    }
 }

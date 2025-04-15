@@ -71,7 +71,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void saveUserAndImage(User user,
+    public void save(User user,
                                  MultipartFile multipart,
                                  RedirectAttributes redirectAttributes) throws IOException {
 //        // Server-Side Rendering Approach

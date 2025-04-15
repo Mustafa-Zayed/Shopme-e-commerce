@@ -88,7 +88,7 @@ public class UserController {
     public String saveUser(@ModelAttribute User user,
                            @RequestPart(value = "userImage") MultipartFile multipart,
                            RedirectAttributes redirectAttributes) throws IOException {
-        userService.saveUserAndImage(user, multipart, redirectAttributes);
+        userService.save(user, multipart, redirectAttributes);
 
         // We use the first part of the email address to filter for the updated user after redirecting.
         String firstPartOfEmail = user.getEmail().split("@")[0];

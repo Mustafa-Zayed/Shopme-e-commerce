@@ -2,15 +2,15 @@ package com.shopme.admin.category.controller;
 
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.common.entity.Category;
-import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.shopme.admin.user.service.UserService.USERS_PER_PAGE;
@@ -39,7 +39,7 @@ public class CategoryController {
 
     private String addToModel(int pageNumber, Page<Category> usersPage,
                               String sortField, String sortDir, String keyword, Model model) {
-        List<Category> categories = usersPage.getContent();
+        List<Category> listCategories = usersPage.getContent();
         int totalPages = usersPage.getTotalPages();
         long totalItems = usersPage.getTotalElements();
 
@@ -49,7 +49,7 @@ public class CategoryController {
         model.addAttribute("startCount", startCount);
         model.addAttribute("endCount", endCount);
 
-        model.addAttribute("categories", categories);
+        model.addAttribute("listCategories", listCategories);
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalItems", totalItems);
@@ -63,5 +63,25 @@ public class CategoryController {
         model.addAttribute("keyword", keyword);
 
         return "categories/categories";
+    }
+
+    @GetMapping("/categories/new")
+    public String newCategory(Model model) {
+        model.addAttribute("category", Category.builder().enabled(true).build());
+//        model.addAttribute("mapCategories", categoryService.listCategoriesUsedInFormMapApproach());
+        model.addAttribute("listCategories", categoryService.listCategoriesUsedInFormListApproach());
+        model.addAttribute("pageTitle", "Create New Category");
+        return "categories/category_form";
+    }
+
+    @PostMapping("/categories/save")
+    public String saveCategory(@ModelAttribute("cat") Category category,
+                           @RequestPart(value = "catImage") MultipartFile multipart,
+                           RedirectAttributes redirectAttributes) throws IOException {
+        categoryService.save(category, multipart, redirectAttributes);
+
+        String catName = category.getAlias();
+        System.out.println("keyword: " + catName);
+        return "redirect:/categories/page/1?sortField=id&sortDir=asc&keyword=" + catName;
     }
 }

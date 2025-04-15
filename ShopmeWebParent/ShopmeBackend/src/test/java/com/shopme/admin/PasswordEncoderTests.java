@@ -1,4 +1,4 @@
-package com.shopme.admin.user;
+package com.shopme.admin;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

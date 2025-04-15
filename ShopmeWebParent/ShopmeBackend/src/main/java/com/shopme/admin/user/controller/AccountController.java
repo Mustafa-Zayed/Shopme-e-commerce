@@ -35,7 +35,7 @@ public class AccountController {
                                 @RequestPart(value = "userImage") MultipartFile multipart,
                                 @AuthenticationPrincipal ShopmeUserDetails loggedUser,
                                 RedirectAttributes redirectAttributes) throws IOException {
-        userService.saveUserAndImage(user, multipart, redirectAttributes);
+        userService.save(user, multipart, redirectAttributes);
         // update the user details in the session, so that they are updated in the UI
         loggedUser.setFirstName(user.getFirstName());
         loggedUser.setLastName(user.getLastName());
