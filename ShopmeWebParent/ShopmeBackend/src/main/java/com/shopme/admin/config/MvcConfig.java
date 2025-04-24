@@ -12,7 +12,6 @@ import java.nio.file.Path;
  */
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
-    private static final String UPLOAD_DIR = "user-photos";
 
     /**
      * Any request made to "/user-photos/**" will be mapped to the corresponding files
@@ -21,9 +20,14 @@ public class MvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        Path path = Path.of(UPLOAD_DIR);
+        String userPhotosDir = "user-photos";
+        Path userPhotosDirPath = Path.of(userPhotosDir);
+        registry.addResourceHandler("/" + userPhotosDir + "/**")
+                .addResourceLocations("file:/" + userPhotosDirPath.toFile().getAbsolutePath() + "/");
 
-        registry.addResourceHandler("/" + UPLOAD_DIR + "/**")
-                .addResourceLocations("file:/" + path.toAbsolutePath() + "/");
+        final String categoryPhotosDir = "../category-photos";
+        Path categoryPhotosDirPath = Path.of(categoryPhotosDir);
+        registry.addResourceHandler("/category-photos/**")
+                .addResourceLocations("file:/" + categoryPhotosDirPath.toFile().getAbsolutePath() + "/");
     }
 }

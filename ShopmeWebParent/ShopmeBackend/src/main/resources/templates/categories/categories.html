@@ -66,12 +66,9 @@
                 <td class="hideable-column">[[${cat.id}]]</td>
                 <!-- <td>[[${iterStat.count}]]</td> <!==iterStat.index is zero-based ==>-->
                 <td>
-<!--                    <img alt="user image"-->
-<!--                         style="width: 100px"-->
-<!--                         th:if="${cat.image != null}" th:src="@{${cat.photosImagePath}}">-->
-
-<!--                    <span class="fa-solid fa-image-portrait fa-3x icon-silver"-->
-<!--                          th:if="${cat.image == null}"></span>-->
+                    <img alt="category image"
+                         style="width: 100px"
+                         th:src="@{${cat.imagePath}}">
                 </td>
                 <td class="hideable-column">[[${cat.name}]]</td>
                 <td>[[${cat.alias}]]</td>

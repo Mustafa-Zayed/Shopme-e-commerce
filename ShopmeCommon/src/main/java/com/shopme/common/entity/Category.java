@@ -3,6 +3,7 @@ package com.shopme.common.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Builder
@@ -39,7 +40,7 @@ public class Category {
 
     @Transient
     public String getImagePath() {
-        if (image == null || id == null)
+        if (Objects.equals(image, "default.png") || id == null)
             return "/images/image-thumbnail.png";
         return "/category-photos/" + id + "/" + image;
     }
