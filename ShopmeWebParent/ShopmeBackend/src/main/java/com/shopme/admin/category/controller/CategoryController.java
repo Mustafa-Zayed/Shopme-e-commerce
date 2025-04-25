@@ -1,5 +1,6 @@
 package com.shopme.admin.category.controller;
 
+import com.shopme.admin.category.exception.CategoryNotFoundException;
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
@@ -83,5 +84,21 @@ public class CategoryController {
         String catName = category.getAlias();
         System.out.println("keyword: " + catName);
         return "redirect:/categories/page/1?sortField=id&sortDir=asc&keyword=" + catName;
+    }
+
+    @GetMapping("/categories/edit/{id}")
+    public String editCategory(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
+        Category category;
+        try {
+            category = categoryService.findById(id);
+        } catch (CategoryNotFoundException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            return "redirect:/categories";
+        }
+
+        model.addAttribute("category", category);
+        model.addAttribute("listCategories", categoryService.listCategoriesUsedInFormListApproach());
+        model.addAttribute("pageTitle", "Edit Category (ID: " + id + ")");
+        return "categories/category_form";
     }
 }

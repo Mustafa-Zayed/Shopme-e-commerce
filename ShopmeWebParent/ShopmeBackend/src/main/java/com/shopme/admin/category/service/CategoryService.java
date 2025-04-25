@@ -1,5 +1,6 @@
 package com.shopme.admin.category.service;
 
+import com.shopme.admin.category.exception.CategoryNotFoundException;
 import com.shopme.admin.category.repository.CategoryRepository;
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.Category;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -91,7 +93,9 @@ public class CategoryService {
                     .children(parent.getChildren())
                     .build());
 
-        Set<Category> children = parent.getChildren();
+        Set<Category> children = parent.getChildren().stream()
+                .sorted(Comparator.comparing(Category::getName))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         for (Category child : children) {
             categoriesUsedInForm.add(Category.builder()
                     .id(child.getId())
@@ -118,14 +122,30 @@ public class CategoryService {
         message = category.getId() == null ?
                 "New Category has been created!" : "Category has been updated successfully!";
 
-        String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipart.getOriginalFilename()));
-        category.setImage(originalFilename);
-        Category savedCategory = save(category); // category == savedCategory: true
-        System.out.println("category.getId(): " + category.getId());
-        String uploadDir = "../category-photos/" + savedCategory.getId(); // category.getId() works as well, because the category and savedCategory objects are the same.
-        FileUploadUtil.saveFile(uploadDir, originalFilename, multipart);
-
+        if (!multipart.isEmpty()) {
+            String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipart.getOriginalFilename()));
+            category.setImage(originalFilename);
+            Category savedCategory = save(category); // category == savedCategory: true
+            System.out.println("category.getId(): " + category.getId());
+            String uploadDir = "../category-photos/" + savedCategory.getId(); // category.getId() works as well, because the category and savedCategory objects are the same.
+            FileUploadUtil.saveFile(uploadDir, originalFilename, multipart);
+        } else {
+            System.out.println("category.getImage(): " + category.getImage()); // user.getImage():
+            // In the create mode, if the user does not upload a new file, photos field will sent as
+            // empty string "", not null, because of <input type="hidden" th:field="*{photos}"> in the
+            // category_form, and that will cause a constraint violation in getImagePath() method in
+            // Category class. So we must set photos to default.png.
+            if (category.getImage().isEmpty()) // not needed, just for the sake of completeness, as the image field is not nullable
+                category.setImage("default.png");
+            save(category);
+        }
 
         redirectAttributes.addFlashAttribute("message", message);
+    }
+
+    public Category findById(Integer id) throws CategoryNotFoundException {
+        return categoryRepository.findById(id).orElseThrow(
+                () -> new CategoryNotFoundException("Could not find any category with Id: " + id)
+        );
     }
 }

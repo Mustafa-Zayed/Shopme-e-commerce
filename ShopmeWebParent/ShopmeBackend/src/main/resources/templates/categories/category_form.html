@@ -68,7 +68,7 @@
                                id="imageFile" name="catImage"
                                size="1024"
                                type="file"
-                               required/>
+                               th:required="${category.id == null}"/>
 
                         <div class="mt-2">
                             <img alt="image preview"
