@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -129,5 +128,23 @@ public class CategoryRepositoryTests {
             if (!child.getChildren().isEmpty())
                 printSubCategories(child, level + 1);
         }
+    }
+
+    @Test
+    void CategoryRepository_FindByName_ReturnCategory() {
+        String catName = "Computers";
+        Category category = categoryRepository.findByName(catName);
+
+        assertThat(category).isNotNull();
+        assertThat(category.getName()).isEqualTo(catName);
+    }
+
+    @Test
+    void CategoryRepository_FindByAlias_ReturnCategory() {
+        String catAlias = "laptop_computers";
+        Category category = categoryRepository.findByAlias(catAlias);
+
+        assertThat(category).isNotNull();
+        assertThat(category.getAlias()).isEqualTo(catAlias);
     }
 }

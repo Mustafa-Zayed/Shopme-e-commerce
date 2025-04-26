@@ -11,4 +11,7 @@ public interface CategoryRepository extends CrudRepository<Category, Integer>, P
     @Query("SELECT c FROM Category c WHERE CONCAT(c.id, ' ', c.alias, ' ', c.name) " +
             "LIKE %?1%")
     Page<Category> findAll(String keyword, Pageable pageable);
+
+    Category findByName(String name);
+    Category findByAlias(String alias);
 }

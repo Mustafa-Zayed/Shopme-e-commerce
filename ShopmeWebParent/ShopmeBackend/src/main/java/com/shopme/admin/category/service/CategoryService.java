@@ -4,6 +4,7 @@ import com.shopme.admin.category.exception.CategoryNotFoundException;
 import com.shopme.admin.category.repository.CategoryRepository;
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.Category;
+import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -147,5 +148,23 @@ public class CategoryService {
         return categoryRepository.findById(id).orElseThrow(
                 () -> new CategoryNotFoundException("Could not find any category with Id: " + id)
         );
+    }
+
+    public boolean checkUniqueName(String name, Integer id) {
+        Category byName  = categoryRepository.findByName(name);
+        if (byName == null)
+            return true;
+
+        // Check if the name belongs to the edited category (i.e. user doesn't need to change the category name)
+        // If new category case, returns false as the id param is null
+        return byName.getId().equals(id);
+    }
+
+    public boolean checkUniqueAlias(String alias, Integer id) {
+        Category byAlias = categoryRepository.findByAlias(alias);
+        if (byAlias == null)
+            return true;
+
+        return byAlias.getId().equals(id);
     }
 }
