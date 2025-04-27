@@ -23,8 +23,8 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public List<Category> listAll() {
-        return (List<Category>) categoryRepository.findAll();
+    public List<Category> listAll(Sort sort) {
+        return (List<Category>) categoryRepository.findAll(sort);
     }
 
     public Page<Category> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
@@ -36,7 +36,7 @@ public class CategoryService {
         Pageable pageable = PageRequest.of(pageNumber - 1, CATS_PER_PAGE, sort);
 
         if (keyword.isEmpty()) {
-            List<Category> hierarchicalCategories = listCategoriesUsedInFormListApproach();
+            List<Category> hierarchicalCategories = listCategoriesUsedInFormListApproach(sort);
             return new PageImpl<>(hierarchicalCategories, pageable, hierarchicalCategories.size());
 
 //            return categoryRepository.findAll(pageable);
@@ -69,20 +69,20 @@ public class CategoryService {
 //        }
 //    }
 
-    public List<Category> listCategoriesUsedInFormListApproach() {
-        List<Category> categories = listAll();
+    public List<Category> listCategoriesUsedInFormListApproach(Sort sort) {
+        List<Category> categories = listAll(sort);
         List<Category> categoriesUsedInForm = new ArrayList<>();
 
         categories.forEach(cat -> {
             if (cat.getParent() == null)
-                listSubCategoriesListApproach(categoriesUsedInForm, cat, 1);
+                listSubCategoriesListApproach(categoriesUsedInForm, cat, sort, 1);
         });
 
         return categoriesUsedInForm;
     }
 
     private void listSubCategoriesListApproach(List<Category> categoriesUsedInForm, Category parent,
-                                    int level) {
+                                               Sort sort, int level) {
         if (parent.getParent() == null) // root category
             categoriesUsedInForm.add(Category.builder()
                     .id(parent.getId())
@@ -94,9 +94,23 @@ public class CategoryService {
                     .children(parent.getChildren())
                     .build());
 
+        // Sort children based on the parent order and store them in a LinkedHashSet to maintain the order.
         Set<Category> children = parent.getChildren().stream()
-                .sorted(Comparator.comparing(Category::getName))
+                .sorted((c1, c2) -> {
+                    for (Sort.Order order : sort) {
+                        int comparison = Comparator.comparing(Category::getName)
+                                .compare(c1, c2);
+                        if (order.isDescending()) {
+                            comparison = -comparison;
+                        }
+                        if (comparison != 0) {
+                            return comparison;
+                        }
+                    }
+                    return 0;
+                })
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+
         for (Category child : children) {
             categoriesUsedInForm.add(Category.builder()
                     .id(child.getId())
@@ -108,7 +122,7 @@ public class CategoryService {
                     .children(child.getChildren())
                     .build());
             if (!child.getChildren().isEmpty())
-                listSubCategoriesListApproach(categoriesUsedInForm, child,level + 1);
+                listSubCategoriesListApproach(categoriesUsedInForm, child, sort, level + 1);
         }
     }
 

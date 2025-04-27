@@ -47,17 +47,19 @@
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
             <thead class="table-dark">
             <tr>
-                <th class="hideable-column">
-                    <!-- This th tag will be removed using th:remove, and replaced with the above th.
-                    We using this approach, as we can't use class attribute with th:replace -->
-                    <th th:replace="~{fragments::column_link('categories', 'id', 'ID', 'tag')}"></th>
-                </th>
+                <th>ID</th>
                 <th>Category Image</th>
-                <th class="hideable-column">
-                    <th th:replace="~{fragments::column_link('categories', 'name', 'Category Name', 'tag')}"></th>
+                <th class="text-decoration-none text-white">
+                    <a class="text-decoration-none text-white"
+                       th:href="@{'/categories/page/' + ${currentPage}
+                       + '?sortDir=' + ${sortField == 'name' ? reverseSortDir : 'asc'}
+                       + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                       }">Name</a>
+
+                    <span th:class="${sortDir} == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'"></span>
                 </th>
-                <th th:replace="~{fragments::column_link('categories', 'alias', 'Alias', 'none')}"></th>
-                <th th:replace="~{fragments::column_link('categories', 'enabled', 'Enabled', 'none')}"></th>
+                <th>Alias</th>
+                <th>Enabled</th>
                 <th>Actions</th>
             </tr>
             </thead>

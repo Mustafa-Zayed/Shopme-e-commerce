@@ -5,6 +5,7 @@ import com.shopme.admin.category.service.CategoryService;
 import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,16 +25,18 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public String listFirstPage(Model model) {
-        return listByPageWithSorting(1, "name", "asc", "", model);
+        return listByPageWithSorting(1,"asc", "", model);
     }
 
     @GetMapping("/categories/page/{pageNumber}")
     public String listByPageWithSorting(
             @PathVariable int pageNumber,
-            @RequestParam(name = "sortField", defaultValue = "name") String sortField,
             @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
             Model model) {
+
+        // default sort field
+        String sortField = "name";
         Page<Category> categoryPage = categoryService.listByPageWithSorting(pageNumber, sortField, sortDir, keyword);
         return addToModel(pageNumber, categoryPage, sortField, sortDir, keyword, model);
     }
@@ -70,7 +73,8 @@ public class CategoryController {
     public String newCategory(Model model) {
         model.addAttribute("category", Category.builder().enabled(true).build());
 //        model.addAttribute("mapCategories", categoryService.listCategoriesUsedInFormMapApproach());
-        model.addAttribute("listCategories", categoryService.listCategoriesUsedInFormListApproach());
+        model.addAttribute("listCategories",
+                categoryService.listCategoriesUsedInFormListApproach(Sort.by("name").ascending()));
         model.addAttribute("pageTitle", "Create New Category");
         return "categories/category_form";
     }
@@ -97,7 +101,8 @@ public class CategoryController {
         }
 
         model.addAttribute("category", category);
-        model.addAttribute("listCategories", categoryService.listCategoriesUsedInFormListApproach());
+        model.addAttribute("listCategories",
+                categoryService.listCategoriesUsedInFormListApproach(Sort.by("name").ascending()));
         model.addAttribute("pageTitle", "Edit Category (ID: " + id + ")");
         return "categories/category_form";
     }
