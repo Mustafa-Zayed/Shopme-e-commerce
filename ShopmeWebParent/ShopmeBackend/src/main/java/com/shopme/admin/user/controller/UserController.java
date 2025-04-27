@@ -141,6 +141,7 @@ public class UserController {
                 redirectAttributes.addFlashAttribute("message", "User ID " + id + " has been enabled");
         } catch (UserNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            return "redirect:/users";
         }
         return "redirect:/users/page/1?sortField=id&sortDir=asc&keyword=" + firstPartOfEmail;
 //        return "redirect:/users";

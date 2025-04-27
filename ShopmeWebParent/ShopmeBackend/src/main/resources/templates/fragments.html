@@ -115,6 +115,21 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
     </div>
 </nav>
 
+<th:block th:fragment="status(path, id, status, title)">
+    <!--send status as a request parameter-->
+    <!--th:href="@{/users/{id}/enabled(id=${user.id}, status=${user.enabled})}"-->
+    <a class="fa-solid fa-circle-check fa-2x text-decoration-none link-success"
+       th:href="@{'/' + ${path} + '/' + ${id} + '/enabled/' + ${status}}"
+       th:if="${status}"
+       th:title="|Disable this ${title}|"
+    ></a>
+
+    <a class="fa-solid fa-circle fa-2x text-decoration-none link-secondary"
+       th:href="@{'/' + ${path} + '/' + ${id} + '/enabled/' + ${status}}"
+       th:if="!${status}"
+       th:title="|Enable this ${title}|"
+    ></a>
+</th:block>
 <div th:fragment="pagination(path)">
     <div class="text-center m-1" th:if="${totalItems > 0}">
         <span>

@@ -75,19 +75,7 @@
                 <td class="hideable-column">[[${cat.name}]]</td>
                 <td>[[${cat.alias}]]</td>
                 <td>
-                    <!--send status as a request parameter-->
-                    <!--th:href="@{/users/{id}/enabled(id=${user.id}, status=${user.enabled})}"-->
-                    <a class="fa-solid fa-circle-check fa-2x text-decoration-none link-success"
-                       th:href="@{/categories/{id}/enabled/{status}(id=${cat.id}, status=${cat.enabled})}"
-                       th:if="${cat.enabled}"
-                       title="Disable this category"
-                    ></a>
-
-                    <a class="fa-solid fa-circle fa-2x text-decoration-none link-secondary"
-                       th:href="@{/categories/{id}/enabled/{status}(id=${cat.id}, status=${cat.enabled})}"
-                       th:if="!${cat.enabled}"
-                       title="Enable this category"
-                    ></a>
+                    <th:block th:replace="~{fragments :: status('categories', ${cat.id}, ${cat.enabled}, 'category')}"></th:block>
                 </td>
                 <td>
                     <a class="fas fa-edit fa-2x text-decoration-none link-primary"
@@ -127,17 +115,7 @@
                 <div class="col-8">
                     <div> [[${cat.name}]]</div>
                     <div class="mt-2">
-                        <a class="fa-solid fa-circle-check fa-2x text-decoration-none link-success"
-                           th:href="@{/categories/{id}/enabled/{status}(id=${cat.id}, status=${cat.enabled})}"
-                           th:if="${cat.enabled}"
-                           title="Disable this category"
-                        ></a>
-                        <a class="fa-solid fa-circle fa-2x text-decoration-none link-secondary"
-                           th:href="@{/categories/{id}/enabled/{status}(id=${cat.id}, status=${cat.enabled})}"
-                           th:if="!${cat.enabled}"
-                           title="Enable this category"
-                        ></a>
-
+                        <th:block th:replace="~{fragments :: status('categories', ${cat.id}, ${cat.enabled}, 'category')}"></th:block>
                         &nbsp;
                         <a class="fas fa-edit fa-2x text-decoration-none link-primary"
                            th:href="@{/categories/edit/{id}(id=${cat.id})}" title="Edit this category"></a>

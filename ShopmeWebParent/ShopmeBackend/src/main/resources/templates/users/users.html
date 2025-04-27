@@ -89,19 +89,7 @@
                 <td>[[${user.lastName}]]</td>
                 <td>[[${user.roles}]]</td>
                 <td>
-                    <!--send status as a request parameter-->
-                    <!--th:href="@{/users/{id}/enabled(id=${user.id}, status=${user.enabled})}"-->
-                    <a class="fa-solid fa-circle-check fa-2x text-decoration-none link-success"
-                       th:href="@{/users/{id}/enabled/{status}(id=${user.id}, status=${user.enabled})}"
-                       th:if="${user.enabled}"
-                       title="Disable this user"
-                    ></a>
-
-                    <a class="fa-solid fa-circle fa-2x text-decoration-none link-secondary"
-                       th:href="@{/users/{id}/enabled/{status}(id=${user.id}, status=${user.enabled})}"
-                       th:if="!${user.enabled}"
-                       title="Enable this user"
-                    ></a>
+                    <th:block th:replace="~{fragments :: status('users', ${user.id}, ${user.enabled}, 'user')}"></th:block>
                 </td>
                 <td>
                     <a class="fas fa-edit fa-2x text-decoration-none link-primary"
@@ -142,18 +130,9 @@
                 <div> [[${user.fullName}]]</div>
                 <div> [[${user.roles}]]</div>
                 <div class="mt-2">
-                    <a class="fa-solid fa-circle-check fa-2x text-decoration-none link-success"
-                       th:href="@{/users/{id}/enabled/{status}(id=${user.id}, status=${user.enabled})}"
-                       th:if="${user.enabled}"
-                       title="Disable this user"
-                    ></a>
-                    <a class="fa-solid fa-circle fa-2x text-decoration-none link-secondary"
-                       th:href="@{/users/{id}/enabled/{status}(id=${user.id}, status=${user.enabled})}"
-                       th:if="!${user.enabled}"
-                       title="Enable this user"
-                    ></a>
+                    <th:block th:replace="~{fragments :: status('users', ${user.id}, ${user.enabled}, 'user')}"></th:block>
 
-                    &nbsp;
+&nbsp;
                     <a class="fas fa-edit fa-2x text-decoration-none link-primary"
                        th:href="@{/users/edit/{id}(id=${user.id})}" title="Edit this user"></a>
                     &nbsp;

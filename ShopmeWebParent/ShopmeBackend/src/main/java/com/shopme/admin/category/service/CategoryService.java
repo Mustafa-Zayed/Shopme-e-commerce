@@ -4,7 +4,7 @@ import com.shopme.admin.category.exception.CategoryNotFoundException;
 import com.shopme.admin.category.repository.CategoryRepository;
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.Category;
-import com.shopme.common.entity.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -180,5 +180,10 @@ public class CategoryService {
             return true;
 
         return byAlias.getId().equals(id);
+    }
+
+    @Transactional
+    public void updateCategoryEnabledStatus(int id, boolean status) {
+        categoryRepository.updateCategoryEnabledStatus(id, status);
     }
 }
