@@ -1,6 +1,7 @@
 package com.shopme.admin.category.service;
 
 import com.shopme.admin.category.exception.CategoryNotFoundException;
+import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.repository.CategoryRepository;
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.Category;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -180,6 +182,20 @@ public class CategoryService {
             return true;
 
         return byAlias.getId().equals(id);
+    }
+
+    public void delete(int id) throws CategoryNotFoundException, HasChildrenException {
+
+        Integer count = categoryRepository.countById(id);
+        if (count == 0)
+            throw new CategoryNotFoundException("Could not find any category with ID: " + id);
+
+        Category category = categoryRepository.findById(id).get();
+        if (category.hasChildren())
+            throw new HasChildrenException("Unable to delete a category with subcategories. ID: " + id);
+
+        categoryRepository.deleteById(id);
+        FileUploadUtil.removeDir("../category-photos/" + id);
     }
 
     @Transactional

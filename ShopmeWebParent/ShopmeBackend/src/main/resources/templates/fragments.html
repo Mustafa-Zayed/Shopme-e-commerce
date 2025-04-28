@@ -130,6 +130,50 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
        th:title="|Enable this ${title}|"
     ></a>
 </th:block>
+
+<th:block th:fragment="delete_entity(path, id, title, condition)">
+    <!--Approach one-->
+    <!--<a class="fas fa-trash fa-2x text-decoration-none icon-red"
+       th:data-user-id="${user.id}"
+       th:data-user-fName="${user.firstName}"
+       th:data-user-lName="${user.lastName}"
+       onclick="showDeleteModal(this)"
+       title="Delete this user"></a>-->
+
+    <!--Approach two-->
+    <a class="fa-solid fa-trash fa-2x text-decoration-none link-danger link-delete"
+       th:href="@{'/' + ${path} + '/delete/' + ${id}}"
+       th:entityId="${id}"
+       th:title="|Delete this ${title}|"
+       th:if="${condition}"
+    ></a>
+</th:block>
+
+<div th:fragment="delete_dialogue" class="modal" id="modalDialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Confirmation</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <span id="modalBody"></span>
+            </div>
+            <div class="modal-footer">
+                <!--Approach one-->
+                <!--<button class="btn btn-success" type="button"
+                onclick="confirmDelete()">Yes</button>-->
+
+                <!--Approach two-->
+                <a class="btn btn-success" id="yesButton"
+                   type="button">Yes</a>
+
+                <button class="btn btn-danger" data-bs-dismiss="modal" type="button">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div th:fragment="pagination(path)">
     <div class="text-center m-1" th:if="${totalItems > 0}">
         <span>
@@ -193,6 +237,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
         </nav>
     </div>
 </div>
+
 
 <div class="text-center m-3" th:fragment="footer">
     <p>Shopme Control Panel - Copyright &copy; Shopme</p>

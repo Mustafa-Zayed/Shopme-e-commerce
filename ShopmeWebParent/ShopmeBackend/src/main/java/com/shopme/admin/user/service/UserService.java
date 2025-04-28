@@ -131,7 +131,7 @@ public class UserService {
 
     public User findById(Integer id) throws UserNotFoundException {
         return userRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("Could not find any user with Id: " + id)
+                () -> new UserNotFoundException("Could not find any user with ID: " + id)
         );
     }
 
@@ -140,13 +140,14 @@ public class UserService {
         // we can use countById() method which will only return 0 or 1 to check if the user exists
         Long count = userRepository.countById(id);
         if (count == 0)
-            throw new UserNotFoundException("Could not find any user with Id: " + id);
+            throw new UserNotFoundException("Could not find any user with ID: " + id);
 
         userRepository.deleteById(id);
+        FileUploadUtil.removeDir("user-photos/" + id);
     }
 
     @Transactional
-    public void updateUserEnabledStatus(int id, boolean status) throws UserNotFoundException {
+    public void updateUserEnabledStatus(int id, boolean status) {
         // This approach is not recommended as it will update a full User object
         /*User user = findById(id);
         user.setEnabled(!user.isEnabled());

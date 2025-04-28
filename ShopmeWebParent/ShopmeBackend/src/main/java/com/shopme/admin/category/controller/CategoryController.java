@@ -1,6 +1,7 @@
 package com.shopme.admin.category.controller;
 
 import com.shopme.admin.category.exception.CategoryNotFoundException;
+import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.admin.user.exception.UserNotFoundException;
 import com.shopme.common.entity.Category;
@@ -90,9 +91,13 @@ public class CategoryController {
                            RedirectAttributes redirectAttributes) throws IOException {
         categoryService.save(category, multipart, redirectAttributes);
 
+        Integer catId = category.getId();
         String catAlias = category.getAlias();
-        System.out.println("keyword: " + catAlias);
-        return "redirect:/categories/page/1?sortField=id&sortDir=asc&keyword=" + catAlias;
+
+        String keyword = catId + " " + catAlias;
+        String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+        System.out.println("encodedKeyword: " + encodedKeyword);
+        return "redirect:/categories/page/1?sortField=id&sortDir=asc&keyword=" + encodedKeyword;
     }
 
     @GetMapping("/categories/edit/{id}")
@@ -102,6 +107,7 @@ public class CategoryController {
             category = categoryService.findById(id);
         } catch (CategoryNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
             return "redirect:/categories";
         }
 
@@ -110,6 +116,18 @@ public class CategoryController {
                 categoryService.listCategoriesUsedInFormListApproach(Sort.by("name").ascending()));
         model.addAttribute("pageTitle", "Edit Category (ID: " + id + ")");
         return "categories/category_form";
+    }
+
+    @GetMapping("/categories/delete/{id}")
+    public String deleteCategory(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        try {
+            categoryService.delete(id);
+            redirectAttributes.addFlashAttribute("message", "Category ID " + id + " has been deleted successfully!");
+        } catch (CategoryNotFoundException | HasChildrenException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
+        }
+        return "redirect:/categories";
     }
 
     @GetMapping("/categories/{id}/enabled/{status}")
@@ -128,6 +146,7 @@ public class CategoryController {
                 redirectAttributes.addFlashAttribute("message", "Category ID " + id + " has been enabled");
         } catch (CategoryNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
             return "redirect:/categories";
         }
         // URLs with spaces are invalid and can lead to unexpected behavior. Even though %20 is

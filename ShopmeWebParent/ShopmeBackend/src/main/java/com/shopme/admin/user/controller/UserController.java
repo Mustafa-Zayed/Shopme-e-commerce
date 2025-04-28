@@ -103,6 +103,7 @@ public class UserController {
             user = userService.findById(id);
         } catch (UserNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
             return "redirect:/users";
         }
         model.addAttribute("user", user);
@@ -118,6 +119,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("message", "User ID " + id + " has been deleted successfully!");
         } catch (UserNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
         }
         return "redirect:/users";
     }
@@ -141,6 +143,7 @@ public class UserController {
                 redirectAttributes.addFlashAttribute("message", "User ID " + id + " has been enabled");
         } catch (UserNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
             return "redirect:/users";
         }
         return "redirect:/users/page/1?sortField=id&sortDir=asc&keyword=" + firstPartOfEmail;

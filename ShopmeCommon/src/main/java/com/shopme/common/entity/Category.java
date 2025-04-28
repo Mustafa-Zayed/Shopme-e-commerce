@@ -44,4 +44,9 @@ public class Category {
             return "/images/image-thumbnail.png";
         return "/category-photos/" + id + "/" + image;
     }
+
+    @Transient
+    public boolean hasChildren() {
+        return children != null && !children.isEmpty();
+    }
 }

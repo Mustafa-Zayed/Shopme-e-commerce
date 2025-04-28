@@ -16,6 +16,8 @@ public interface CategoryRepository extends CrudRepository<Category, Integer>, P
     Category findByName(String name);
     Category findByAlias(String alias);
 
+    Integer countById(Integer id);
+
     @Modifying
     @Query("UPDATE Category c SET c.enabled = ?2 WHERE c.id = ?1")
     void updateCategoryEnabledStatus(int id, boolean status);

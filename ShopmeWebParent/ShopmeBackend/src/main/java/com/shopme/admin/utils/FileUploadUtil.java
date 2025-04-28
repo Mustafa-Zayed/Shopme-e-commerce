@@ -49,11 +49,25 @@ public class FileUploadUtil {
                     return FileVisitResult.CONTINUE;
                 }
             });
-             System.out.println("Deleted " + count[0] + " files");
+            System.out.println("Deleted " + count[0] + " files");
             logger.info("Deleted {} files", count[0]);
         } catch (IOException e) {
             System.out.println("Error cleaning directory: " + uploadPath.toAbsolutePath());
             logger.error("Error cleaning directory: {}", uploadPath.toAbsolutePath(), e);
+        }
+    }
+
+    public static void removeDir(String uploadDir) {
+        Path dir = Path.of(uploadDir);
+        cleanDir(dir);
+
+        try {
+            Files.delete(dir);
+            System.out.println("Deleted directory: " + dir.toAbsolutePath());
+            logger.info("Deleted directory: {}", dir.toAbsolutePath());
+        } catch (IOException e) {
+            System.out.println("Error deleting directory: " + dir.toAbsolutePath());
+            logger.error("Error deleting directory: {}", dir.toAbsolutePath(), e);
         }
     }
 }
