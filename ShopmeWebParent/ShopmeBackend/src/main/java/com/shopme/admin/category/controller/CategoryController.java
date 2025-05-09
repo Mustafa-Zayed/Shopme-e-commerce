@@ -1,13 +1,11 @@
 package com.shopme.admin.category.controller;
 
+import com.shopme.admin.category.CategoryPageInfo;
 import com.shopme.admin.category.exception.CategoryNotFoundException;
 import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.service.CategoryService;
-import com.shopme.admin.user.exception.UserNotFoundException;
 import com.shopme.common.entity.Category;
-import com.shopme.common.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,12 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.shopme.admin.user.service.UserService.USERS_PER_PAGE;
+import static com.shopme.admin.category.service.CategoryService.ROOT_CATS_PER_PAGE;
 
 @RequiredArgsConstructor
 @Controller
@@ -43,18 +40,21 @@ public class CategoryController {
 
         // default sort field
         String sortField = "name";
-        Page<Category> categoryPage = categoryService.listByPageWithSorting(pageNumber, sortField, sortDir, keyword);
-        return addToModel(pageNumber, categoryPage, sortField, sortDir, keyword, model);
+        CategoryPageInfo categoryPageInfo = new CategoryPageInfo();
+
+        List<Category> hierarchicalCategories = categoryService
+                .listByPageWithSorting(categoryPageInfo, pageNumber, sortField, sortDir, keyword);
+        return addToModel(pageNumber, hierarchicalCategories, categoryPageInfo, sortField, sortDir, keyword, model);
     }
 
-    private String addToModel(int pageNumber, Page<Category> usersPage,
+    private String addToModel(int pageNumber, List<Category> listCategories,
+                              CategoryPageInfo categoryPageInfo,
                               String sortField, String sortDir, String keyword, Model model) {
-        List<Category> listCategories = usersPage.getContent();
-        int totalPages = usersPage.getTotalPages();
-        long totalItems = usersPage.getTotalElements();
+        int totalPages = categoryPageInfo.getTotalPages();
+        long totalItems = categoryPageInfo.getTotalElements();
 
-        long startCount = ((long) (pageNumber - 1) * USERS_PER_PAGE) + 1;
-        long endCount = (startCount + USERS_PER_PAGE) - 1;
+        long startCount = ((long) (pageNumber - 1) * ROOT_CATS_PER_PAGE) + 1;
+        long endCount = (startCount + ROOT_CATS_PER_PAGE) - 1;
         if (endCount > totalItems) endCount = totalItems;
         model.addAttribute("startCount", startCount);
         model.addAttribute("endCount", endCount);

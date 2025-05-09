@@ -174,14 +174,14 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
     </div>
 </div>
 
-<div th:fragment="pagination(path)">
+<div th:fragment="pagination(path)" th:with="entityName = ${entityName ?: path}" th:remove="tag">
     <div class="text-center m-1" th:if="${totalItems > 0}">
         <span>
-            Showing [[${path}]] # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]
+            Showing [[${entityName}]] # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]
         </span>
     </div>
     <div class="text-center m-1" th:unless="${totalItems > 0}">
-        <span>No users found</span>
+        <span>No [[${path}]] found</span>
     </div>
 
     <div th:if="${totalPages > 1}"> <!-- hide pagination if it's only one page -->

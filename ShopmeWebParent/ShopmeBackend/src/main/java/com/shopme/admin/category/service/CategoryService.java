@@ -1,5 +1,6 @@
 package com.shopme.admin.category.service;
 
+import com.shopme.admin.category.CategoryPageInfo;
 import com.shopme.admin.category.exception.CategoryNotFoundException;
 import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.repository.CategoryRepository;
@@ -14,14 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class CategoryService {
-    public static final int CATS_PER_PAGE = 4;
+    public static final int ROOT_CATS_PER_PAGE = 4;
 
     private final CategoryRepository categoryRepository;
 
@@ -29,23 +29,77 @@ public class CategoryService {
         return (List<Category>) categoryRepository.findAll(sort);
     }
 
-    public Page<Category> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
+    /**
+     * Because we return <b>List<Category></b> not a <b>Page<Category></b>, due to the nature
+     * of the hierarchical structure of categories, we have to do our own pagination. <p>
+     * So we need to have a special intermediate object to hold
+     * the information of the pagination, <b>CategoryPageInfo</b>.
+    */
+    public List<Category> listByPageWithSorting(CategoryPageInfo categoryPageInfo,
+                                                int pageNumber, String sortField, String sortDir,
                                                 String keyword) {
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
 
         // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
-        Pageable pageable = PageRequest.of(pageNumber - 1, CATS_PER_PAGE, sort);
+        Pageable pageable = PageRequest.of(pageNumber - 1, ROOT_CATS_PER_PAGE, sort);
 
         if (keyword.isEmpty()) {
-            List<Category> hierarchicalCategories = listCategoriesUsedInFormListApproach(sort);
-            return new PageImpl<>(hierarchicalCategories, pageable, hierarchicalCategories.size());
+            Page<Category> categoryPage = categoryRepository.findRootCategories(pageable);
+            categoryPageInfo.setTotalElements(categoryPage.getTotalElements());
+            categoryPageInfo.setTotalPages(categoryPage.getTotalPages());
 
-//            return categoryRepository.findAll(pageable);
+            List<Category> rootCategories = categoryPage.getContent();
+            List<Category> hierarchicalCategories = new ArrayList<>();
+
+            for (Category parent : rootCategories) {
+                listSubCategoriesListApproach(hierarchicalCategories, parent, sort, 1);
+            }
+
+            return hierarchicalCategories;
         }
         return categoryRepository.findAll(keyword, pageable);
     }
 
+//    private void listChildren(Category parent, List<Category> rootCategoriesList, Sort sort, int level) {
+////        Set<Category> listedChildren = new LinkedHashSet<>();
+//
+//        // Sort children based on the parent order and store them in a LinkedHashSet to maintain the order.
+//        Set<Category> children = parent.getChildren().stream()
+//                .sorted((c1, c2) -> {
+//                    for (Sort.Order order : sort) {
+//                        int comparison = Comparator.comparing(Category::getName)
+//                                .compare(c1, c2);
+//                        if (order.isDescending()) {
+//                            comparison = -comparison;
+//                        }
+//                        if (comparison != 0) {
+//                            return comparison;
+//                        }
+//                    }
+//                    return 0;
+//                })
+//                .collect(Collectors.toCollection(LinkedHashSet::new));
+//
+//        for (Category child : children) {
+//            rootCategoriesList.add(Category.builder()
+//                    .id(child.getId())
+//                    .name("--".repeat(level) + child.getName())
+//                    .alias(child.getAlias())
+//                    .image(child.getImage())
+//                    .enabled(child.isEnabled())
+//                    .parent(child.getParent())
+//                    .children(child.getChildren())
+//                    .build());
+//
+//            if (!child.getChildren().isEmpty())
+//                listChildren(child, sort, level + 1);
+//        }
+////        System.out.println("listedChildren: " + listedChildren);
+//        parent.setChildren(listedChildren);
+//    }
+
+    /**/
 //    public Map<Category, String> listCategoriesUsedInFormMapApproach() {
 //        List<Category> categories = listAll();
 //        Map<Category, String> categoriesUsedInForm = new LinkedHashMap<>();

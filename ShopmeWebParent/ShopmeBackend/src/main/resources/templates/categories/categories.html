@@ -119,7 +119,7 @@
             </div>
         </div>
 
-        <div th:replace="~{fragments :: pagination('categories')}"></div>
+        <div th:replace="~{fragments :: pagination(path = 'categories', entityName = 'top-level categories')}"></div>
 
     <div th:replace="~{fragments :: delete_dialogue}"></div>
 
