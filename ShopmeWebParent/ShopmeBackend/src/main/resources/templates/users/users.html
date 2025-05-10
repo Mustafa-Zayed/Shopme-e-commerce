@@ -26,32 +26,7 @@
         [[${message}]]
     </div>
 
-    <form class="row g-2 align-items-center m-3" th:action="@{/users/page/{pageNumber}(pageNumber=1)}">
-        <!-- We send sortField and sortDir as hidden fields, as it doesn't work if we can include in
-        th:action. Only form fields are sent as part of the HTTP request when the form is submitted -->
-        <input class="form-control" name="sortField" th:value="${sortField}" type="hidden"/>
-        <input class="form-control" name="sortDir" th:value="${sortDir}" type="hidden"/>
-
-        <!-- Filter Label & Input -->
-        <div class="col-12 col-md-auto">
-            <label class="form-label m-0" for="keyword">Filter:</label>
-        </div>
-        <div class="col-12 col-md-auto">
-            <input class="form-control" id="keyword" name="keyword" required
-                   style="width: 200px;" th:value="${keyword}" type="search"/>
-        </div>
-
-        <!-- Buttons -->
-        <div class="col-12 col-md-auto d-flex gap-2">
-            <button class="btn btn-primary" type="submit">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-
-            <button class="btn btn-secondary" onclick="clearSearch()" type="button">
-                <i class="fa-solid fa-eraser"></i>
-            </button>
-        </div>
-    </form>
+    <div th:replace="~{fragments :: search_form('users')}"></div>
 
     <div class="full-details">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">

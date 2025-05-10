@@ -19,30 +19,7 @@
         [[${message}]]
     </div>
 
-    <form class="row g-2 align-items-center m-3" th:action="@{/categories/page/{pageNumber}(pageNumber=1)}">
-        <input class="form-control" name="sortField" th:value="${sortField}" type="hidden"/>
-        <input class="form-control" name="sortDir" th:value="${sortDir}" type="hidden"/>
-
-        <!-- Filter Label & Input -->
-        <div class="col-12 col-md-auto">
-            <label class="form-label m-0" for="keyword">Filter:</label>
-        </div>
-        <div class="col-12 col-md-auto">
-            <input class="form-control" id="keyword" name="keyword" required
-                   style="width: 200px;" th:value="${keyword}" type="search"/>
-        </div>
-
-        <!-- Buttons -->
-        <div class="col-12 col-md-auto d-flex gap-2">
-            <button class="btn btn-primary" type="submit">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-
-            <button class="btn btn-secondary" onclick="clearSearch()" type="button">
-                <i class="fa-solid fa-eraser"></i>
-            </button>
-        </div>
-    </form>
+    <div th:replace="~{fragments :: search_form('categories')}"></div>
 
     <div class="full-details">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
@@ -50,15 +27,7 @@
             <tr>
                 <th>ID</th>
                 <th>Category Image</th>
-                <th class="text-decoration-none text-white">
-                    <a class="text-decoration-none text-white"
-                       th:href="@{'/categories/page/' + ${currentPage}
-                       + '?sortDir=' + ${sortField == 'name' ? reverseSortDir : 'asc'}
-                       + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
-                       }">Name</a>
-
-                    <span th:class="${sortDir} == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'"></span>
-                </th>
+                <th th:replace="~{fragments::column_link('categories', 'name', 'Name', 'none')}"></th>
                 <th>Alias</th>
                 <th>Enabled</th>
                 <th>Actions</th>
@@ -119,7 +88,12 @@
             </div>
         </div>
 
+    <div th:if="${keyword.isEmpty()}">
         <div th:replace="~{fragments :: pagination(path = 'categories', entityName = 'top-level categories')}"></div>
+    </div>
+    <div th:unless="${keyword.isEmpty()}">
+        <div th:replace="~{fragments :: pagination(path = 'categories', additionalSentence = 'Search result doesn\'t show categories in hierarchical form')}"></div>
+    </div>
 
     <div th:replace="~{fragments :: delete_dialogue}"></div>
 
