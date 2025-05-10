@@ -1,4 +1,4 @@
-package com.shopme.admin.category;
+package com.shopme.admin.category.pagination;
 
 import lombok.Getter;
 import lombok.Setter;

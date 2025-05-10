@@ -1,6 +1,6 @@
 package com.shopme.admin.category.service;
 
-import com.shopme.admin.category.CategoryPageInfo;
+import com.shopme.admin.category.pagination.CategoryPageInfo;
 import com.shopme.admin.category.exception.CategoryNotFoundException;
 import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.repository.CategoryRepository;
@@ -58,48 +58,13 @@ public class CategoryService {
 
             return hierarchicalCategories;
         }
-        return categoryRepository.findAll(keyword, pageable);
+        Page<Category> categories = categoryRepository.findAll(keyword, pageable);
+
+        categoryPageInfo.setTotalElements(categories.getTotalElements());
+        categoryPageInfo.setTotalPages(categories.getTotalPages());
+        return categories.getContent();
     }
 
-//    private void listChildren(Category parent, List<Category> rootCategoriesList, Sort sort, int level) {
-////        Set<Category> listedChildren = new LinkedHashSet<>();
-//
-//        // Sort children based on the parent order and store them in a LinkedHashSet to maintain the order.
-//        Set<Category> children = parent.getChildren().stream()
-//                .sorted((c1, c2) -> {
-//                    for (Sort.Order order : sort) {
-//                        int comparison = Comparator.comparing(Category::getName)
-//                                .compare(c1, c2);
-//                        if (order.isDescending()) {
-//                            comparison = -comparison;
-//                        }
-//                        if (comparison != 0) {
-//                            return comparison;
-//                        }
-//                    }
-//                    return 0;
-//                })
-//                .collect(Collectors.toCollection(LinkedHashSet::new));
-//
-//        for (Category child : children) {
-//            rootCategoriesList.add(Category.builder()
-//                    .id(child.getId())
-//                    .name("--".repeat(level) + child.getName())
-//                    .alias(child.getAlias())
-//                    .image(child.getImage())
-//                    .enabled(child.isEnabled())
-//                    .parent(child.getParent())
-//                    .children(child.getChildren())
-//                    .build());
-//
-//            if (!child.getChildren().isEmpty())
-//                listChildren(child, sort, level + 1);
-//        }
-////        System.out.println("listedChildren: " + listedChildren);
-//        parent.setChildren(listedChildren);
-//    }
-
-    /**/
 //    public Map<Category, String> listCategoriesUsedInFormMapApproach() {
 //        List<Category> categories = listAll();
 //        Map<Category, String> categoriesUsedInForm = new LinkedHashMap<>();
@@ -216,7 +181,7 @@ public class CategoryService {
 
     public Category findById(Integer id) throws CategoryNotFoundException {
         return categoryRepository.findById(id).orElseThrow(
-                () -> new CategoryNotFoundException("Could not find any category with Id: " + id)
+                () -> new CategoryNotFoundException("Could not find any category with ID: " + id)
         );
     }
 
