@@ -1,10 +1,12 @@
 package com.shopme.admin.category.controller;
 
+import com.shopme.admin.category.export.CategoryCsvExporter;
 import com.shopme.admin.category.pagination.CategoryPageInfo;
 import com.shopme.admin.category.exception.CategoryNotFoundException;
 import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.common.entity.Category;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -158,5 +160,13 @@ public class CategoryController {
         System.out.println("encodedKeyword: " + encodedKeyword);
 
         return "redirect:/categories/page/1?keyword=" + encodedKeyword;
+    }
+
+    @GetMapping("/categories/export/csv")
+    public void exportToCSV(HttpServletResponse response) throws IOException {
+        List<Category> categories = categoryService.listCategoriesUsedInFormListApproach(
+                Sort.by("name").ascending());
+        CategoryCsvExporter csvExporter = new CategoryCsvExporter();
+        csvExporter.export(categories, response);
     }
 }

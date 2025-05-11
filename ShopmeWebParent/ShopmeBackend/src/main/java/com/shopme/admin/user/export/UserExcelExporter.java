@@ -1,5 +1,6 @@
 package com.shopme.admin.user.export;
 
+import com.shopme.admin.utils.AbstractExporter;
 import com.shopme.common.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Cell;
@@ -68,7 +69,8 @@ public class UserExcelExporter {
 
     public void export(List<User> users, HttpServletResponse response) throws IOException {
         // Set response headers for Excel file
-        AbstractExporter.setResponseHeader(response, "application/octet-stream", ".xlsx");
+        AbstractExporter.setResponseHeader(response, "application/octet-stream",
+                ".xlsx", "users_");
 
         // Write Excel header
         writeHeaderLine();
