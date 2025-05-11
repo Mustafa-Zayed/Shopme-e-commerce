@@ -21,12 +21,7 @@
            th:href="@{/users/export/pdf}"></a>
     </div>
 
-    <!-- || syntax (literal substitutions) and the Elvis operator (?:) to provide a default value -->
-    <div th:class="|alert alert-${resultClass ?: 'success'} text-center m-2|" th:if="${message != null}">
-        [[${message}]]
-    </div>
-
-    <div th:replace="~{fragments :: search_form('users')}"></div>
+    <div th:replace="~{fragments :: message_and_search_form('users')}"></div>
 
     <div class="full-details">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
@@ -68,8 +63,7 @@
                     <th:block th:replace="~{fragments :: status('users', ${user.id}, ${user.enabled}, 'user')}"></th:block>
                 </td>
                 <td>
-                    <a class="fas fa-edit fa-2x text-decoration-none link-primary"
-                       th:href="@{/users/edit/{id}(id=${user.id})}" title="Edit this user"></a>
+                    <th:block th:replace="~{fragments :: edit_entity('users', ${user.id}, 'user')}"></th:block>
                     &nbsp;
                     <th:block th:replace="~{fragments :: delete_entity('users', ${user.id}, 'user', true)}"></th:block>
                 </td>
@@ -94,10 +88,8 @@
                 <div> [[${user.roles}]]</div>
                 <div class="mt-2">
                     <th:block th:replace="~{fragments :: status('users', ${user.id}, ${user.enabled}, 'user')}"></th:block>
-
-&nbsp;
-                    <a class="fas fa-edit fa-2x text-decoration-none link-primary"
-                       th:href="@{/users/edit/{id}(id=${user.id})}" title="Edit this user"></a>
+                    &nbsp;
+                    <th:block th:replace="~{fragments :: edit_entity('users', ${user.id}, 'user')}"></th:block>
                     &nbsp;
                     <th:block th:replace="~{fragments :: delete_entity('users', ${user.id}, 'user', true)}"></th:block>
                 </div>

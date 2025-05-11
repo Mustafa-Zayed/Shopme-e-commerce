@@ -115,7 +115,12 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
     </div>
 </nav>
 
-<div th:fragment="search_form(path)" th:remove="tag">
+<div th:fragment="message_and_search_form(path)" th:remove="tag">
+    <!-- || syntax (literal substitutions) and the Elvis operator (?:) to provide a default value -->
+    <div th:class="|alert alert-${resultClass ?: 'success'} text-center m-2|" th:if="${message != null}">
+        [[${message}]]
+    </div>
+
     <form class="row g-2 align-items-center m-3" th:action="@{'/' + ${path} + '/page/1'}">
         <input class="form-control" name="sortField" th:value="${sortField}" type="hidden"/>
         <input class="form-control" name="sortDir" th:value="${sortDir}" type="hidden"/>
@@ -156,6 +161,12 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
        th:if="!${status}"
        th:title="|Enable this ${title}|"
     ></a>
+</th:block>
+
+<th:block th:fragment="edit_entity(path, id, title)">
+    <a class="fa-solid fa-edit fa-2x text-decoration-none link-primary"
+       th:href="@{'/' + ${path} + '/edit/' + ${id}}"
+       th:title="|Edit this ${title}|"></a>
 </th:block>
 
 <th:block th:fragment="delete_entity(path, id, title, condition)">

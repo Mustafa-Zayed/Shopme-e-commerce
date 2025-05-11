@@ -14,12 +14,7 @@
            th:href="@{/categories/export/csv}"></a>
     </div>
 
-    <!-- || syntax (literal substitutions) and the Elvis operator (?:) to provide a default value -->
-    <div th:class="|alert alert-${resultClass ?: 'success'} text-center m-2|" th:if="${message != null}">
-        [[${message}]]
-    </div>
-
-    <div th:replace="~{fragments :: search_form('categories')}"></div>
+    <div th:replace="~{fragments :: message_and_search_form('categories')}"></div>
 
     <div class="full-details">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
@@ -48,8 +43,7 @@
                     <th:block th:replace="~{fragments :: status('categories', ${cat.id}, ${cat.enabled}, 'category')}"></th:block>
                 </td>
                 <td>
-                    <a class="fas fa-edit fa-2x text-decoration-none link-primary"
-                       th:href="@{/categories/edit/{id}(id=${cat.id})}" title="Edit this category"></a>
+                    <th:block th:replace="~{fragments :: edit_entity('categories', ${cat.id}, 'catregory')}"></th:block>
                     &nbsp;
                     <th:block th:replace="~{fragments :: delete_entity('categories', ${cat.id}, 'catregory', ${!cat.hasChildren()})}"></th:block>
                 </td>
@@ -71,8 +65,7 @@
                     <div class="mt-2">
                         <th:block th:replace="~{fragments :: status('categories', ${cat.id}, ${cat.enabled}, 'category')}"></th:block>
                         &nbsp;
-                        <a class="fas fa-edit fa-2x text-decoration-none link-primary"
-                           th:href="@{/categories/edit/{id}(id=${cat.id})}" title="Edit this category"></a>
+                        <th:block th:replace="~{fragments :: edit_entity('categories', ${cat.id}, 'catregory')}"></th:block>
                         &nbsp;
                         <th:block th:replace="~{fragments :: delete_entity('categories', ${cat.id}, 'catregory', ${!cat.hasChildren()})}"></th:block>
                     </div>
