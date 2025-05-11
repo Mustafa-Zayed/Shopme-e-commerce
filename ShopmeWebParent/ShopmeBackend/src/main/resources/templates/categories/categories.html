@@ -28,22 +28,22 @@
                 <th>ID</th>
                 <th>Category Image</th>
                 <th th:replace="~{fragments::column_link('categories', 'name', 'Name', 'none')}"></th>
-                <th>Alias</th>
+                <th class="hideable-column">Alias</th>
                 <th>Enabled</th>
                 <th>Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="cat, iterStat : ${listCategories}">
-                <td class="hideable-column">[[${cat.id}]]</td>
+                <td>[[${cat.id}]]</td>
                 <!-- <td>[[${iterStat.count}]]</td> <!==iterStat.index is zero-based ==>-->
                 <td>
                     <img alt="category image"
                          style="width: 100px"
                          th:src="@{${cat.imagePath}}">
                 </td>
-                <td class="hideable-column">[[${cat.name}]]</td>
-                <td>[[${cat.alias}]]</td>
+                <td>[[${cat.name}]]</td>
+                <td  class="hideable-column">[[${cat.alias}]]</td>
                 <td>
                     <th:block th:replace="~{fragments :: status('categories', ${cat.id}, ${cat.enabled}, 'category')}"></th:block>
                 </td>
@@ -61,12 +61,9 @@
         <div class="less-details">
             <div class="row m-1" th:each="cat : ${listCategories}">
                 <div class="col-4">
-<!--                    <img alt="user image"-->
-<!--                         style="width: 100px"-->
-<!--                         th:if="${cat.image != null}" th:src="@{${cat.photosImagePath}}">-->
-
-                    <span class="fa-solid fa-image-portrait fa-3x icon-silver"
-                          th:if="${cat.image == null}"></span>
+                    <img alt="user image"
+                         style="width: 100px"
+                         th:src="@{${cat.imagePath}}">
                 </div>
 
                 <div class="col-8">
@@ -77,9 +74,7 @@
                         <a class="fas fa-edit fa-2x text-decoration-none link-primary"
                            th:href="@{/categories/edit/{id}(id=${cat.id})}" title="Edit this category"></a>
                         &nbsp;
-                        <a class="fas fa-trash fa-2x text-decoration-none link-danger link-delete"
-                           th:href="@{/categories/delete/{id}(id=${cat.id})}"
-                           th:userId="${cat.id}" title="Delete this category"></a>
+                        <th:block th:replace="~{fragments :: delete_entity('categories', ${cat.id}, 'catregory', ${!cat.hasChildren()})}"></th:block>
                     </div>
                 </div>
 

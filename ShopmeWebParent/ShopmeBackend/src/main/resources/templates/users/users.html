@@ -99,9 +99,7 @@
                     <a class="fas fa-edit fa-2x text-decoration-none link-primary"
                        th:href="@{/users/edit/{id}(id=${user.id})}" title="Edit this user"></a>
                     &nbsp;
-                    <a class="fas fa-trash fa-2x text-decoration-none link-danger link-delete"
-                       th:href="@{/users/delete/{id}(id=${user.id})}"
-                       th:userId="${user.id}" title="Delete this user"></a>
+                    <th:block th:replace="~{fragments :: delete_entity('users', ${user.id}, 'user', true)}"></th:block>
                 </div>
             </div>
 
