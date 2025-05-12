@@ -38,6 +38,10 @@ public class Category {
     @ToString.Exclude
     private Set<Category> children;
 
+    @ManyToMany(mappedBy = "categories")
+    @ToString.Exclude
+    private Set<Brand> brands;
+
     @Transient
     public String getImagePath() {
         if (Objects.equals(image, "default.png") || id == null)
