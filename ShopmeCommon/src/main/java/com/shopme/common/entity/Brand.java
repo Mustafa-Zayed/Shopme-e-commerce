@@ -3,6 +3,7 @@ package com.shopme.common.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Builder
@@ -32,4 +33,11 @@ public class Brand {
     )
     // @ToString.Exclude
     Set<Category> categories;
+
+    @Transient
+    public String getLogoPath() {
+        if (Objects.equals(logo, "default.png") || id == null)
+            return "/images/image-thumbnail.png";
+        return "/brand-logos/" + id + "/" + logo;
+    }
 }
