@@ -2,11 +2,8 @@ package com.shopme.admin.brand.controller;
 
 import com.shopme.admin.brand.exception.BrandNotFoundException;
 import com.shopme.admin.brand.service.BrandService;
-import com.shopme.admin.category.exception.CategoryNotFoundException;
-import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.common.entity.Brand;
-import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -16,8 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RequiredArgsConstructor

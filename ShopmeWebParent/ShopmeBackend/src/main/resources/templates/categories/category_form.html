@@ -9,7 +9,8 @@
             <h2>Manage Categories | [[${pageTitle}]]</h2>
         </div>
 
-        <form method="post" onsubmit="return checkUniqueNameAndAlias(this)" style="max-width: 500px; margin: 0 auto"
+        <form method="post" onsubmit="return checkUniqueNameAndAlias(this)"
+              style="max-width: 500px; margin: 0 auto"
               th:action="@{/categories/save}"
               th:object="${category}"
               enctype="multipart/form-data"

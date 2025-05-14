@@ -2,12 +2,8 @@ package com.shopme.admin.brand.service;
 
 import com.shopme.admin.brand.exception.BrandNotFoundException;
 import com.shopme.admin.brand.repository.BrandRepository;
-import com.shopme.admin.category.exception.CategoryNotFoundException;
-import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.Brand;
-import com.shopme.common.entity.Brand;
-import com.shopme.common.entity.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -73,5 +69,15 @@ public class BrandService {
 
         brandRepository.deleteById(id);
         FileUploadUtil.removeDir("../brand-logos/" + id);
+    }
+
+    public boolean checkUniqueName(String name, Integer id) {
+        Brand byName  = brandRepository.findByName(name);
+        if (byName == null)
+            return true;
+
+        // Check if the name belongs to the edited brand (i.e. user doesn't need to change the brand name)
+        // If new brand case, returns false as the id param is null
+        return byName.getId().equals(id);
     }
 }
