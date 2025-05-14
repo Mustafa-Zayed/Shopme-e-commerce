@@ -51,12 +51,20 @@
                     <label class="col-sm-4 col-form-label">Select one or more categories:</label>
                     <div class="col-sm-8">
                         <select class="form-select" th:field="*{categories}" multiple required
-                                style="resize: vertical; height: 200px">
+                                style="resize: vertical; height: 200px"
+                        >
                             <option th:each="cat : ${listCategories}"
                                     th:value="${cat.id}"
                                     th:text="${cat.name}">
                             </option>
                         </select>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label class="col-sm-4 col-form-label">Chosen categories:</label>
+                    <div class="col-sm-8">
+                        <div id="chosenCategories"></div>
                     </div>
                 </div>
 
@@ -73,6 +81,51 @@
     </div>
     <script type="text/javascript">
         let moduleURL = "[[@{/brands}]]";
+
+        // jQuery-only version
+        $(document).ready(function () {
+            const select = $("#categories");
+            const chosenDiv = $("#chosenCategories");
+
+            function updateChosenCategories() {
+                const names = [];
+
+                // Loop through selected options using jQuery
+                select.find("option:selected").each(function () {
+                    const name = $(this).text().replace(/-/g, "");
+                    names.push(`<span class="badge text-bg-secondary me-1">${name}</span>`);
+                });
+
+                chosenDiv.html(names.join(""));
+            }
+
+            // Initial update (for edit mode or pre-filled form)
+            updateChosenCategories();
+
+            // Update on change
+            select.on("change", updateChosenCategories);
+        });
+
+        // // Vanilla JS DOM methods
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     const select = document.getElementById("categories");
+        //     const chosenDiv = document.getElementById("chosenCategories");
+        //
+        //     function updateChosenCategories() {
+        //         const selectedOptions = Array.from(select.selectedOptions);
+        //         const names = selectedOptions.map(option => option.text.replace(/-/g,""));
+        //         chosenDiv.innerHTML = names.map(name => `<span class="badge text-bg-secondary me-1">${name}</span>`).join("");
+        //     }
+        //
+        //     // Initial update ensures the selected categories are immediately displayed when the page
+        //     // loads, even before the user interacts with the dropdown.
+        //     // If the form is used for editing (not just creating), some categories might already
+        //     // be selected when the page loads.
+        //     updateChosenCategories();
+        //
+        //     // Update on change
+        //     select.addEventListener("change", updateChosenCategories);
+        // });
     </script>
     <script th:src="@{/js/common_form.js}" type="text/javascript"></script>
 </body>
