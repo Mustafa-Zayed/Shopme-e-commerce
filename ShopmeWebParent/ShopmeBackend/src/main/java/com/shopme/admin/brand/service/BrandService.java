@@ -5,6 +5,10 @@ import com.shopme.admin.brand.repository.BrandRepository;
 import com.shopme.admin.utils.FileUploadUtil;
 import com.shopme.common.entity.Brand;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,11 +21,26 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Service
 public class BrandService {
+    public static final int BRANDS_PER_PAGE = 10;
 
     private final BrandRepository brandRepository;
 
     public List<Brand> listAll() {
-        return (List<Brand>) brandRepository.findAll();
+        return (List<Brand>) brandRepository.findAll(Sort.by("name").ascending());
+    }
+
+    public Page<Brand> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
+                                            String keyword) {
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+
+        // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
+        Pageable pageable = PageRequest.of(pageNumber - 1, BRANDS_PER_PAGE, sort);
+
+        if (keyword.isEmpty())
+            return brandRepository.findAll(pageable);
+
+        return brandRepository.findAll(keyword, pageable);
     }
 
     public Brand save(Brand brand) {

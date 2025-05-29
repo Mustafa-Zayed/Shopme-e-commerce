@@ -22,7 +22,9 @@
             <tr>
                 <th>ID</th>
                 <th>Logo</th>
-                <th>Brand Name</th>
+                <th>
+                    <th th:replace="~{fragments::column_link('brands', 'name', 'Brand Name', 'tag')}"></th>
+                </th>
                 <th>Categories</th>
                 <th>Actions</th>
             </tr>
@@ -74,7 +76,7 @@
         </div>
     </div>
 
-<!--    <div th:replace="~{fragments :: pagination(path = 'brands')}"></div>-->
+    <div th:replace="~{fragments :: pagination(path = 'brands')}"></div>
 
     <div th:replace="~{fragments :: delete_dialogue}"></div>
 
