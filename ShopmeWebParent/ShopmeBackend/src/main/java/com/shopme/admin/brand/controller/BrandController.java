@@ -1,9 +1,11 @@
 package com.shopme.admin.brand.controller;
 
 import com.shopme.admin.brand.exception.BrandNotFoundException;
+import com.shopme.admin.brand.export.BrandCsvExporter;
 import com.shopme.admin.brand.service.BrandService;
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.common.entity.Brand;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -117,5 +119,12 @@ public class BrandController {
             redirectAttributes.addFlashAttribute("resultClass", "danger");
         }
         return "redirect:/brands";
+    }
+
+    @GetMapping("/brands/export/csv")
+    public void exportToCSV(HttpServletResponse response) throws IOException {
+        BrandCsvExporter csvExporter = new BrandCsvExporter();
+        List<Brand> brandList = brandService.listAll();
+        csvExporter.export(brandList, response);
     }
 }
