@@ -20,7 +20,7 @@
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
             <thead class="table-dark">
             <tr>
-                <th>ID</th>
+                <th class="hideable-column">ID</th>
                 <th>Logo</th>
                 <th>
                     <th th:replace="~{fragments::column_link('brands', 'name', 'Brand Name', 'tag')}"></th>
@@ -31,7 +31,7 @@
             </thead>
             <tbody>
             <tr th:each="brand, iterStat : ${listBrands}">
-                <td>[[${brand.id}]]</td>
+                <td class="hideable-column">[[${brand.id}]]</td>
                 <!-- <td>[[${iterStat.count}]]</td> <!==iterStat.index is zero-based ==>-->
                 <td>
                     <img alt="brand image"
@@ -57,9 +57,9 @@
     <div class="less-details">
         <div class="row m-1" th:each="brand : ${listBrands}">
             <div class="col-4">
-<!--                <img alt="brand image"-->
-<!--                     style="width: 100px"-->
-<!--                     th:src="@{${brand.imagePath}}">-->
+                <img alt="brand image"
+                     style="width: 100px"
+                     th:src="@{${brand.logoPath}}">
             </div>
 
             <div class="col-8">
