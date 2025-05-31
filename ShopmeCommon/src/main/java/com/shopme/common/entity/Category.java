@@ -9,7 +9,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@ToString
+@ToString(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -20,6 +20,7 @@ public class Category {
     private Integer id;
 
     @Column(length = 128, nullable = false, unique = true)
+    @ToString.Include
     private String name;
 
     @Column(length = 64, nullable = false, unique = true)

@@ -113,8 +113,9 @@ public class UserRepositoryTests {
         user.setEnabled(true);
 
         //Assert
-        assertThat(user).isNotNull();
-        assertThat(user.isEnabled()).isEqualTo(true);
+        User updatedUser = userRepository.findById(1).get();
+        assertThat(updatedUser).isNotNull();
+        assertThat(updatedUser.isEnabled()).isEqualTo(true);
     }
 
     @Test
@@ -129,8 +130,9 @@ public class UserRepositoryTests {
         user.addRole(roleEditor);
 
         //Assert
-        System.out.println(user.getRoles());
-        assertThat(user.getRoles().size()).isEqualTo(2);
+        User updatedUser = userRepository.findById(2).get();
+        System.out.println(updatedUser.getRoles());
+        assertThat(updatedUser.getRoles().size()).isEqualTo(2);
     }
 
     @Test

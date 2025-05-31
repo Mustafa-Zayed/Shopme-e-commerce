@@ -88,8 +88,9 @@ public class BrandRepositoryTests {
 
         samsung.setName("Samsung Electronics");
 
-        System.out.println(samsung);
-        assertThat(samsung.getName()).isEqualTo("Samsung Electronics");
+        Brand savedSamsung = brandRepository.findById(3).get();
+        System.out.println(savedSamsung);
+        assertThat(savedSamsung.getName()).isEqualTo("Samsung Electronics");
     }
 
     @Test
