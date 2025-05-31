@@ -26,7 +26,7 @@ public class BrandService {
     private final BrandRepository brandRepository;
 
     public List<Brand> listAll() {
-        return (List<Brand>) brandRepository.findAll(Sort.by("name").ascending());
+        return (List<Brand>) brandRepository.findAll(Sort.by("id").ascending());
     }
 
     public Page<Brand> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
