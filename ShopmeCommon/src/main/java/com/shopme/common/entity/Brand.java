@@ -35,6 +35,10 @@ public class Brand {
     // @ToString.Exclude
     Set<Category> categories;
 
+    public Brand(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
     @Transient
     public String getLogoPath() {
         if (Objects.equals(logo, "default.png") || id == null)

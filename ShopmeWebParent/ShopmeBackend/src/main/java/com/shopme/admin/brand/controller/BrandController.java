@@ -124,7 +124,7 @@ public class BrandController {
     @GetMapping("/brands/export/csv")
     public void exportToCSV(HttpServletResponse response) throws IOException {
         BrandCsvExporter csvExporter = new BrandCsvExporter();
-        List<Brand> brandList = brandService.listAll();
+        List<Brand> brandList = brandService.listAll(Sort.by("id").ascending());
         csvExporter.export(brandList, response);
     }
 }

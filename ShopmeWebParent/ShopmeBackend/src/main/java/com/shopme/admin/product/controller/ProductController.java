@@ -1,22 +1,24 @@
 package com.shopme.admin.product.controller;
 
+import com.shopme.admin.brand.service.BrandService;
 import com.shopme.admin.product.service.ProductService;
+import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.shopme.admin.brand.service.BrandService.BRANDS_PER_PAGE;
-
 @RequiredArgsConstructor
 @Controller
 public class ProductController {
 
     private final ProductService productService;
+    private final BrandService brandService;
 
     @GetMapping("/products")
     public String listFirstPage(Model model) {
@@ -61,5 +63,29 @@ public class ProductController {
         model.addAttribute("keyword", keyword);
 
         return "products/products";
+    }
+
+    @GetMapping("/products/new")
+    public String newProduct(Model model) {
+        Product product = Product.builder()
+                .enabled(true)
+                .inStock(true)
+                .cost(0.0f)
+                .listPrice(0.0f)
+                .discountPercent(0.0f)
+                .build();
+        List<Brand> listBrands = brandService.listAll(Sort.by("name").ascending());
+
+        model.addAttribute("product", product);
+        model.addAttribute("listBrands", listBrands);
+        model.addAttribute("pageTitle", "Create New Product");
+
+        return "products/product_form";
+    }
+
+    @PostMapping("/products/save")
+    public String saveProduct(@ModelAttribute Product product) {
+        System.out.println("Product: " + product);
+        return "redirect:/products";
     }
 }
