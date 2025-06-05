@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<head>
+    <head th:replace="~{fragments :: page_head(title = ${pageTitle}, removeTag = 'tag')}"></head>
+
+    <link rel="stylesheet" th:href="@{/richtext/richtext.min.css}">
+    <script th:src="@{/richtext/jquery.richtext.min.js}" type="text/javascript"></script>
+</head>
 <body>
     <div class="container-fluid">
         <div th:replace="~{fragments :: top_navbar}"></div>
@@ -31,16 +36,25 @@
                         <button class="nav-link" data-bs-toggle="tab"
                                 data-bs-target="#details" type="button" role="tab">Details</button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab"
+                                data-bs-target="#shipping" type="button" role="tab">Shipping</button>
+                    </li>
                 </ul>
 
                 <!-- Tab panes -->
                 <div class="tab-content p-3">
                     <div class="tab-pane active" id="overview" role="tabpanel" tabindex="0">
-                        <div th:replace="~{products/product_form_fragments :: overview}"></div>
+                        <div th:replace="~{products/fragments/product_overview_fragment :: overview}"></div>
                     </div>
-                    <div class="tab-pane" id="description" role="tabpanel" tabindex="0">Description</div>
+                    <div class="tab-pane" id="description" role="tabpanel" tabindex="0">
+                        <div th:replace="~{products/fragments/product_description_fragment :: description}"></div>
+                    </div>
                     <div class="tab-pane" id="images" role="tabpanel" tabindex="0">Images</div>
                     <div class="tab-pane" id="details" role="tabpanel" tabindex="0">Details</div>
+                    <div class="tab-pane" id="shipping" role="tabpanel" tabindex="0">
+                        <div th:replace="~{products/fragments/product_shipping_fragment :: shipping}"></div>
+                    </div>
                 </div>
 
                 <div class="text-center">
@@ -57,17 +71,26 @@
     <script type="text/javascript">
         let moduleURL = "[[@{/products}]]";
 
+        const brandSelect = $("#brand");
+        const categorySelect = $("#category");
+
         $(document).ready(function () {
-            const brandSelect = $("#brand");
-            const categorySelect = $("#category");
+            // Initial call (for default brand selected when the page loads)
+            getCategories();
 
-            function getCategories() {
-                let brandId = brandSelect.val(); // brandSelect.find("option:selected").val();
-                let url = "[[@{/brands/}]]" + brandId + "/categories";
+            // Update categories on change
+            brandSelect.on("change", getCategories);
 
-                $.get(
-                    url,
-                    function (response) {
+            $('.content').richText();
+        });
+
+        function getCategories() {
+            let brandId = brandSelect.val(); // brandSelect.find("option:selected").val();
+            let url = "[[@{/brands/}]]" + brandId + "/categories";
+
+            $.get(
+                url,
+                function (response) {
                     categorySelect.empty();
                     $.each(response, function (index, category) {
                         $("<option>")
@@ -79,14 +102,7 @@
                         //     .text(category.name));
                     });
                 });
-            }
-
-            // Initial call (for default brand selected when the page loads)
-            getCategories();
-
-            // Update categories on change
-            brandSelect.on("change", getCategories);
-        });
+        }
     </script>
     <script th:src="@{/js/common_form.js}" type="text/javascript"></script>
 </body>

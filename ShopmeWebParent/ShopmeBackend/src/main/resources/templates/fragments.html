@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="page_head(title)">
+<head th:fragment="page_head(title)" th:with="removeTag = ${removeTag ?: 'none'}" th:remove="${removeTag}">
     <meta charset="UTF-8" content="text/html" http-equiv="Content-Type">
     <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0" name="viewport">
 
