@@ -8,7 +8,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -32,5 +34,25 @@ public class ProductService {
             return productRepository.findAll(pageable);
 
         return productRepository.findAll(keyword, pageable);
+    }
+
+    public Product save(Product product, RedirectAttributes redirectAttributes) {
+        String message = product.getId() == null ?
+                "New Product has been created!" : "Product has been updated successfully!";
+
+        product.setUpdatedTime(new Date());
+        product.setMainImage("default.png");
+
+        if (product.getId() == null) {
+            product.setCreatedTime(new Date());
+        }
+
+        if (product.getAlias() == null || product.getAlias().isEmpty())
+            product.setAlias(product.getName().replaceAll(" ", "-"));
+        else
+            product.setAlias(product.getAlias().replaceAll(" ", "-"));
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return productRepository.save(product);
     }
 }

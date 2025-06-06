@@ -10,7 +10,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -73,6 +75,7 @@ public class ProductController {
                 .cost(0.0f)
                 .listPrice(0.0f)
                 .discountPercent(0.0f)
+                .createdTime(new Date(System.currentTimeMillis()))
                 .build();
         List<Brand> listBrands = brandService.listAll(Sort.by("name").ascending());
 
@@ -84,8 +87,12 @@ public class ProductController {
     }
 
     @PostMapping("/products/save")
-    public String saveProduct(@ModelAttribute Product product) {
+    public String saveProduct(@ModelAttribute Product product, RedirectAttributes redirectAttributes) {
+
+        productService.save(product, redirectAttributes);
+
         System.out.println("Product: " + product);
+
         return "redirect:/products";
     }
 }
