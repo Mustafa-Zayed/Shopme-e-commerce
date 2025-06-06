@@ -1,8 +1,11 @@
 package com.shopme.admin.product.service;
 
+import com.shopme.admin.category.exception.CategoryNotFoundException;
+import com.shopme.admin.product.exception.ProductNotFoundException;
 import com.shopme.admin.product.repository.ProductRepository;
 import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -65,5 +68,16 @@ public class ProductService {
         // Check if the name belongs to the edited product (i.e. user doesn't need to change the product name)
         // If new product case, returns false as the id param is null
         return byName.getId().equals(id);
+    }
+
+    public Product findById(int id) throws ProductNotFoundException {
+        return productRepository.findById(id).orElseThrow(
+                () -> new ProductNotFoundException("Could not find any product with ID: " + id)
+        );
+    }
+
+    @Transactional
+    public void updateProductEnabledStatus(int id, boolean status) {
+        productRepository.updateProductEnabledStatus(id, status);
     }
 }

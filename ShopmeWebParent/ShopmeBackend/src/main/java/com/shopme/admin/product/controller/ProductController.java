@@ -1,6 +1,7 @@
 package com.shopme.admin.product.controller;
 
 import com.shopme.admin.brand.service.BrandService;
+import com.shopme.admin.product.exception.ProductNotFoundException;
 import com.shopme.admin.product.service.ProductService;
 import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
@@ -12,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
@@ -93,6 +96,37 @@ public class ProductController {
 
         System.out.println("Product: " + product);
 
+        return "redirect:/products";
+    }
+
+    @GetMapping("/products/{id}/enabled/{status}")
+    public String updateProductEnabledStatus(@PathVariable int id,
+                                              @PathVariable(value = "status") boolean statusBefore,
+                                              RedirectAttributes redirectAttributes) {
+        String productAlias;
+        try {
+            productService.updateProductEnabledStatus(id, !statusBefore);
+            Product product = productService.findById(id);
+            productAlias = product.getAlias();
+
+            if (statusBefore)
+                redirectAttributes.addFlashAttribute("message", "Product ID " + id + " has been disabled");
+            else
+                redirectAttributes.addFlashAttribute("message", "Product ID " + id + " has been enabled");
+        } catch (ProductNotFoundException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
+            return "redirect:/products";
+        }
+        // URLs with spaces are invalid and can lead to unexpected behavior. Even though %20 is
+        // the encoded form of a space, Spring's redirect handling might not properly encode or
+        // interpret the URL, causing issues with flash attributes.
+        // URLs must be properly encoded (no spaces allowed)
+        String keyword = id + " " + productAlias;
+        String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+        System.out.println("encodedKeyword: " + encodedKeyword);
+
+//        return "redirect:/products/page/1?keyword=" + encodedKeyword;
         return "redirect:/products";
     }
 }
