@@ -1,6 +1,7 @@
 package com.shopme.admin.product.service;
 
 import com.shopme.admin.product.repository.ProductRepository;
+import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,5 +55,15 @@ public class ProductService {
 
         redirectAttributes.addFlashAttribute("message", message);
         return productRepository.save(product);
+    }
+
+    public boolean checkUniqueName(String name, Integer id) {
+        Product byName  = productRepository.findByName(name);
+        if (byName == null)
+            return true;
+
+        // Check if the name belongs to the edited product (i.e. user doesn't need to change the product name)
+        // If new product case, returns false as the id param is null
+        return byName.getId().equals(id);
     }
 }

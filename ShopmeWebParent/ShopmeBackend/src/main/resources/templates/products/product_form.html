@@ -14,7 +14,7 @@
             <h2>Manage Products | [[${pageTitle}]]</h2>
         </div>
 
-        <form method="post"
+        <form method="post" onsubmit="return checkUniqueName(this)"
               th:action="@{/products/save}"
               th:object="${product}">
             <div class="border border-secondary rounded p-3">
@@ -102,6 +102,33 @@
                         //     .text(category.name));
                     });
                 });
+        }
+
+        function checkUniqueName(form) {
+            let url = "[[@{/products/check_unique_name}]]";
+            let productName = $("#name").val();
+            let productId = $("#id").val();
+            let csrfValue = $("input[name='_csrf']").val(); // the server generates a unique CSRF token and sends it to the client (e.g., embedded in the HTML or as part of a response header).
+            let params = {name: productName, id: productId, _csrf: csrfValue};
+
+            $.post(
+                url,
+                params,
+                function (response) {
+                    if (response === "OK")
+                        // alert("OK")
+                        form.submit();
+                    else if (response === "Duplicated")
+                        showWarningModal(`There is another product having the name: <b>${productName}</b>`);
+                    else
+                        showErrorModal("Unknown response from the server.");
+                }
+            ).fail(function () { // in case it fails to connect to the server (i.e '/products/check_unique_name' API)
+                    showErrorModal("Could not connect to server.")
+                }
+            )
+
+            return false;
         }
     </script>
     <script th:src="@{/js/common_form.js}" type="text/javascript"></script>

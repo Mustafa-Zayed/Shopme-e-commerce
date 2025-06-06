@@ -21,7 +21,7 @@ public class BrandRestController {
 
     // Consumed by Ajax call in brand_form.html
     @PostMapping("/brands/check_unique_name")
-    public String checkUniqueNameAlias(@RequestParam String name,
+    public String checkUniqueName(@RequestParam String name,
                                        @RequestParam(defaultValue = "") Integer id
     ) {
         return brandService.checkUniqueName(name, id) ? "OK" : "Duplicated";

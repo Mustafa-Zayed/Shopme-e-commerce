@@ -147,7 +147,7 @@
                     else
                         showErrorModal("Unknown response from the server.");
                 }
-            ).fail(function () { // in case it fails to connect to the server (i.e '/brands/check_name_alias' API)
+            ).fail(function () { // in case it fails to connect to the server (i.e '/brands/check_unique_name' API)
                     showErrorModal("Could not connect to server.")
                 }
             )

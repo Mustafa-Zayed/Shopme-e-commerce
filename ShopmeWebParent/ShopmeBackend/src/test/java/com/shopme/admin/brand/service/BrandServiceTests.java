@@ -22,18 +22,18 @@ public class BrandServiceTests {
 
     @Test
     void BrandService_CheckUniqueName_ReturnBoolean() {
-        Integer catId = 1;
-        String catName = "Acer";
+        Integer brandId = 1;
+        String brandName = "Acer";
 
         Brand brand = Brand.builder()
-                        .id(catId)
-                        .name(catName)
+                        .id(brandId)
+                        .name(brandName)
                         .build();
 
-        when(brandRepository.findByName(Mockito.anyString())).thenReturn(brand); // Check if the id belongs to the edited category
+        when(brandRepository.findByName(Mockito.anyString())).thenReturn(brand); // Check if the id belongs to the edited brand
 //        when(brandRepository.findByName(Mockito.anyString())).thenReturn(null); // True
 
-        boolean result = brandService.checkUniqueName("testName", catId);
+        boolean result = brandService.checkUniqueName("testName", brandId);
 //        boolean result = brandService.checkUniqueName("testName", 7);
 
         assertThat(result).isTrue();
