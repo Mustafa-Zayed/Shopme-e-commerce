@@ -1,9 +1,7 @@
 package com.shopme.admin.product.service;
 
-import com.shopme.admin.category.exception.CategoryNotFoundException;
 import com.shopme.admin.product.exception.ProductNotFoundException;
 import com.shopme.admin.product.repository.ProductRepository;
-import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -79,5 +77,14 @@ public class ProductService {
     @Transactional
     public void updateProductEnabledStatus(int id, boolean status) {
         productRepository.updateProductEnabledStatus(id, status);
+    }
+
+    public void delete(int id) throws ProductNotFoundException {
+        Integer count = productRepository.countById(id);
+        if (count == 0)
+            throw new ProductNotFoundException("Could not find any product with ID: " + id);
+
+        productRepository.deleteById(id);
+//        FileUploadUtil.removeDir("../product-logos/" + id);
     }
 }

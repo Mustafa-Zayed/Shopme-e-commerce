@@ -1,7 +1,6 @@
 package com.shopme.admin.brand.repository;
 
 import com.shopme.common.entity.Brand;
-import com.shopme.common.entity.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,7 +21,4 @@ public interface BrandRepository extends CrudRepository<Brand, Integer>, PagingA
 
     @Query("SELECT b FROM Brand b WHERE b.name LIKE %?1%")
     Page<Brand> findAll(String keyword, Pageable pageable);
-
-    @Query("SELECT b.categories FROM Brand b WHERE b.id = ?1")
-    List<Category> findCategoriesByBrand(Integer brandId);
 }

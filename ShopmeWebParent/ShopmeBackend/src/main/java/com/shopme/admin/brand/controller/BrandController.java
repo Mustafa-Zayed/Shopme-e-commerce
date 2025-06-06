@@ -113,7 +113,7 @@ public class BrandController {
     public String deleteBrand(@PathVariable int id, RedirectAttributes redirectAttributes) {
         try {
             brandService.delete(id);
-            redirectAttributes.addFlashAttribute("message", "Category ID " + id + " has been deleted successfully!");
+            redirectAttributes.addFlashAttribute("message", "Brand ID " + id + " has been deleted successfully!");
         } catch (BrandNotFoundException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
             redirectAttributes.addFlashAttribute("resultClass", "danger");

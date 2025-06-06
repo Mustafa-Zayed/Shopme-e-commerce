@@ -99,6 +99,18 @@ public class ProductController {
         return "redirect:/products";
     }
 
+    @GetMapping("/products/delete/{id}")
+    public String deleteProduct(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        try {
+            productService.delete(id);
+            redirectAttributes.addFlashAttribute("message", "Product ID " + id + " has been deleted successfully!");
+        } catch (ProductNotFoundException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
+        }
+        return "redirect:/products";
+    }
+
     @GetMapping("/products/{id}/enabled/{status}")
     public String updateProductEnabledStatus(@PathVariable int id,
                                               @PathVariable(value = "status") boolean statusBefore,
