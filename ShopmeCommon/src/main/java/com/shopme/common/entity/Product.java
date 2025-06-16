@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder
 @Getter
 @Setter
-@ToString
+@ToString(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -17,9 +19,11 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ToString.Include
     private Integer id;
 
     @Column(length = 256, unique = true, nullable = false)
+    @ToString.Include
     private String name;
 
     @Column(length = 256, unique = true, nullable = false)
@@ -53,6 +57,9 @@ public class Product {
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private Set<ProductImage> extraImages;
+
     private Float length;
     private Float width;
     private Float height;
@@ -61,4 +68,16 @@ public class Product {
     private Float averageRating;
     private Integer reviewCount;
     private Float cost;
+
+    public void addExtraImage(String imageName) {
+        if (extraImages == null)
+            extraImages = new HashSet<>();
+
+        ProductImage productImage = ProductImage.builder()
+                .name(imageName)
+                .product(this) // set product_id to current product
+                .build();
+
+        extraImages.add(productImage);
+    }
 }
