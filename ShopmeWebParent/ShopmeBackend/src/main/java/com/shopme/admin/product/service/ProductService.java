@@ -2,6 +2,8 @@ package com.shopme.admin.product.service;
 
 import com.shopme.admin.product.exception.ProductNotFoundException;
 import com.shopme.admin.product.repository.ProductRepository;
+import com.shopme.admin.utils.FileUploadUtil;
+import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -10,10 +12,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -38,12 +44,17 @@ public class ProductService {
         return productRepository.findAll(keyword, pageable);
     }
 
-    public Product save(Product product, RedirectAttributes redirectAttributes) {
+    public Product save(Product brand) {
+        return productRepository.save(brand);
+    }
+
+    public Product save(Product product,
+                        MultipartFile multipart,
+                        RedirectAttributes redirectAttributes) throws IOException {
         String message = product.getId() == null ?
                 "New Product has been created!" : "Product has been updated successfully!";
 
         product.setUpdatedTime(new Date());
-        product.setMainImage("default.png");
 
         if (product.getId() == null) {
             product.setCreatedTime(new Date());
@@ -53,6 +64,24 @@ public class ProductService {
             product.setAlias(product.getName().replaceAll(" ", "-"));
         else
             product.setAlias(product.getAlias().replaceAll(" ", "-"));
+
+        if (!multipart.isEmpty()) {
+            String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipart.getOriginalFilename()));
+            product.setMainImage(originalFilename);
+            Product savedProduct = save(product); // product == savedProduct: true
+            System.out.println("product.getId(): " + product.getId());
+            String uploadDir = "../product-images/" + savedProduct.getId(); // product.getId() works as well, because the brand and savedProduct objects are the same.
+            FileUploadUtil.saveFile(uploadDir, originalFilename, multipart);
+        } else {
+            System.out.println("product.getMainImage(): " + product.getMainImage()); // product.getMainImage():
+            // In the create mode, if the user does not upload a new file, photos field will sent as
+            // empty string "", not null, because of <input type="hidden" th:field="*{mainImage}"> in the
+            // product_form, and that will cause a constraint violation in getMainImage() method in
+            // Product class. So we must set mainImage to default.png.
+            if (product.getMainImage().isEmpty()) // not needed, just for the sake of completeness, as the image field is not nullable
+                product.setMainImage("default.png");
+            save(product);
+        }
 
         redirectAttributes.addFlashAttribute("message", message);
         return productRepository.save(product);

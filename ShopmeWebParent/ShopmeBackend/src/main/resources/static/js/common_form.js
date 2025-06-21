@@ -2,6 +2,13 @@ let thumbnail = $("#thumbnail");
 let prevSrcBeforeChanging = thumbnail.attr("src"); // the initial thumbnail source
 console.log("prevSrcBeforeChanging: " + prevSrcBeforeChanging)
 
+// Define the fileSizeLimit variable, assigning it the value of MAX_FILE_SIZE if available.
+// If MAX_FILE_SIZE is not declared, use a default value instead.
+// This approach avoids the need to declare MAX_FILE_SIZE in every file that uses this JS file.
+// 'typeof' is preferred for checking if a variable is defined or not, while !== null only
+// checks for the null value, not for undefined or undeclared variables.
+let fileSizeLimit = typeof MAX_FILE_SIZE !== "undefined" ? MAX_FILE_SIZE : 102400; // default is 100kb => 1024 * 100
+
 $(document).ready(function () {
     $("#buttonCancel").on("click", function () {
         // we define the moduleURL in the html page, as it's a thymeleaf variable
@@ -13,8 +20,8 @@ $(document).ready(function () {
         let fileSize = this.files[0]?.size || 0;
         console.log(fileSize)
 
-        if (fileSize > 102400) { // 1024 * 100
-            this.setCustomValidity("Image size must be less than 100KB! =)");
+        if (fileSize > fileSizeLimit) {
+            this.setCustomValidity("Image size must be less than " + fileSizeLimit / 1024 + "KB! =)");
             this.reportValidity();
         } else {
             this.setCustomValidity("");

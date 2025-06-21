@@ -16,7 +16,8 @@
 
         <form method="post" onsubmit="return checkUniqueName(this)"
               th:action="@{/products/save}"
-              th:object="${product}">
+              th:object="${product}"
+              enctype="multipart/form-data">
             <div class="border border-secondary rounded p-3">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -50,7 +51,9 @@
                     <div class="tab-pane" id="description" role="tabpanel" tabindex="0">
                         <div th:replace="~{products/fragments/product_description_fragment :: description}"></div>
                     </div>
-                    <div class="tab-pane" id="images" role="tabpanel" tabindex="0">Images</div>
+                    <div class="tab-pane" id="images" role="tabpanel" tabindex="0">
+                        <div th:replace="~{products/fragments/product_images_fragment :: images}"></div>
+                    </div>
                     <div class="tab-pane" id="details" role="tabpanel" tabindex="0">Details</div>
                     <div class="tab-pane" id="shipping" role="tabpanel" tabindex="0">
                         <div th:replace="~{products/fragments/product_shipping_fragment :: shipping}"></div>
@@ -70,6 +73,7 @@
     </div>
     <script type="text/javascript">
         let moduleURL = "[[@{/products}]]";
+        let MAX_FILE_SIZE = 512000;
 
         const brandSelect = $("#brand");
         const categorySelect = $("#category");

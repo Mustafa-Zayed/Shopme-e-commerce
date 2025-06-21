@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Builder
@@ -69,6 +70,7 @@ public class Product {
     private Integer reviewCount;
     private Float cost;
 
+    // convenient method to add an extra image
     public void addExtraImage(String imageName) {
         if (extraImages == null)
             extraImages = new HashSet<>();
@@ -79,5 +81,12 @@ public class Product {
                 .build();
 
         extraImages.add(productImage);
+    }
+
+    @Transient
+    public String getMainImagePath() {
+        if (Objects.equals(mainImage, "default.png") || id == null)
+            return "/images/image-thumbnail.png";
+        return "/product-images/" + id + "/" + mainImage;
     }
 }

@@ -11,8 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -90,11 +92,14 @@ public class ProductController {
     }
 
     @PostMapping("/products/save")
-    public String saveProduct(@ModelAttribute Product product, RedirectAttributes redirectAttributes) {
+    public String saveProduct(@ModelAttribute("product") Product product,
+                              @RequestPart(value = "prodMainImage") MultipartFile multipart,
+                              RedirectAttributes redirectAttributes) throws IOException {
+        // avoid the field name collision between the Product.mainImage string and the uploaded file name in product_form,
+        // so Spring is receiving the uploaded file and trying to bind it to product.mainImage, because
+        // both the request part and the model attribute are sharing the same field name — mainImage
 
-        productService.save(product, redirectAttributes);
-
-        System.out.println("Product: " + product);
+        productService.save(product, multipart, redirectAttributes);
 
         return "redirect:/products";
     }

@@ -34,6 +34,9 @@
                 <td>[[${product.id}]]</td>
                 <!-- <td>[[${iterStat.count}]]</td> <!==iterStat.index is zero-based ==>-->
                 <td>
+                    <img alt="product image"
+                    style="width: 100px"
+                    th:src="@{${product.mainImagePath}}">
                 </td>
                 <td>[[${product.name}]]</td>
                 <td>[[${product.brand.name}]]</td>
