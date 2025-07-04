@@ -17,33 +17,39 @@ $(document).ready(function () {
     });
 
     $("#imageFile").change(function () {
-        let fileSize = this.files[0]?.size || 0;
-        console.log(fileSize)
-
-        if (fileSize > fileSizeLimit) {
-            this.setCustomValidity("Image size must be less than " + fileSizeLimit / 1024 + "KB! =)");
-            this.reportValidity();
-        } else {
-            this.setCustomValidity("");
-            showImageThumbnail(this);
-        }
+        checkSizeAndShowThumbnail(this, thumbnail, prevSrcBeforeChanging);
     })
 });
 
-function showImageThumbnail(fileInput) {
+function checkSizeAndShowThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging) {
+    let fileSize = fileInput.files[0]?.size || 0;
+    console.log(fileSize)
+
+    if (fileSize > fileSizeLimit) {
+        theThumbnail.attr("src", thePrevSrcBeforeChanging); // reset the thumbnail
+        fileInput.value = ""; // reset the input value to 'No file chosen' instead of the big file name
+        fileInput.setCustomValidity("Image size must be less than " + fileSizeLimit / 1024 + "KB! =)");
+        fileInput.reportValidity();
+    } else {
+        fileInput.setCustomValidity("");
+        showImageThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging);
+    }
+}
+
+function showImageThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging) {
     console.log(fileInput.files)
     let file = fileInput.files[0];
 
     if (file == null) { // If no image selected, return to the original one
-        thumbnail.removeAttr("src");
-        thumbnail.attr("src", prevSrcBeforeChanging);
+        theThumbnail.removeAttr("src");
+        theThumbnail.attr("src", thePrevSrcBeforeChanging);
         return
     }
 
     let reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function () {
-        thumbnail.attr("src", reader.result);
+        theThumbnail.attr("src", reader.result);
         // console.log("reader.result: " + reader.result)
     }
 }
