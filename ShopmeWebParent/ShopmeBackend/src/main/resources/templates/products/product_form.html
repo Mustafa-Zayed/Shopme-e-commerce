@@ -14,7 +14,7 @@
             <h2>Manage Products | [[${pageTitle}]]</h2>
         </div>
 
-        <form method="post" onsubmit="return checkUniqueName(this)"
+        <form method="post" onsubmit="return checkUniqueName(this)" id="productForm"
               th:action="@{/products/save}"
               th:object="${product}"
               enctype="multipart/form-data">

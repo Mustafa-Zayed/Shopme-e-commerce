@@ -1,5 +1,6 @@
 const brandSelect = $("#brand");
 const categorySelect = $("#category");
+const productForm = $("#productForm");
 
 let extraImageCount = 1;
 
@@ -14,12 +15,14 @@ $(document).ready(function () {
 
     $('input[name="extraImage"]').each(function (index){
         $(this).change(function () {
-            checkSizeAndShowThumbnail(this, $("#extraThumbnail0"), index);
+            checkSizeAndShowThumbnailAndAddNewExtraImage(this, $("#extraThumbnail0"), index);
         })
     })
+
+    productForm.on("submit", removeLastExtraImage);
 });
 
-function checkSizeAndShowThumbnail(fileInput, theThumbnail, index) {
+function checkSizeAndShowThumbnailAndAddNewExtraImage(fileInput, theThumbnail, index) {
     let fileSize = fileInput.files[0]?.size || 0;
     console.log(fileSize)
 
@@ -104,7 +107,7 @@ function AddNextExtraImageSection(index) {
 
                 <div>
                     <input type="file" id="extraImage${index}" name="extraImage"
-                           onchange="checkSizeAndShowThumbnail(this, $('#extraThumbnail${index}'), ${index})"
+                           onchange="checkSizeAndShowThumbnailAndAddNewExtraImage(this, $('#extraThumbnail${index}'), ${index})"
                            accept="image/png, image/jpeg"
                            class="img-thumbnail">
                 </div>
@@ -125,6 +128,13 @@ function AddNextExtraImageSection(index) {
 
 function removeExtraImageSection(index) {
     $("#extraImageDiv" + index).remove();
+}
+
+function removeLastExtraImage(){
+    $('input[name="extraImage"]').each(function (){
+        if (this.value === "")
+            this.remove();
+    })
 }
 
 function getCategories() {

@@ -20,7 +20,8 @@ public class FileUploadUtil {
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         } else { // Delete all previous files
-            cleanDir(uploadPath);
+            if (!uploadPath.toString().contains("extras")) // don't remove the existed extra images
+                cleanDir(uploadPath);
         }
 
         try (InputStream inputStream = multipartFile.getInputStream()) {

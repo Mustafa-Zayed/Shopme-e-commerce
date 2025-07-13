@@ -93,13 +93,15 @@ public class ProductController {
 
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute("product") Product product,
-                              @RequestPart(value = "prodMainImage") MultipartFile multipart,
-                              RedirectAttributes redirectAttributes) throws IOException {
+                              RedirectAttributes redirectAttributes,
+                              @RequestPart(value = "prodMainImage") MultipartFile mainImageMultipart,
+                              @RequestPart(value = "extraImage") MultipartFile ...extraImageMultiparts) throws IOException {
         // avoid the field name collision between the Product.mainImage string and the uploaded file name in product_form,
         // so Spring is receiving the uploaded file and trying to bind it to product.mainImage, because
         // both the request part and the model attribute are sharing the same field name — mainImage
 
-        productService.save(product, multipart, redirectAttributes);
+        System.out.println(extraImageMultiparts.length);
+        productService.save(product, redirectAttributes, mainImageMultipart, extraImageMultiparts);
 
         return "redirect:/products";
     }
