@@ -3,10 +3,7 @@ package com.shopme.common.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Builder
 @Getter
@@ -61,6 +58,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private Set<ProductImage> extraImages;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductDetail> productDetails;
+
     private Float length;
     private Float width;
     private Float height;
@@ -81,6 +81,20 @@ public class Product {
                 .build();
 
         extraImages.add(productImage);
+    }
+
+    // convenient method to add product details
+    public void addProductDetails(String name, String value) {
+        if (productDetails == null)
+            productDetails = new ArrayList<>();
+
+        ProductDetail productDetail = ProductDetail.builder()
+                .name(name)
+                .value(value)
+                .product(this) // set product_id to current product
+                .build();
+
+        productDetails.add(productDetail);
     }
 
     @Transient

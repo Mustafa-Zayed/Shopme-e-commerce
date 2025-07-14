@@ -128,4 +128,20 @@ public class ProductRepositoryTests {
 
         assertThat(savedProduct.getExtraImages().size()).isEqualTo(3);
     }
+
+    @Test
+    void ProductRepository_SaveProductWithDetails_ReturnSavedProduct() {
+
+        Product product = productRepository.findById(4).get();
+
+        product.addProductDetails("key1", "value1");
+        product.addProductDetails("key2", "value2");
+        product.addProductDetails("key3", "value3");
+
+        Product savedProduct = productRepository.save(product);
+
+        System.out.println(savedProduct);
+
+        assertThat(savedProduct.getProductDetails()).isNotEmpty();
+    }
 }
