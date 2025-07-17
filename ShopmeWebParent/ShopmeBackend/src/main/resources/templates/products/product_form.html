@@ -54,7 +54,9 @@
                     <div class="tab-pane" id="images" role="tabpanel" tabindex="0">
                         <div th:replace="~{products/fragments/product_images_fragment :: images}"></div>
                     </div>
-                    <div class="tab-pane" id="details" role="tabpanel" tabindex="0">Details</div>
+                    <div class="tab-pane" id="details" role="tabpanel" tabindex="0">
+                        <div th:replace="~{products/fragments/product_details_fragment :: details}"></div>
+                    </div>
                     <div class="tab-pane" id="shipping" role="tabpanel" tabindex="0">
                         <div th:replace="~{products/fragments/product_shipping_fragment :: shipping}"></div>
                     </div>
@@ -76,13 +78,15 @@
         let moduleURL = "[[@{/products}]]";
         let MAX_FILE_SIZE = 512000; // 500kb
 
-        // for product_form.js
+        // for product_form_overview.js and product_form_images.js
         let brandModuleURL = "[[@{/brands}]]";
         let productUniqueNameUrl = "[[@{/products/check_unique_name}]]";
         let initialProductThumbnail = "[[@{/images/image-thumbnail.png}]]";
 
     </script>
     <script th:src="@{/js/common_form.js}" type="text/javascript"></script>
-    <script th:src="@{/js/product_form.js}" type="text/javascript"></script>
+    <script th:src="@{/js/product/product_form_overview.js}" type="text/javascript"></script>
+    <script th:src="@{/js/product/product_form_images.js}" type="text/javascript"></script>
+    <script th:src="@{/js/product/product_form_details.js}" type="text/javascript"></script>
 </body>
 </html>
