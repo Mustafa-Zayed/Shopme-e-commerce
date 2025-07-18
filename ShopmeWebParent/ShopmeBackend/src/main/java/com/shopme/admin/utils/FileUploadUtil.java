@@ -60,6 +60,10 @@ public class FileUploadUtil {
 
     public static void removeDir(String uploadDir) {
         Path dir = Path.of(uploadDir);
+
+        if (!Files.exists(dir)) // may be `extra` dir and not existed, so not to throw an error
+            return;
+
         cleanDir(dir);
 
         try {

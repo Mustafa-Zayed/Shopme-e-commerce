@@ -50,6 +50,8 @@ public class ProductService {
 
     public Product save(Product product,
                         RedirectAttributes redirectAttributes,
+                        String[] detailNames,
+                        String[] detailValues,
                         MultipartFile mainImageMultipart,
                         MultipartFile ...extraImageMultiparts) throws IOException {
         String message = product.getId() == null ?
@@ -68,7 +70,11 @@ public class ProductService {
 
         saveMainImageMultipart(product, mainImageMultipart);
 
-        saveExtraImageMultiparts(product, extraImageMultiparts);
+        if (extraImageMultiparts != null)
+            saveExtraImageMultiparts(product, extraImageMultiparts);
+
+        if (detailNames != null && detailValues != null)
+            saveProductDetails(product, detailNames, detailValues);
 
         redirectAttributes.addFlashAttribute("message", message);
         return productRepository.save(product);
@@ -103,6 +109,14 @@ public class ProductService {
                 Product savedProduct = save(product);
                 String uploadDir = "../product-images/" + savedProduct.getId() + "/extras/";
                 FileUploadUtil.saveFile(uploadDir, originalFilename, multipartFile);
+            }
+        }
+    }
+
+    private void saveProductDetails(Product product, String[] detailNames, String[] detailValues) {
+        for (int i = 0; i < detailNames.length; i++) {
+            if (!detailNames[i].isBlank() && !detailValues[i].isBlank()) {
+                product.addProductDetails(detailNames[i], detailValues[i]);
             }
         }
     }

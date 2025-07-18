@@ -6,6 +6,8 @@ let detailCount = 1;
 
 $(document).ready(function () {
     addMoreDetailBtn.on("click", addMoreDetail);
+
+    productForm.on("submit", removeEmptyDetails);
 });
 
 function addMoreDetail() {
@@ -53,4 +55,16 @@ function addMoreDetail() {
 function removeDetailSection(index) {
     $("#detailRow" + index).remove();
     // $("#" + index).remove(); // approach 2
+}
+
+function removeEmptyDetails(){
+    $('input[name="detailName"]').each(function (){
+        if (this.value === "")
+            this.remove();
+    })
+
+    $('input[name="detailValue"]').each(function (){
+        if (this.value === "")
+            this.remove();
+    })
 }
