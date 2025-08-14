@@ -1,10 +1,18 @@
 const addMoreDetailBtn = $("#addMoreDetail");
 const allDetailsDivs = $("#productDetailsDiv")
 
-
-let detailCount = 1;
+const allDetailsRows = $("[id ^= 'detailRow']");
+let detailCount = allDetailsRows.length;
 
 $(document).ready(function () {
+    // console.log('detailCount: ' + detailCount);
+
+    $('a[name="linkRemoveDetail"]').each(function (index){
+        $(this).click(function () {
+            removeDetailSection(index)
+        })
+    })
+
     addMoreDetailBtn.on("click", addMoreDetail);
 
     productForm.on("submit", removeEmptyDetails);

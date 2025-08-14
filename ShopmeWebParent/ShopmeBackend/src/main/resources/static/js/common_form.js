@@ -19,30 +19,49 @@ $(document).ready(function () {
     $("#imageFile").change(function () {
         checkSizeAndShowThumbnail(this, thumbnail, prevSrcBeforeChanging);
     })
+
+    // Specific to product form
+    $("#imageProductFile").change(function () {
+        checkSizeAndShowThumbnail(this, thumbnail, prevSrcBeforeChanging, $("#mainImageName"));
+    })
 });
 
-function checkSizeAndShowThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging) {
+function checkSizeAndShowThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging,
+                                    showImageName = null) {
     let fileSize = fileInput.files[0]?.size || 0;
     console.log(fileSize)
 
     if (fileSize > fileSizeLimit) {
         theThumbnail.attr("src", thePrevSrcBeforeChanging); // reset the thumbnail
         fileInput.value = ""; // reset the input value to 'No file chosen' instead of the big file name
+
+        // reset the image name
+        if (showImageName != null) {
+            showImageName.text(initialProdImageName);
+        }
+
         fileInput.setCustomValidity("Image size must be less than " + fileSizeLimit / 1024 + "KB! =)");
         fileInput.reportValidity();
     } else {
         fileInput.setCustomValidity("");
-        showImageThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging);
+        showImageThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging, showImageName);
     }
 }
 
-function showImageThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging) {
+function showImageThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging,
+                            showImageName = null) {
     console.log(fileInput.files)
     let file = fileInput.files[0];
 
     if (file == null) { // If no image selected, return to the original one
         theThumbnail.removeAttr("src");
         theThumbnail.attr("src", thePrevSrcBeforeChanging);
+
+        // reset the image name
+        if (showImageName != null) {
+            showImageName.text(initialProdImageName);
+        }
+
         return
     }
 
@@ -51,6 +70,11 @@ function showImageThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging) {
     reader.onload = function () {
         theThumbnail.attr("src", reader.result);
         // console.log("reader.result: " + reader.result)
+    }
+
+    // display the new image name
+    if (showImageName != null) {
+        showImageName.text(file.name);
     }
 }
 

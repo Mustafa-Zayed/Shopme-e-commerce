@@ -7,12 +7,16 @@
 <body>
     <div th:fragment="images" th:remove="tag">
         <div class="row mb-3" id="productImagesDiv">
+            <!-- main image -->
             <div class="col border border-secondary rounded p-2 m-3">
-<!--                <input th:field="*{mainImage}" type="hidden">-->
+                <input th:field="*{mainImage}" type="hidden">
 
-                <div> <label for="imageFile" class="mb-1">Main Image:</label> </div>
+                <div>
+                    <label for="imageProductFile" class="mb-1">Main Image:</label>
+                    <span id="mainImageName" th:text="*{mainImage}"></span>
+                </div>
 
-                <div class="mt-2">
+                <div class="mb-2">
                     <img alt="Main image preview"
                          class="img-thumbnail"
                          id="thumbnail"
@@ -23,27 +27,70 @@
                     <!-- avoid the field name collision between the Product.mainImage string and this uploaded file name,
                     so Spring is receiving the uploaded file and trying to bind it to product.mainImage, because
                     both the request part and the model attribute are sharing the same field name — mainImage -->
-                    <input type="file" id="imageFile" name="prodMainImage"
+                    <input type="file" id="imageProductFile" name="prodMainImage"
                            accept="image/png, image/jpeg"
                            class="img-thumbnail"
-                           required>
+                           th:required="${product.id == null}"> <!-- th:required="${product.mainImage == null}"> also works -->
                 </div>
             </div>
 
-            <div class="col border border-secondary rounded p-2 m-3" id="extraImageDiv0">
-                <div id="extraImageHeader0">
-                    <label for="extraImage0" class="mb-1">Extra Image #1:</label>
+            <!-- expose the extra images in the edit mode, where the extraImages list is not null -->
+            <div class="col border border-secondary rounded p-2 m-3"
+                 th:if="${product.id != null and not #sets.isEmpty(extraImages)}"
+                 th:each="extraImage, status : ${extraImages}"
+                 th:id="'extraImageDiv' + ${status.index}"
+            >
+                <input type="hidden" name="extraImageID" th:id="'extraImageID' + ${status.index}"
+                    th:value="${extraImage.id}">
+                <input type="hidden" name="extraImageName" th:id="'extraImageName' + ${status.index}"
+                    th:value="${extraImage.name}">
+
+                <div>
+                    <label th:for="'extraImage' + ${status.index}"
+                           class="mb-1">Extra Image #[[${status.count}]]:</label>
+                    <span th:id="'extraImageName' + ${status.index}"
+                          th:text="${extraImage.name}"></span>
+                    <a name="linkRemoveExtraImage"
+                       class="btn fa-solid fa-times-circle fa-2x float-end icon-dark"
+                       title="Remove this image"
+                    ></a>
                 </div>
 
-                <div class="mt-2">
-                    <img alt="Extra image #1 preview"
+                <div class="mb-2">
+                    <img th:alt="'Extra image #' + ${status.count} + ' preview'"
+                         th:id="'extraThumbnail' + ${status.index}"
+                         th:src="@{${extraImage.imagePath}}" class="img-thumbnail">
+                </div>
+
+                <div>
+                    <input type="file" th:id="'extraImage' + ${status.index}" name="extraImage"
+                           accept="image/png, image/jpeg"
+                           class="img-thumbnail">
+                </div>
+            </div>
+
+            <!-- the empty extra image, we check if the extraImages list is empty to avoid the exception
+            in the creation mode where the extraImages list is null -->
+            <div class="col border border-secondary rounded p-2 m-3"
+                     th:with="extraImagesSize = ${#sets.isEmpty(extraImages) ?
+                                0 : #sets.size(extraImages)}"
+                     th:id = "'extraImageDiv' + ${extraImagesSize}">
+
+                <div th:id="|extraImageHeader${extraImagesSize}|">
+                    <label th:for="'extraImage' + ${extraImagesSize}"
+                           class="mb-1">Extra Image #[[${extraImagesSize + 1}]]:</label>
+                    <span th:id="'extraImageName' + ${extraImagesSize}"></span>
+                </div>
+
+                <div class="mb-2">
+                    <img th:alt="'Extra image #' + ${extraImagesSize} + ' preview'"
                          class="img-thumbnail"
-                         id="extraThumbnail0"
+                         th:id="|extraThumbnail${extraImagesSize}|"
                          th:src="@{/images/image-thumbnail.png}">
                 </div>
 
                 <div>
-                    <input type="file" id="extraImage0" name="extraImage"
+                    <input type="file" th:id="|extraImage${extraImagesSize}|" name="extraImage"
                            accept="image/png, image/jpeg"
                            class="img-thumbnail">
                 </div>

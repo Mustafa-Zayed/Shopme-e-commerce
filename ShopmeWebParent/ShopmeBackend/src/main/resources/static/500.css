@@ -18,6 +18,14 @@ body {
     background-color: #ecf0f1;
 }
 
+body .navbar {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
+}
+
 .container {
     text-align: center;
     margin: auto;

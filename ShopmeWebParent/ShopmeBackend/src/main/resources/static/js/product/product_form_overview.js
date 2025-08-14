@@ -1,5 +1,6 @@
 const brandSelect = $("#brand");
 const categorySelect = $("#category");
+const prodCat = $("#prodCat");
 
 $(document).ready(function () {
     // Initial call (for default brand selected when the page loads)
@@ -8,7 +9,8 @@ $(document).ready(function () {
     // Update categories on change
     brandSelect.on("change", getCategories);
 
-    $('.content').richText();
+    $("#shortDescription").richText();
+    $("#fullDescription").richText();
 });
 
 function getCategories() {
@@ -23,6 +25,7 @@ function getCategories() {
                 $("<option>")
                     .val(category.id)
                     .text(category.name)
+                    .prop("selected", category.name === prodCat.val()) // make the edited product category as a selected
                     .appendTo(categorySelect);
                 // categorySelect.append($("<option></option>")
                 //     .val(category.id)

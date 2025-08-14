@@ -18,6 +18,15 @@
               th:action="@{/products/save}"
               th:object="${product}"
               enctype="multipart/form-data">
+
+            <input th:field="*{id}" type="hidden"/>
+
+            <!-- used in product_form_overview.js file to get the edited product category
+            and expose it in the overview tab -->
+            <input type="hidden" id="prodCat"
+                   th:if="${product.id != null}"
+                   th:value="*{category.name}"> <!-- th:if="${product.category != null}"> also works-->
+
             <div class="border border-secondary rounded p-3">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">

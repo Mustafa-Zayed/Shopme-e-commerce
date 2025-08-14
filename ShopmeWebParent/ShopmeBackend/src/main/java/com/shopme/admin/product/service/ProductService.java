@@ -44,79 +44,99 @@ public class ProductService {
         return productRepository.findAll(keyword, pageable);
     }
 
-    public Product save(Product brand) {
-        return productRepository.save(brand);
+    public Product save(Product product) {
+        return productRepository.save(product);
     }
 
     public Product save(Product product,
                         RedirectAttributes redirectAttributes,
-                        String[] detailNames,
-                        String[] detailValues,
                         MultipartFile mainImageMultipart,
-                        MultipartFile ...extraImageMultiparts) throws IOException {
+                        MultipartFile[] extraImageMultiparts,
+                        String[] detailNames,
+                        String[] detailValues) throws IOException {
         String message = product.getId() == null ?
                 "New Product has been created!" : "Product has been updated successfully!";
 
-        product.setUpdatedTime(new Date());
+        setProductTimestamps(product);
+        setProductAlias(product);
 
+        setMainImage(product, mainImageMultipart);
+        setExtraImages(product, extraImageMultiparts);
+        setProductDetails(product, detailNames, detailValues);
+
+        Product savedProduct = productRepository.save(product);
+
+        saveMainImageFile(savedProduct, mainImageMultipart);
+        saveExtraImageFiles(savedProduct, extraImageMultiparts);
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return savedProduct;
+    }
+
+    private void setProductTimestamps(Product product) {
+        product.setUpdatedTime(new Date());
         if (product.getId() == null) {
             product.setCreatedTime(new Date());
         }
+    }
 
+    private void setProductAlias(Product product) {
         if (product.getAlias() == null || product.getAlias().isEmpty())
             product.setAlias(product.getName().replaceAll(" ", "-"));
         else
             product.setAlias(product.getAlias().replaceAll(" ", "-"));
-
-        saveMainImageMultipart(product, mainImageMultipart);
-
-        if (extraImageMultiparts != null)
-            saveExtraImageMultiparts(product, extraImageMultiparts);
-
-        if (detailNames != null && detailValues != null)
-            saveProductDetails(product, detailNames, detailValues);
-
-        redirectAttributes.addFlashAttribute("message", message);
-        return productRepository.save(product);
     }
 
-    private void saveMainImageMultipart(Product product, MultipartFile mainImageMultipart) throws IOException {
-        if (!mainImageMultipart.isEmpty()) {
+    private void setMainImage(Product product, MultipartFile mainImageMultipart) {
+        if (mainImageMultipart != null && !mainImageMultipart.isEmpty()) {
             String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(mainImageMultipart.getOriginalFilename()));
             product.setMainImage(originalFilename);
-            Product savedProduct = save(product); // product == savedProduct: true
-            System.out.println("product.getId(): " + product.getId());
-            String uploadDir = "../product-images/" + savedProduct.getId(); // product.getId() works as well, because the brand and savedProduct objects are the same.
-            FileUploadUtil.saveFile(uploadDir, originalFilename, mainImageMultipart);
         } else {
-            System.out.println("product.getMainImage(): " + product.getMainImage()); // product.getMainImage():
             // In the create mode, if the user does not upload a new file, photos field will sent as
             // empty string "", not null, because of <input type="hidden" th:field="*{mainImage}"> in the
             // product_form, and that will cause a constraint violation in getMainImage() method in
             // Product class. So we must set mainImage to default.png.
-            if (product.getMainImage().isEmpty()) // not needed, just for the sake of completeness, as the image field is not nullable
-                product.setMainImage("default.png");
-            save(product);
+            if (product.getMainImage() == null || product.getMainImage().isEmpty())
+                product.setMainImage("default.png"); // not needed as the image field is not nullable, just for the sake of completeness.
         }
     }
 
-    private void saveExtraImageMultiparts(Product product, MultipartFile[] extraImageMultiparts) throws IOException {
-        for (MultipartFile multipartFile : extraImageMultiparts) {
-            if (!multipartFile.isEmpty()) {
-                String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-                System.out.println("originalFilename: " + originalFilename);
-                product.addExtraImage(originalFilename);
-                Product savedProduct = save(product);
-                String uploadDir = "../product-images/" + savedProduct.getId() + "/extras/";
-                FileUploadUtil.saveFile(uploadDir, originalFilename, multipartFile);
+    private void setExtraImages(Product product, MultipartFile[] extraImageMultiparts) {
+        if (extraImageMultiparts != null) {
+            for (MultipartFile multipartFile : extraImageMultiparts) {
+                if (!multipartFile.isEmpty()) {
+                    String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+                    product.addExtraImage(originalFilename);
+                }
             }
         }
     }
 
-    private void saveProductDetails(Product product, String[] detailNames, String[] detailValues) {
-        for (int i = 0; i < detailNames.length; i++) {
-            if (!detailNames[i].isBlank() && !detailValues[i].isBlank()) {
-                product.addProductDetails(detailNames[i], detailValues[i]);
+    private void setProductDetails(Product product, String[] detailNames, String[] detailValues) {
+        if (detailNames != null && detailValues != null) {
+            for (int i = 0; i < detailNames.length; i++) {
+                if (!detailNames[i].isBlank() && !detailValues[i].isBlank()) {
+                    product.addProductDetails(detailNames[i], detailValues[i]);
+                }
+            }
+        }
+    }
+
+    private void saveMainImageFile(Product product, MultipartFile mainImageMultipart) throws IOException {
+        if (mainImageMultipart != null && !mainImageMultipart.isEmpty()) {
+            String uploadDir = "../product-images/" + product.getId();
+            FileUploadUtil.saveFile(uploadDir, product.getMainImage(), mainImageMultipart);
+        }
+    }
+
+    private void saveExtraImageFiles(Product product, MultipartFile[] extraImageMultiparts) throws IOException {
+        if (extraImageMultiparts != null) {
+            for (MultipartFile multipartFile : extraImageMultiparts) {
+                if (!multipartFile.isEmpty()) {
+                    String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+                    String uploadDir = "../product-images/" + product.getId() + "/extras/";
+                    FileUploadUtil.saveFile(uploadDir, originalFilename, multipartFile);
+                }
             }
         }
     }

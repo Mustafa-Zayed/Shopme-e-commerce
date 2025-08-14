@@ -5,6 +5,8 @@ import com.shopme.admin.product.exception.ProductNotFoundException;
 import com.shopme.admin.product.service.ProductService;
 import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
+import com.shopme.common.entity.ProductDetail;
+import com.shopme.common.entity.ProductImage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -20,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Controller
@@ -95,18 +98,40 @@ public class ProductController {
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute("product") Product product,
                               RedirectAttributes redirectAttributes,
-                              @RequestParam(value = "detailName", required = false) String[] detailNames,
-                              @RequestParam(value = "detailValue", required = false) String[] detailValues,
                               @RequestPart(value = "prodMainImage") MultipartFile mainImageMultipart,
-                              @RequestPart(value = "extraImage", required = false) MultipartFile ...extraImageMultiparts) throws IOException {
+                              @RequestPart(value = "extraImage", required = false) MultipartFile[] extraImageMultiparts, // MultipartFile ...extraImageMultiparts
+                              @RequestParam(value = "detailName", required = false) String[] detailNames,
+                              @RequestParam(value = "detailValue", required = false) String[] detailValues) throws IOException {
         // avoid the field name collision between the Product.mainImage string and the uploaded file name in product_form,
         // so Spring is receiving the uploaded file and trying to bind it to product.mainImage, because
         // both the request part and the model attribute are sharing the same field name — mainImage
 
-        productService.save(product, redirectAttributes,
-                detailNames, detailValues, mainImageMultipart, extraImageMultiparts);
+        productService.save(product, redirectAttributes, mainImageMultipart, extraImageMultiparts,
+                detailNames, detailValues);
 
         return "redirect:/products";
+    }
+
+    @GetMapping("/products/edit/{id}")
+    public String editProduct(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Product product = productService.findById(id);
+            List<Brand> listBrands = brandService.listAll(Sort.by("name").ascending());
+            Set<ProductImage> extraImages = product.getExtraImages();
+            List<ProductDetail> productDetails = product.getProductDetails();
+
+            model.addAttribute("product", product);
+            model.addAttribute("listBrands", listBrands);
+            model.addAttribute("pageTitle", "Edit Product (ID: " + id + ")");
+            model.addAttribute("extraImages", extraImages);
+            model.addAttribute("productDetails", productDetails);
+
+            return "products/product_form";
+        } catch (ProductNotFoundException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
+            return "redirect:/products";
+        }
     }
 
     @GetMapping("/products/delete/{id}")
