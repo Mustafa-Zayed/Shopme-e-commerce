@@ -101,13 +101,16 @@ public class ProductController {
                               @RequestPart(value = "prodMainImage") MultipartFile mainImageMultipart,
                               @RequestPart(value = "extraImage", required = false) MultipartFile[] extraImageMultiparts, // MultipartFile ...extraImageMultiparts
                               @RequestParam(value = "detailName", required = false) String[] detailNames,
-                              @RequestParam(value = "detailValue", required = false) String[] detailValues) throws IOException {
+                              @RequestParam(value = "detailValue", required = false) String[] detailValues,
+                              @RequestParam(value = "extraImageID", required = false) String[] extraImageIDs,
+                              @RequestParam(value = "extraImageName", required = false) String[] extraImageNames,
+                              @RequestParam(value = "detailID", required = false) String[] detailIDs) throws IOException {
         // avoid the field name collision between the Product.mainImage string and the uploaded file name in product_form,
         // so Spring is receiving the uploaded file and trying to bind it to product.mainImage, because
         // both the request part and the model attribute are sharing the same field name — mainImage
 
         productService.save(product, redirectAttributes, mainImageMultipart, extraImageMultiparts,
-                detailNames, detailValues);
+                detailNames, detailValues, extraImageIDs, extraImageNames, detailIDs);
 
         return "redirect:/products";
     }

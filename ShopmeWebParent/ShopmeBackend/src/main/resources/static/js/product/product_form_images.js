@@ -2,6 +2,7 @@ const productForm = $("#productForm");
 
 const extraImageDivs = $("[id ^= 'extraImageDiv']");
 let extraImageCount = extraImageDivs.length;
+let staticExtraImageCount = extraImageDivs.length;
 
 let newProd = $("[id = 'id']").val() === '';
 
@@ -13,7 +14,7 @@ let extraImagesThumbnailsSrcs = extraImagesThumbnails.map(function () {
     return $(this).attr("src");
 })
 
-let extraImagesNames = $("[id ^= 'extraImageName']");
+let extraImagesNames = $("[id ^= 'extraImageNameSpan']");
 let extraImagesNamesTexts = extraImagesNames.map(function () {
     return $(this).text();
 })
@@ -31,7 +32,8 @@ $(document).ready(function () {
         })
     })
 
-    productForm.on("submit", removeLastExtraImage);
+    // On submit, the empty extra images inputs are removed and the images shrinks in size
+    // productForm.on("submit", removeEmptyExtraImages);
 });
 
 function checkSizeAndShowThumbnailAndAddNewExtraImage(fileInput, theThumbnail, index) {
@@ -43,6 +45,13 @@ function checkSizeAndShowThumbnailAndAddNewExtraImage(fileInput, theThumbnail, i
         fileInput.value = ""; // reset the input value to 'No file chosen' instead of the big file name
         fileInput.setCustomValidity("Image size must be less than " + fileSizeLimit / 1024 + "KB! =)");
         fileInput.reportValidity();
+
+        // Clear the custom validity after a short delay.
+        setTimeout(() => {
+            fileInput.setCustomValidity("");
+            fileInput.reportValidity(); // updates the validation UI
+        }, 3000);
+
     } else {
         fileInput.setCustomValidity("");
         showImageThumbnailAndAddNextExtraImageSection(fileInput, theThumbnail, index);
@@ -65,7 +74,13 @@ function showImageThumbnailAndAddNextExtraImageSection(fileInput, theThumbnail, 
     }
 
     // display the new image name
-    $("#extraImageName" + index).text(file.name);
+    $("#extraImageNameSpan" + index).text(file.name);
+
+    // update the image name in the hidden field so that the changed image name isn't saved in the extraImages
+    let imageNameHiddenField = $("#extraImageName" + index);
+    if (imageNameHiddenField.length) { // check if the hidden field exists
+        imageNameHiddenField.val(file.name);
+    }
 
     // This code has a logic issue as it's using the array length. It fails when images are removed
     // because the length decreases, but the index in the new section remains the same.
@@ -109,7 +124,7 @@ function AddNextExtraImageSection(index) {
             <div class="col border border-secondary rounded p-2 m-3" id="extraImageDiv${index}">
                 <div id="extraImageHeader${index}"> 
                     <label for="extraImage${index}" class="mb-1">Extra Image #${index + 1}:</label>
-                    <span id="extraImageName${index}"></span>
+                    <span id="extraImageNameSpan${index}"></span>
                 </div>
 
                 <div class="mb-2">
@@ -141,18 +156,26 @@ function AddNextExtraImageSection(index) {
 }
 
 function resetThumbnailSrcAndImageName(theThumbnail, index){
+    let dynamicallyAddedExtraImage = index >= staticExtraImageCount; // if it's a dynamically added extra image, its initial thumbnail is the initial one as it's a new product
+
     // reset thumbnail src to the initial one whatever it's a new or edit product
-    if (newProd) {
+    if (newProd || dynamicallyAddedExtraImage) {
         theThumbnail.attr("src", initialProductThumbnail);
         // reset the image name
-        $("#extraImageName" + index).text('');
+        $("#extraImageNameSpan" + index).text('');
     }
-    else {
+    else { // extra image
         let initialExtraImageThumbnailSrc = extraImagesThumbnailsSrcs.eq(index)[0];
         theThumbnail.attr("src", initialExtraImageThumbnailSrc);
 
         // reset the image name
-        $("#extraImageName" + index).text(extraImagesNamesTexts.eq(index)[0]);
+        $("#extraImageNameSpan" + index).text(extraImagesNamesTexts.eq(index)[0]);
+
+        // reset the image name in the hidden field so don't save another image
+        let imageNameHiddenField = $("#extraImageName" + index);
+        if (imageNameHiddenField.length) {
+            imageNameHiddenField.val(extraImagesNamesTexts.eq(index)[0]);
+        }
     }
 }
 
@@ -160,7 +183,7 @@ function removeExtraImageSection(index) {
     $("#extraImageDiv" + index).remove();
 }
 
-function removeLastExtraImage(){
+function removeEmptyExtraImages(){
     $('input[name="extraImage"]').each(function (){
         if (this.value === "")
             this.remove();

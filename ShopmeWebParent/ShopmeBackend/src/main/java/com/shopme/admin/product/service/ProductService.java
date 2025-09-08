@@ -3,10 +3,13 @@ package com.shopme.admin.product.service;
 import com.shopme.admin.product.exception.ProductNotFoundException;
 import com.shopme.admin.product.repository.ProductRepository;
 import com.shopme.admin.utils.FileUploadUtil;
-import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
+import com.shopme.common.entity.ProductDetail;
+import com.shopme.common.entity.ProductImage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +20,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
+
 
     public List<Product> listAll() {
         return (List<Product>) productRepository.findAll(Sort.by("id").ascending());
@@ -53,7 +59,10 @@ public class ProductService {
                         MultipartFile mainImageMultipart,
                         MultipartFile[] extraImageMultiparts,
                         String[] detailNames,
-                        String[] detailValues) throws IOException {
+                        String[] detailValues,
+                        String[] extraImageIDs,
+                        String[] extraImageNames,
+                        String[] detailIDs) throws IOException {
         String message = product.getId() == null ?
                 "New Product has been created!" : "Product has been updated successfully!";
 
@@ -61,13 +70,21 @@ public class ProductService {
         setProductAlias(product);
 
         setMainImage(product, mainImageMultipart);
-        setExtraImages(product, extraImageMultiparts);
-        setProductDetails(product, detailNames, detailValues);
+        setExistingExtraImages(product, extraImageIDs, extraImageNames);
+        setNewAddedExtraImages(product, extraImageMultiparts);
+
+        setProductDetails(product, detailIDs, detailNames, detailValues); // better approach
+
+        // alternative approach for setting product details (less efficient approach)
+//        setExistingProductDetails(product, detailIDs, detailNames, detailValues);
+//        setNewAddedProductDetails(product, detailNames, detailValues);
 
         Product savedProduct = productRepository.save(product);
 
         saveMainImageFile(savedProduct, mainImageMultipart);
         saveExtraImageFiles(savedProduct, extraImageMultiparts);
+
+        deleteRemovedExtraImagesFromFileSystem(product);
 
         redirectAttributes.addFlashAttribute("message", message);
         return savedProduct;
@@ -101,26 +118,112 @@ public class ProductService {
         }
     }
 
-    private void setExtraImages(Product product, MultipartFile[] extraImageMultiparts) {
+    private void setExistingExtraImages(Product product, String[] extraImageIDs, String[] extraImageNames) {
+        if (extraImageIDs == null || extraImageIDs.length == 0)
+            return;
+
+        Set<ProductImage> newProductImages = new HashSet<>();
+
+        for (int i = 0; i < extraImageIDs.length; i++) {
+            if (!extraImageIDs[i].isBlank() && !extraImageNames[i].isBlank()) {
+                Integer id = Integer.parseInt(extraImageIDs[i]);
+                String name = extraImageNames[i];
+
+                ProductImage productImage = ProductImage.builder()
+                        .id(id)
+                        .name(name)
+                        .product(product) // set product_id to current product
+                        .build();
+
+                newProductImages.add(productImage);
+            }
+        }
+
+        // In this step, any extra image without hidden name or id inputs is removed, and the remaining ones
+        // are added. Because of the orphanRemoval setting in the @OneToMany mapping, the removed image will
+        // also be deleted from the database.
+
+        // product.setExtraImages(newProductImages); // this are replacing the whole collection reference that Hibernate is tracking, it gets an error when removing the whole extra images so newProductImages still equals new HashSet<>() and we don't initialize the extraImages field in Product entity.
+
+        // Instead of replacing the collection reference, modify the existing one
+        // This way: Hibernate still tracks the same Set object, Orphans (images removed from the set)
+        // will be detected and deleted, New images will be persisted.
+        product.getExtraImages().clear();
+        product.getExtraImages().addAll(newProductImages);
+
+    }
+
+    private void setNewAddedExtraImages(Product product, MultipartFile[] extraImageMultiparts) {
         if (extraImageMultiparts != null) {
             for (MultipartFile multipartFile : extraImageMultiparts) {
                 if (!multipartFile.isEmpty()) {
                     String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-                    product.addExtraImage(originalFilename);
+                    if (!product.containsImage(originalFilename)) // to avoid duplicates
+                        product.addExtraImage(originalFilename);
                 }
             }
         }
     }
 
-    private void setProductDetails(Product product, String[] detailNames, String[] detailValues) {
-        if (detailNames != null && detailValues != null) {
-            for (int i = 0; i < detailNames.length; i++) {
-                if (!detailNames[i].isBlank() && !detailValues[i].isBlank()) {
-                    product.addProductDetails(detailNames[i], detailValues[i]);
+    private void setProductDetails(Product product, String[] detailIDs,
+                                           String[] detailNames, String[] detailValues) {
+            if (detailNames == null || detailNames.length == 0)
+                return;
+
+            for (int i = 0; i < detailNames.length; i++){
+                int id = Integer.parseInt(detailIDs[i]);
+                String name = detailNames[i];
+                String value = detailValues[i];
+
+                if (!product.containsDetail(detailNames[i], detailValues[i])) { // to avoid duplicates
+                    if (id != 0) { // update an existing detail
+                        product.addProductDetails(id, name, value);
+                    } else if (!detailNames[i].isBlank() && !detailValues[i].isBlank()) { // add a new detail
+                        product.addProductDetails(name, value);
+                    }
                 }
             }
-        }
     }
+
+// alternative approach for setting product details (less efficient approach)
+//    private void setExistingProductDetails(Product product, String[] detailIDs,
+//                                           String[] detailNames, String[] detailValues) {
+//        if (detailIDs == null || detailIDs.length == 0)
+//            return;
+//
+//        List<ProductDetail> newProductDetails = new ArrayList<>();
+//
+//        for (int i = 0; i < detailIDs.length; i++) {
+//            if (!detailIDs[i].isBlank() && !detailNames[i].isBlank() && !detailValues[i].isBlank()) {
+//                Integer id = Integer.parseInt(detailIDs[i]);
+//                String name = detailNames[i];
+//                String value = detailValues[i];
+//
+//                ProductDetail productDetail = ProductDetail.builder()
+//                        .id(id)
+//                        .name(name)
+//                        .value(value)
+//                        .product(product) // set product_id to current product
+//                        .build();
+//
+//                newProductDetails.add(productDetail);
+//            }
+//        }
+//
+//        product.getProductDetails().clear();
+//        product.getProductDetails().addAll(newProductDetails);
+//    }
+//
+//    private void setNewAddedProductDetails(Product product, String[] detailNames, String[] detailValues) {
+//        if (detailNames != null && detailValues != null) {
+//            for (int i = 0; i < detailNames.length; i++) {
+//                if (!detailNames[i].isBlank() && !detailValues[i].isBlank()) {
+//                    if (!product.containsDetail(detailNames[i], detailValues[i])) // to avoid duplicates
+//                        product.addProductDetails(detailNames[i], detailValues[i]);
+//                }
+//            }
+//        }
+//    }
 
     private void saveMainImageFile(Product product, MultipartFile mainImageMultipart) throws IOException {
         if (mainImageMultipart != null && !mainImageMultipart.isEmpty()) {
@@ -138,6 +241,21 @@ public class ProductService {
                     FileUploadUtil.saveFile(uploadDir, originalFilename, multipartFile);
                 }
             }
+        }
+    }
+
+    private void deleteRemovedExtraImagesFromFileSystem(Product product) {
+        String extraImagesDir = "../product-images/" + product.getId() + "/extras/";
+        Path extraImagesPath = Path.of(extraImagesDir);
+
+        try(Stream<Path> pathStream = Files.list(extraImagesPath)) {
+            pathStream.forEach(image -> {
+                String imageName = image.toFile().getName();
+                if (!product.containsImage(imageName))
+                    FileUploadUtil.removeFile(image);
+            });
+        } catch (IOException e) {
+            LOGGER.error("Error listing directory: {}", extraImagesDir);
         }
     }
 

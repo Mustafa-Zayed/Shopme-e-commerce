@@ -55,11 +55,11 @@ public class Product {
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private Set<ProductImage> extraImages;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductImage> extraImages = new HashSet<>(); // initialization is required here to avoid: A collection with cascade="all-delete-orphan" was no longer referenced by the owning entity instance: com.shopme.common.entity.Product.extraImages
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductDetail> productDetails;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductDetail> productDetails = new ArrayList<>(); // initialization is required here to avoid: A collection with cascade="all-delete-orphan" was no longer referenced by the owning entity instance: com.shopme.common.entity.Product.productDetails
 
     private Float length;
     private Float width;
@@ -97,10 +97,40 @@ public class Product {
         productDetails.add(productDetail);
     }
 
+    public void addProductDetails(Integer id, String name, String value) {
+        if (productDetails == null)
+            productDetails = new ArrayList<>();
+
+        ProductDetail productDetail = ProductDetail.builder()
+                .id(id)
+                .name(name)
+                .value(value)
+                .product(this) // set product_id to current product
+                .build();
+
+        productDetails.add(productDetail);
+    }
+
     @Transient
     public String getMainImagePath() {
         if (Objects.equals(mainImage, "default.png") || id == null)
             return "/images/image-thumbnail.png";
         return "/product-images/" + id + "/" + mainImage;
+    }
+
+    @Transient
+    public boolean containsImage(String imageName) {
+        if (extraImages == null || extraImages.isEmpty())
+            return false;
+        return extraImages.stream().anyMatch(image -> image.getName().equals(imageName));
+    }
+
+    @Transient
+    public boolean containsDetail(String detailName, String detailValue) {
+        if (productDetails == null || productDetails.isEmpty())
+            return false;
+        return productDetails.stream().anyMatch(detail ->
+                detail.getName().equals(detailName) && detail.getValue().equals(detailValue)
+        );
     }
 }

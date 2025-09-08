@@ -48,7 +48,7 @@
                 <div>
                     <label th:for="'extraImage' + ${status.index}"
                            class="mb-1">Extra Image #[[${status.count}]]:</label>
-                    <span th:id="'extraImageName' + ${status.index}"
+                    <span th:id="'extraImageNameSpan' + ${status.index}"
                           th:text="${extraImage.name}"></span>
                     <a name="linkRemoveExtraImage"
                        class="btn fa-solid fa-times-circle fa-2x float-end icon-dark"
@@ -79,7 +79,7 @@
                 <div th:id="|extraImageHeader${extraImagesSize}|">
                     <label th:for="'extraImage' + ${extraImagesSize}"
                            class="mb-1">Extra Image #[[${extraImagesSize + 1}]]:</label>
-                    <span th:id="'extraImageName' + ${extraImagesSize}"></span>
+                    <span th:id="'extraImageNameSpan' + ${extraImagesSize}"></span>
                 </div>
 
                 <div class="mb-2">

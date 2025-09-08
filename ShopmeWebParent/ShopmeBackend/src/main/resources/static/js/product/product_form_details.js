@@ -26,6 +26,9 @@ function addMoreDetail() {
 
     let htmlDetailSection = `
         <div class="row mb-3" id="detailRow${detailCount}">
+            <!-- New product details will have id = 0 -->
+            <input type="hidden" name="detailID" value="0">
+
             <div class="col-4 d-flex align-items-center">
                 <label for="name${detailCount}" class="me-2 mb-0">Name:</label>
                 <input type="text" class="form-control" id="name${detailCount}" name="detailName" maxlength="255">
@@ -66,13 +69,13 @@ function removeDetailSection(index) {
 }
 
 function removeEmptyDetails(){
-    $('input[name="detailName"]').each(function (){
+    $('input[name="detailName"]').each(function (index){
         if (this.value === "")
-            this.remove();
+            $("#detailRow" + index).remove();
     })
 
-    $('input[name="detailValue"]').each(function (){
+    $('input[name="detailValue"]').each(function (index){
         if (this.value === "")
-            this.remove();
+            $("#detailRow" + index).remove();
     })
 }

@@ -10,7 +10,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class FileUploadUtil {
-    private static final Logger logger = LoggerFactory.getLogger(FileUploadUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUploadUtil.class);
 
     public static void saveFile(String uploadDir, String fileName, MultipartFile multipartFile)
             throws IOException {
@@ -50,11 +50,11 @@ public class FileUploadUtil {
                     return FileVisitResult.CONTINUE;
                 }
             });
-            System.out.println("Deleted " + count[0] + " files");
-            logger.info("Deleted {} files", count[0]);
+//            System.out.println("Deleted " + count[0] + " files");
+            LOGGER.info("Deleted {} files", count[0]);
         } catch (IOException e) {
-            System.out.println("Error cleaning directory: " + uploadPath.toAbsolutePath());
-            logger.error("Error cleaning directory: {}", uploadPath.toAbsolutePath(), e);
+//            System.out.println("Error cleaning directory: " + uploadPath.toAbsolutePath());
+            LOGGER.error("Error cleaning directory: {}", uploadPath.toAbsolutePath(), e);
         }
     }
 
@@ -68,11 +68,22 @@ public class FileUploadUtil {
 
         try {
             Files.delete(dir);
-            System.out.println("Deleted directory: " + dir.toAbsolutePath());
-            logger.info("Deleted directory: {}", dir.toAbsolutePath());
+//            System.out.println("Deleted directory: " + dir.toAbsolutePath());
+            LOGGER.info("Deleted directory: {}", dir.toAbsolutePath());
         } catch (IOException e) {
-            System.out.println("Error deleting directory: " + dir.toAbsolutePath());
-            logger.error("Error deleting directory: {}", dir.toAbsolutePath(), e);
+//            System.out.println("Error deleting directory: " + dir.toAbsolutePath());
+            LOGGER.error("Error deleting directory: {}", dir.toAbsolutePath(), e);
+        }
+    }
+
+    public static void removeFile(Path name) {
+        try {
+            Files.delete(name);
+//            System.out.println("Deleted file: " + name);
+            LOGGER.info("Deleted file: {}", name);
+        } catch (IOException e) {
+//            System.out.println("Error deleting file: " + name);
+            LOGGER.error("Error deleting file: {}", name, e);
         }
     }
 }

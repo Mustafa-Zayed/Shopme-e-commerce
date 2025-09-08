@@ -42,6 +42,13 @@ function checkSizeAndShowThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChan
 
         fileInput.setCustomValidity("Image size must be less than " + fileSizeLimit / 1024 + "KB! =)");
         fileInput.reportValidity();
+
+        // Clear the custom validity after a short delay.
+        setTimeout(() => {
+            fileInput.setCustomValidity("");
+            fileInput.reportValidity(); // updates the validation UI
+        }, 3000);
+
     } else {
         fileInput.setCustomValidity("");
         showImageThumbnail(fileInput, theThumbnail, thePrevSrcBeforeChanging, showImageName);
