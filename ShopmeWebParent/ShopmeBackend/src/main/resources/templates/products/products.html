@@ -38,14 +38,18 @@
                     style="width: 100px"
                     th:src="@{${product.mainImagePath}}">
                 </td>
-                <td>[[${product.name}]]</td>
+                <td>
+                    <a class="text-decoration-none link-primary link-detail"
+                       th:href="@{'/products/details/' + ${product.id}}"
+                       title="View details of this product">[[${product.name}]]</a>
+                </td>
                 <td>[[${product.brand.name}]]</td>
                 <td>[[${product.category.name}]]</td>
                 <td>
                     <th:block th:replace="~{fragments :: status('products', ${product.id}, ${product.enabled}, 'product')}"></th:block>
                 </td>
                 <td>
-                    <a class="fa-solid fa-file-alt fa-2x text-decoration-none link-success"
+                    <a class="fa-solid fa-file-alt fa-2x text-decoration-none link-success link-detail"
                        th:href="@{'/products/details/' + ${product.id}}"
                        title="View details of this product"></a>
                     &nbsp;
@@ -78,6 +82,14 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="productDetailsModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
     <div th:replace="~{fragments :: pagination(path = 'products')}"></div>
 
     <div th:replace="~{fragments :: delete_dialogue}"></div>
@@ -86,6 +98,24 @@
 </div>
 <script>
     let entity = 'product', path = "[[@{/products}]]";
+
+    $(document).ready(function () {
+        $(".link-detail").click(function (event) {
+            event.preventDefault();
+            const url = $(this).attr('href');
+            getProduct(url);
+        });
+    });
+
+    function getProduct(url) {
+        const modalElement = $("#productDetailsModal");
+        const modalInstance = new bootstrap.Modal(modalElement);
+
+        // Fetches url (like $.get(url)) and inserts its contents inside .modal-content
+        $(".modal-content").load(url, function () {
+            modalInstance.show(); // Show after content is loaded
+        });
+    }
 </script>
 <script th:src="@{/js/common_list.js}" type="text/javascript"></script>
 </body>

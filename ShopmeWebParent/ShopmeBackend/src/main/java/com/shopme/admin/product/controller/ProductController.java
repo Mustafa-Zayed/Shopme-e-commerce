@@ -179,4 +179,23 @@ public class ProductController {
 //        return "redirect:/products/page/1?keyword=" + encodedKeyword;
         return "redirect:/products";
     }
+
+    @GetMapping("/products/details/{id}")
+    public String viewProductDetails(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Product product = productService.findById(id);
+            Set<ProductImage> extraImages = product.getExtraImages();
+            List<ProductDetail> productDetails = product.getProductDetails();
+
+            model.addAttribute("product", product);
+            model.addAttribute("extraImages", extraImages);
+            model.addAttribute("productDetails", productDetails);
+
+            return "products/product_details_modal";
+        } catch (ProductNotFoundException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+            redirectAttributes.addFlashAttribute("resultClass", "danger");
+            return "redirect:/products";
+        }
+    }
 }

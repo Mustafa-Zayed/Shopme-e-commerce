@@ -10,7 +10,7 @@ public class ProductRestController {
 
     private final ProductService productService;
 
-    // Consumed by Ajax call in brand_form.html
+    // Consumed by Ajax call in product_form.html
     @PostMapping("/products/check_unique_name")
     public String checkUniqueName(@RequestParam String name,
                                        @RequestParam(defaultValue = "") Integer id
