@@ -44,8 +44,15 @@ public class Product {
 
     private boolean enabled;
     private boolean inStock;
-    private Float listPrice;
+
+    private Float cost;
+    private Float price;
     private Float discountPercent;
+
+    private Float length;
+    private Float width;
+    private Float height;
+    private Float weight;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -60,15 +67,6 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductDetail> productDetails = new ArrayList<>(); // initialization is required here to avoid: A collection with cascade="all-delete-orphan" was no longer referenced by the owning entity instance: com.shopme.common.entity.Product.productDetails
-
-    private Float length;
-    private Float width;
-    private Float height;
-    private Float weight;
-
-    private Float averageRating;
-    private Integer reviewCount;
-    private Float cost;
 
     // convenient method to add an extra image
     public void addExtraImage(String imageName) {

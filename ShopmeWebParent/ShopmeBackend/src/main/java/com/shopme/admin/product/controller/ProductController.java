@@ -82,7 +82,7 @@ public class ProductController {
                 .enabled(true)
                 .inStock(true)
                 .cost(0.0f)
-                .listPrice(0.0f)
+                .price(0.0f)
                 .discountPercent(0.0f)
                 .createdTime(new Date(System.currentTimeMillis()))
                 .build();
