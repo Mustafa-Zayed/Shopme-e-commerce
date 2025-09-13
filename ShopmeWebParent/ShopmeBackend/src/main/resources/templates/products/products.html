@@ -14,7 +14,7 @@
            th:href="@{/products/export/csv}"></a>
     </div>
 
-    <div th:replace="~{fragments :: message_and_search_form('products')}"></div>
+    <div th:replace="~{fragments :: message_and_search_form(path = 'products', productForm = true)}"></div>
 
     <div class="full-details">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
@@ -41,7 +41,8 @@
                 <td>
                     <a class="text-decoration-none link-primary link-detail"
                        th:href="@{'/products/details/' + ${product.id}}"
-                       title="View details of this product">[[${product.name}]]</a>
+                       th:title="${product.name}"
+                    >[[${product.shortName}]]</a>
                 </td>
                 <td>[[${product.brand.name}]]</td>
                 <td>[[${product.category.name}]]</td>
@@ -82,7 +83,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Details Modal -->
     <div class="modal fade" id="productDetailsModal">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">

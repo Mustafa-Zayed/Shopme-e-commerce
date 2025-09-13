@@ -1,6 +1,7 @@
 package com.shopme.admin.product.controller;
 
 import com.shopme.admin.brand.service.BrandService;
+import com.shopme.admin.category.service.CategoryService;
 import com.shopme.admin.product.exception.ProductNotFoundException;
 import com.shopme.admin.product.service.ProductService;
 import com.shopme.common.entity.Brand;
@@ -24,12 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.shopme.admin.product.service.ProductService.PRODUCTS_PER_PAGE;
+
 @RequiredArgsConstructor
 @Controller
 public class ProductController {
 
     private final ProductService productService;
     private final BrandService brandService;
+    private final CategoryService categoryService;
 
     @GetMapping("/products")
     public String listFirstPage(Model model) {
@@ -54,13 +58,16 @@ public class ProductController {
         int totalPages = productsPage.getTotalPages();
         long totalItems = productsPage.getTotalElements();
 
-        long startCount = ((long) (pageNumber - 1) * 4) + 1;
-        long endCount = (startCount + 4) - 1;
+        long startCount = ((long) (pageNumber - 1) * PRODUCTS_PER_PAGE) + 1;
+        long endCount = (startCount + PRODUCTS_PER_PAGE) - 1;
         if (endCount > totalItems) endCount = totalItems;
         model.addAttribute("startCount", startCount);
         model.addAttribute("endCount", endCount);
 
         model.addAttribute("listProducts", listProducts);
+        model.addAttribute("listCategories",
+                categoryService.listCategoriesUsedInFormListApproach(Sort.by("name").ascending()));
+
         model.addAttribute("currentPage", pageNumber);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalItems", totalItems);

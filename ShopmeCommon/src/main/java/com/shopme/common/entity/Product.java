@@ -131,4 +131,11 @@ public class Product {
                 detail.getName().equals(detailName) && detail.getValue().equals(detailValue)
         );
     }
+
+    @Transient
+    public String getShortName() {
+        if (name.length() > 70)
+            return name.substring(0, 70).concat("...");
+        return name;
+    }
 }

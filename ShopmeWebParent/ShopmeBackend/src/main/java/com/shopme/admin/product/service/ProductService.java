@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 public class ProductService {
     private final ProductRepository productRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
+    public static final int PRODUCTS_PER_PAGE = 5;
 
 
     public List<Product> listAll() {
@@ -42,7 +43,7 @@ public class ProductService {
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
 
         // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
-        Pageable pageable = PageRequest.of(pageNumber - 1, 4, sort);
+        Pageable pageable = PageRequest.of(pageNumber - 1, PRODUCTS_PER_PAGE, sort);
 
         if (keyword.isEmpty())
             return productRepository.findAll(pageable);
