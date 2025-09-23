@@ -31,6 +31,9 @@ public class Category {
 
     private boolean enabled;
 
+    @Column(name = "all_parent_ids", length = 256)
+    private String allParentIDs;
+
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Category parent;
