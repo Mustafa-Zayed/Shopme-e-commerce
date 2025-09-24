@@ -23,12 +23,17 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
 <!== th:href="@{/users/page/{pageNumber}( pageNumber=${currentPage}, sortField=${sortFieldName}, sortDir=${sortField == sortFieldName ? reverseSortDir : 'asc'}, keyword=${keyword})}"==>
 -->
 
-<th th:fragment="column_link(path, sortFieldName, columnLabel, removeTag)" th:remove="${removeTag}">
+<th th:fragment="column_link(path, sortFieldName, columnLabel, removeTag)"
+    th:with="productForm = ${productForm ?: false}" th:remove="${removeTag}">
+
+    <!-- We can do without defining productForm by checking if prodCatId is null directly -->
+    <!-- ${prodCatId != null ? '&prodCatId=' + prodCatId : ''}} -->
     <a class="text-decoration-none text-white"
        th:href="@{'/' + ${path} + '/page/' + ${currentPage}
            + '?sortField=' + ${sortFieldName}
            + '&sortDir=' + ${sortField == sortFieldName ? reverseSortDir : 'asc'}
-           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
+           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
     >[[${columnLabel}]]</a>
 
     <span th:class="${sortDir} == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'"
@@ -124,21 +129,22 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
         [[${message}]]
     </div>
 
-    <form class="row g-2 align-items-center m-3" th:action="@{'/' + ${path} + '/page/1'}">
+    <form class="row g-2 align-items-center m-3" th:action="@{'/' + ${path} + '/page/1'}" id="searchForm">
         <input class="form-control" name="sortField" th:value="${sortField}" type="hidden"/>
         <input class="form-control" name="sortDir" th:value="${sortDir}" type="hidden"/>
 
-        <!-- Category -->
+        <!-- specified for products to filter by category -->
         <th:block th:if="${productForm}">
             <div class="col-12 col-md-auto">
-                <label class="form-label m-0" for="prodCatId">Category:</label>
+                <label class="form-label m-0" for="dropDownProdCat">Category:</label>
             </div>
             <div class="col-12 col-md-auto">
-                <select class="form-select" name="prodCatId" id="prodCatId">
-                    <option th:text="'All Categories'" th:value="null" selected></option>
+                <select class="form-select" name="prodCatId" id="dropDownProdCat">
+                    <option th:text="'All Categories'" value="0" selected></option>
                     <option th:each="cat : ${listCategories}"
                             th:value="${cat.id}"
-                            th:text="${cat.getName()}">
+                            th:text="${cat.getName()}"
+                            th:selected="${cat.id} == ${prodCatId}">
                     </option>
                 </select>
             </div>
@@ -149,7 +155,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
             <label class="form-label m-0" for="keyword">Filter:</label>
         </div>
         <div class="col-12 col-md-auto">
-            <input class="form-control" id="keyword" name="keyword" required
+            <input class="form-control" id="keyword" name="keyword" placeholder="Search..."
                    style="width: 200px;" th:value="${keyword}" type="search"/>
         </div>
 
@@ -235,7 +241,8 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
 the value of the path variable. additionalSentence is the same -->
 <div th:fragment="pagination(path)"
      th:with="entityName = ${entityName ?: path},
-     additionalSentence = ${additionalSentence ?: ''}" th:remove="tag">
+     additionalSentence = ${additionalSentence ?: ''},
+     productForm = ${productForm ?: false}" th:remove="tag">
 
     <div class="text-center m-1" th:if="${additionalSentence != ''}">
         <span>
@@ -255,11 +262,14 @@ the value of the path variable. additionalSentence is the same -->
         <nav>
             <ul class="pagination justify-content-center flex-wrap">
                 <li th:class="${currentPage > 1 ? 'page-item':'page-item disabled'}">
+                    <!-- We can do without defining productForm by checking if prodCatId is null directly -->
+                    <!-- ${prodCatId != null ? '&prodCatId=' + prodCatId : ''}} -->
                     <a class="page-link"
                        th:href="@{'/' + ${path} + '/page/1'
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                     >First</a>
                 </li>
                 <li th:class="${currentPage > 1 ? 'page-item':'page-item disabled'}">
@@ -267,7 +277,8 @@ the value of the path variable. additionalSentence is the same -->
                        th:href="@{'/' + ${path} + '/page/' +  ${currentPage - 1}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                     >Previous</a>
                 </li>
 
@@ -278,7 +289,8 @@ the value of the path variable. additionalSentence is the same -->
                        th:href="@{'/' + ${path} + '/page/' + ${i}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                        th:if="${currentPage != i}"
                     >[[${i}]]</a>
                     <span class="page-link" th:unless="${currentPage != i}">[[${i}]]</span>
@@ -289,7 +301,8 @@ the value of the path variable. additionalSentence is the same -->
                        th:href="@{'/' + ${path} + '/page/' + ${currentPage + 1}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                     >Next</a>
                 </li>
                 <li th:class="${currentPage < totalPages ? 'page-item':'page-item disabled'}">
@@ -297,7 +310,8 @@ the value of the path variable. additionalSentence is the same -->
                        th:href="@{'/' + ${path} + '/page/' + ${totalPages}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}}"
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                     >Last</a>
                 </li>
             </ul>

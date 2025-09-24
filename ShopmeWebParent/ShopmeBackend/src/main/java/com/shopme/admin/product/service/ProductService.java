@@ -38,17 +38,20 @@ public class ProductService {
     }
 
     public Page<Product> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
-                                               String keyword) {
+                                               String keyword, Integer prodCatId) {
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
 
         // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
         Pageable pageable = PageRequest.of(pageNumber - 1, PRODUCTS_PER_PAGE, sort);
 
-        if (keyword.isEmpty())
+        if (keyword.isEmpty() && prodCatId.equals(0))
             return productRepository.findAll(pageable);
 
-        return productRepository.findAll(keyword, pageable);
+        if (prodCatId.equals(0))
+            return productRepository.findAll(keyword, pageable);
+
+        return productRepository.findAll(keyword, prodCatId, pageable);
     }
 
     public Product save(Product product) {

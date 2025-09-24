@@ -37,7 +37,7 @@ public class ProductController {
 
     @GetMapping("/products")
     public String listFirstPage(Model model) {
-        return listByPageWithSorting(1, "name", "asc", "", model);
+        return listByPageWithSorting(1, "name", "asc", "", 0, model);
     }
 
     @GetMapping("/products/page/{pageNumber}")
@@ -46,14 +46,16 @@ public class ProductController {
             @RequestParam(name = "sortField", defaultValue = "name") String sortField,
             @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
             @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "prodCatId", defaultValue = "0") Integer prodCatId,
             Model model) {
 
-        Page<Product> productsPage = productService.listByPageWithSorting(pageNumber, sortField, sortDir, keyword);
-        return addToModel(pageNumber, productsPage, sortField, sortDir, keyword, model);
+        Page<Product> productsPage = productService
+                .listByPageWithSorting(pageNumber, sortField, sortDir, keyword, prodCatId);
+        return addToModel(pageNumber, productsPage, sortField, sortDir, keyword, prodCatId, model);
     }
 
     private String addToModel(@PathVariable int pageNumber, Page<Product> productsPage,
-                              String sortField, String sortDir, String keyword, Model model) {
+                              String sortField, String sortDir, String keyword, Integer prodCatId, Model model) {
         List<Product> listProducts = productsPage.getContent();
         int totalPages = productsPage.getTotalPages();
         long totalItems = productsPage.getTotalElements();
@@ -79,6 +81,7 @@ public class ProductController {
         model.addAttribute("reverseSortDir", reverseSortDir);
 
         model.addAttribute("keyword", keyword);
+        model.addAttribute("prodCatId", prodCatId);
 
         return "products/products";
     }

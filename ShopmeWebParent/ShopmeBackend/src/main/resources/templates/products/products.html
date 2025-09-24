@@ -20,12 +20,17 @@
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
             <thead class="table-dark">
             <tr>
-                <th th:replace="~{fragments::column_link('products', 'id', 'ID', 'none')}">ID</th>
+                <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'id',
+                    columnLabel = 'ID', removeTag = 'none', productForm = true)}">ID</th>
                 <th>Main Image</th>
-                <th th:replace="~{fragments::column_link('products', 'name', 'Product Name', 'none')}"></th>
-                <th th:replace="~{fragments::column_link('products', 'brand.name', 'Brand', 'none')}"></th>
-                <th th:replace="~{fragments::column_link('products', 'category.name', 'Category', 'none')}"></th>
-                <th th:replace="~{fragments::column_link('products', 'enabled', 'Enabled', 'none')}"></th>
+                <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'name',
+                    columnLabel = 'Product Name', removeTag ='none', productForm = true)}"></th>
+                <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'brand.name',
+                    columnLabel = 'Brand', removeTag ='none', productForm = true)}"></th>
+                <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'category.name',
+                    columnLabel = 'Category', removeTag ='none', productForm = true)}"></th>
+                <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'enabled',
+                    columnLabel = 'Enabled',removeTag ='none', productForm = true)}"></th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -91,7 +96,7 @@
         </div>
     </div>
 
-    <div th:replace="~{fragments :: pagination(path = 'products')}"></div>
+    <div th:replace="~{fragments :: pagination(path = 'products', productForm = true)}"></div>
 
     <div th:replace="~{fragments :: delete_dialogue}"></div>
 
@@ -105,6 +110,10 @@
             event.preventDefault();
             const url = $(this).attr('href');
             getProduct(url);
+        });
+
+        $("#dropDownProdCat").change(function () {
+            $("#searchForm").submit();
         });
     });
 
