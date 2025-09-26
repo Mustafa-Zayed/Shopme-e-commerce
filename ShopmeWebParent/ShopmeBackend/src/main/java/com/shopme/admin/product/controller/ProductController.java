@@ -3,12 +3,12 @@ package com.shopme.admin.product.controller;
 import com.shopme.admin.brand.service.BrandService;
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.admin.product.exception.ProductNotFoundException;
+import com.shopme.admin.product.export.ProductCsvExporter;
 import com.shopme.admin.product.service.ProductService;
 import com.shopme.admin.security.ShopmeUserDetails;
-import com.shopme.common.entity.Brand;
-import com.shopme.common.entity.Product;
-import com.shopme.common.entity.ProductDetail;
-import com.shopme.common.entity.ProductImage;
+import com.shopme.admin.user.export.UserCsvExporter;
+import com.shopme.common.entity.*;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -225,5 +225,12 @@ public class ProductController {
             redirectAttributes.addFlashAttribute("resultClass", "danger");
             return "redirect:/products";
         }
+    }
+
+    @GetMapping("/products/export/csv")
+    public void exportToCSV(HttpServletResponse response) throws IOException {
+        ProductCsvExporter csvExporter = new ProductCsvExporter();
+        List<Product> productList = productService.listAll();
+        csvExporter.export(productList, response);
     }
 }
