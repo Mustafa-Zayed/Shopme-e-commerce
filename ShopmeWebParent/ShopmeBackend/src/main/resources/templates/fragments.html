@@ -155,8 +155,8 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
             <label class="form-label m-0" for="keyword">Filter:</label>
         </div>
         <div class="col-12 col-md-auto">
-            <input class="form-control" id="keyword" name="keyword" placeholder="Search..."
-                   style="width: 200px;" th:value="${keyword}" type="search"/>
+            <input type="search" class="form-control" id="keyword" name="keyword" placeholder="Search..."
+                   th:value="${keyword}"/>
         </div>
 
         <!-- Buttons -->

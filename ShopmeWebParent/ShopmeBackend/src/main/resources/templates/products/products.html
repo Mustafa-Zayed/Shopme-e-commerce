@@ -23,15 +23,21 @@
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
             <thead class="table-dark">
             <tr>
-                <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'id',
-                    columnLabel = 'ID', removeTag = 'none', productForm = true)}">ID</th>
+                <th class="hideable-column">
+                    <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'id',
+                        columnLabel = 'ID', removeTag = 'tag', productForm = true)}">ID</th>
+                </th>
                 <th>Main Image</th>
                 <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'name',
                     columnLabel = 'Product Name', removeTag ='none', productForm = true)}"></th>
-                <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'brand.name',
-                    columnLabel = 'Brand', removeTag ='none', productForm = true)}"></th>
-                <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'category.name',
-                    columnLabel = 'Category', removeTag ='none', productForm = true)}"></th>
+                <th class="hideable-column">
+                    <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'brand.name',
+                        columnLabel = 'Brand', removeTag ='tag', productForm = true)}"></th>
+                </th>
+                <th class="hideable-column">
+                    <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'category.name',
+                        columnLabel = 'Category', removeTag ='tag', productForm = true)}"></th>
+                </th>
                 <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
                     <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'enabled',
                         columnLabel = 'Enabled',removeTag ='none', productForm = true)}"></th>
@@ -41,7 +47,7 @@
             </thead>
             <tbody>
             <tr th:each="product, iterStat : ${listProducts}">
-                <td>[[${product.id}]]</td>
+                <td class="hideable-column">[[${product.id}]]</td>
                 <!-- <td>[[${iterStat.count}]]</td> <!==iterStat.index is zero-based ==>-->
                 <td>
                     <img alt="product image"
@@ -54,8 +60,8 @@
                        th:title="${product.name}"
                     >[[${product.shortName}]]</a>
                 </td>
-                <td>[[${product.brand.name}]]</td>
-                <td>[[${product.category.name}]]</td>
+                <td class="hideable-column">[[${product.brand.name}]]</td>
+                <td class="hideable-column">[[${product.category.name}]]</td>
                 <td sec:authorize="hasAnyAuthority('Admin', 'Editor')">
                     <th:block th:replace="~{fragments :: status('products', ${product.id}, ${product.enabled}, 'product')}"></th:block>
                 </td>
@@ -80,12 +86,23 @@
     <div class="less-details">
         <div class="row m-1" th:each="product : ${listProducts}">
             <div class="col-4">
-
+                <img alt="category image"
+                     style="width: 100px"
+                     th:src="@{${product.mainImagePath}}">
             </div>
 
             <div class="col-8">
-                <div> [[${product.name}]]</div>
+                <div>
+                    <a class="text-decoration-none link-primary link-detail"
+                       th:href="@{'/products/details/' + ${product.id}}"
+                       th:title="${product.name}"
+                    >[[${product.shortName}]]</a>
+                </div>
                 <div class="mt-2">
+                    <a class="fa-solid fa-file-alt fa-2x text-decoration-none link-success link-detail"
+                       th:href="@{'/products/details/' + ${product.id}}"
+                       title="View details of this product"></a>
+                    &nbsp;
                     <th:block th:replace="~{fragments :: edit_entity('products', ${product.id}, 'product')}"></th:block>
                     &nbsp;
                     <th:block th:replace="~{fragments :: delete_entity('products', ${product.id}, 'product', true)}"></th:block>
