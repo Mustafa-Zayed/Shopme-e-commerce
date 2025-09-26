@@ -94,6 +94,20 @@ public class ProductService {
         return savedProduct;
     }
 
+    public void save(Product product, RedirectAttributes redirectAttributes) throws ProductNotFoundException {
+        Integer id = product.getId();
+        Product prodInDB = findById(id);
+
+        prodInDB.setCost(product.getCost());
+        prodInDB.setPrice(product.getPrice());
+        prodInDB.setDiscountPercent(product.getDiscountPercent());
+
+        save(prodInDB);
+
+        String message = "Product has been updated successfully!";
+        redirectAttributes.addFlashAttribute("message", message);
+    }
+
     private void setProductTimestamps(Product product) {
         product.setUpdatedTime(new Date());
         if (product.getId() == null) {

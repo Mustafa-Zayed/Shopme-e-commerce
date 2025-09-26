@@ -4,6 +4,7 @@ import com.shopme.admin.brand.service.BrandService;
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.admin.product.exception.ProductNotFoundException;
 import com.shopme.admin.product.service.ProductService;
+import com.shopme.admin.security.ShopmeUserDetails;
 import com.shopme.common.entity.Brand;
 import com.shopme.common.entity.Product;
 import com.shopme.common.entity.ProductDetail;
@@ -11,6 +12,7 @@ import com.shopme.common.entity.ProductImage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -108,21 +110,37 @@ public class ProductController {
     @PostMapping("/products/save")
     public String saveProduct(@ModelAttribute("product") Product product,
                               RedirectAttributes redirectAttributes,
-                              @RequestPart(value = "prodMainImage") MultipartFile mainImageMultipart,
+                              @RequestPart(value = "prodMainImage", required = false) MultipartFile mainImageMultipart,
                               @RequestPart(value = "extraImage", required = false) MultipartFile[] extraImageMultiparts, // MultipartFile ...extraImageMultiparts
                               @RequestParam(value = "detailName", required = false) String[] detailNames,
                               @RequestParam(value = "detailValue", required = false) String[] detailValues,
                               @RequestParam(value = "extraImageID", required = false) String[] extraImageIDs,
                               @RequestParam(value = "extraImageName", required = false) String[] extraImageNames,
-                              @RequestParam(value = "detailID", required = false) String[] detailIDs) throws IOException {
+                              @RequestParam(value = "detailID", required = false) String[] detailIDs,
+                              // @RequestParam(value = "userRole", required = false) String userRole,
+                              @AuthenticationPrincipal ShopmeUserDetails loggedUser) throws IOException, ProductNotFoundException {
         // avoid the field name collision between the Product.mainImage string and the uploaded file name in product_form,
         // so Spring is receiving the uploaded file and trying to bind it to product.mainImage, because
         // both the request part and the model attribute are sharing the same field name — mainImage
 
-        productService.save(product, redirectAttributes, mainImageMultipart, extraImageMultiparts,
-                detailNames, detailValues, extraImageIDs, extraImageNames, detailIDs);
+        if (loggedUser.hasRole("Salesperson")) // userRole.equals("Salesperson")
+            productService.save(product, redirectAttributes);
+        else
+            productService.save(product, redirectAttributes, mainImageMultipart, extraImageMultiparts,
+                    detailNames, detailValues, extraImageIDs, extraImageNames, detailIDs);
 
-        return "redirect:/products";
+        // Retrieve the saved product with all fields populated for use in the redirect (e.g. product.getName())
+        if (loggedUser.hasRole("Salesperson")) // userRole.equals("Salesperson")
+            product = productService.findById(product.getId());
+
+        // return to the saved product in the listing page
+        String keyword = product.getName().length() > 30 ? product.getName().substring(0, 29)
+                : product.getName();
+
+        String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+        System.out.println("encodedKeyword: " + encodedKeyword);
+        return "redirect:/products/page/1?keyword=" + encodedKeyword;
+//        return "redirect:/products";
     }
 
     @GetMapping("/products/edit/{id}")
@@ -163,11 +181,12 @@ public class ProductController {
     public String updateProductEnabledStatus(@PathVariable int id,
                                               @PathVariable(value = "status") boolean statusBefore,
                                               RedirectAttributes redirectAttributes) {
-        String productAlias;
+        String keyword;
         try {
             productService.updateProductEnabledStatus(id, !statusBefore);
             Product product = productService.findById(id);
-            productAlias = product.getAlias();
+            keyword = product.getName().length() > 30 ? product.getName().substring(0, 29)
+                    : product.getName();
 
             if (statusBefore)
                 redirectAttributes.addFlashAttribute("message", "Product ID " + id + " has been disabled");
@@ -182,12 +201,11 @@ public class ProductController {
         // the encoded form of a space, Spring's redirect handling might not properly encode or
         // interpret the URL, causing issues with flash attributes.
         // URLs must be properly encoded (no spaces allowed)
-        String keyword = id + " " + productAlias;
         String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
         System.out.println("encodedKeyword: " + encodedKeyword);
 
-//        return "redirect:/products/page/1?keyword=" + encodedKeyword;
-        return "redirect:/products";
+        return "redirect:/products/page/1?keyword=" + encodedKeyword;
+        // return "redirect:/products";
     }
 
     @GetMapping("/products/details/{id}")

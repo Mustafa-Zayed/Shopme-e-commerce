@@ -27,6 +27,9 @@
                    th:if="${product.id != null}"
                    th:value="*{category.name}"> <!-- th:if="${product.category != null}"> also works-->
 
+            <!-- We can use @AuthenticationPrincipal to get the current logged in user instead of this -->
+            <!--<input name="userRole" th:value="${#authentication.authorities.get(0)}" type="hidden"/>-->
+
             <div class="border border-secondary rounded p-3">
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -58,16 +61,40 @@
                         <div th:replace="~{products/fragments/product_overview_fragment :: overview}"></div>
                     </div>
                     <div class="tab-pane" id="description" role="tabpanel" tabindex="0">
-                        <div th:replace="~{products/fragments/product_description_fragment :: description}"></div>
+                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
+                            <div th:replace="~{products/fragments/product_description_fragment :: description}"></div>
+                        </th:block>
+
+                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Salesperson'')')}">
+                            <div th:replace="~{products/fragments/readonly/product_description_read_only :: description}"></div>
+                        </th:block>
                     </div>
                     <div class="tab-pane" id="images" role="tabpanel" tabindex="0">
-                        <div th:replace="~{products/fragments/product_images_fragment :: images}"></div>
+                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
+                            <div th:replace="~{products/fragments/product_images_fragment :: images}"></div>
+                        </th:block>
+
+                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Salesperson'')')}">
+                            <div th:replace="~{products/fragments/readonly/product_images_read_only :: images}"></div>
+                        </th:block>
                     </div>
                     <div class="tab-pane" id="details" role="tabpanel" tabindex="0">
-                        <div th:replace="~{products/fragments/product_details_fragment :: details}"></div>
+                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
+                            <div th:replace="~{products/fragments/product_details_fragment :: details}"></div>
+                        </th:block>
+
+                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Salesperson'')')}">
+                            <div th:replace="~{products/fragments/readonly/product_details_read_only :: details}"></div>
+                        </th:block>
                     </div>
                     <div class="tab-pane" id="shipping" role="tabpanel" tabindex="0">
-                        <div th:replace="~{products/fragments/product_shipping_fragment :: shipping}"></div>
+                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
+                            <div th:replace="~{products/fragments/product_shipping_fragment :: shipping}"></div>
+                        </th:block>
+
+                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Salesperson'')')}">
+                            <div th:replace="~{products/fragments/readonly/product_shipping_read_only :: shipping}"></div>
+                        </th:block>
                     </div>
                 </div>
 

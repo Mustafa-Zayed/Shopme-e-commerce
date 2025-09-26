@@ -32,7 +32,14 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/users/**").hasAuthority("Admin")
                                 .requestMatchers("/categories/**", "/brands/**").hasAnyAuthority("Admin", "Editor")
-                                .requestMatchers("/products/**").hasAnyAuthority("Admin", "Editor", "Salesperson", "Shipper")
+
+                                .requestMatchers("/products", "/products/page/**", "/products/details/**")
+                                    .hasAnyAuthority("Admin", "Editor", "Salesperson", "Shipper")
+                                .requestMatchers("/products/edit/**", "/products/save", "/products/check_unique_name")
+                                    .hasAnyAuthority("Admin", "Editor", "Salesperson")
+                                .requestMatchers("/products/*/enabled/*", "/products/new", "/products/delete/**")
+                                    .hasAnyAuthority("Admin", "Editor")
+
                                 .requestMatchers("/customers/**").hasAnyAuthority("Admin", "Salesperson")
                                 .requestMatchers("/shipping/**").hasAnyAuthority("Admin", "Salesperson")
                                 .requestMatchers("/orders/**").hasAnyAuthority("Admin", "Salesperson", "Shipper")

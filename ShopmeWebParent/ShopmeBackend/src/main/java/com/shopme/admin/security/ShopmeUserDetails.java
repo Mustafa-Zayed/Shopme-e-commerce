@@ -58,4 +58,8 @@ public class ShopmeUserDetails implements UserDetails {
     public void setLastName(String lastName) {
         this.user.setLastName(lastName);
     }
+
+    public boolean hasRole(String role) {
+        return user.hasRole(role);
+    }
 }

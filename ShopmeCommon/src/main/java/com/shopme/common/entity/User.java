@@ -63,4 +63,10 @@ public class User {
     public String getFullName() {
         return firstName + " " + lastName;
     }
+
+    public boolean hasRole(String role) {
+        if (roles == null || role.isEmpty())
+            return false;
+        return roles.stream().anyMatch(r -> r.getName().equals(role));
+    }
 }

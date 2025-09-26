@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:fragment="shipping" th:remove="tag">
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Length (inch):</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" th:value="*{length}" disabled/>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Width (inch):</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" th:value="*{width}" disabled/>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Height (inch):</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" th:value="*{height}" disabled/>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Weight (pounds):</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" th:value="*{weight}" disabled/>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

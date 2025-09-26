@@ -3,11 +3,14 @@ const categorySelect = $("#category");
 const prodCat = $("#prodCat");
 
 $(document).ready(function () {
-    // Initial call (for default brand selected when the page loads)
-    getCategories();
+    // Ensure select elements exist, as they may be absent for certain roles (e.g., Salesperson)
+    if (brandSelect.length && categorySelect.length) {
+        // Initial call (for default brand selected when the page loads)
+        getCategories();
 
-    // Update categories on change
-    brandSelect.on("change", getCategories);
+        // Update categories on change
+        brandSelect.on("change", getCategories);
+    }
 
     $("#shortDescription").richText();
     $("#fullDescription").richText();
