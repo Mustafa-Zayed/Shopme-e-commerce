@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: page_head('Shopme')}"></head>
+<head th:replace="~{fragments :: page_head('Error - Shopme')}"></head>
 <body>
+<!--Global Error-->
 <div class="container-fluid">
     <div th:replace="~{fragments :: top_navbar}"></div>
 
-    <h1>Welcome to Shopme e-commerce</h1>
+    <div class="m-3">
+        <h2>Sorry, an unexpected error has occurred</h2>
+    </div>
 
     <div th:replace="~{fragments :: footer_navbar}"></div>
 </div>
