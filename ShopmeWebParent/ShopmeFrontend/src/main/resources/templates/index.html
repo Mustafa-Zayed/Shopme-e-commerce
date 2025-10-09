@@ -5,7 +5,19 @@
 <div class="container-fluid">
     <div th:replace="~{fragments :: top_navbar}"></div>
 
-    <h1>Welcome to Shopme e-commerce</h1>
+    <h1>Shopping by Categories</h1>
+
+    <div class="row">
+        <div class="col" th:each="category : ${categories}">
+            <div>
+                <img th:src="@{${category.imagePath}}" alt="Category image" width="80">
+            </div>
+            <div>
+                <a th:href="@{'/c/' + ${category.alias}}" class="text-decoration-none link-primary">
+                    [[${category.name}]]</a>
+            </div>
+        </div>
+    </div>
 
     <div th:replace="~{fragments :: footer_navbar}"></div>
 </div>

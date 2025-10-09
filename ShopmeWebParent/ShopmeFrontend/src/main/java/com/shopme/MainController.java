@@ -1,12 +1,25 @@
 package com.shopme;
 
-import org.springframework.stereotype.Component;
+import com.shopme.category.service.CategoryService;
+import com.shopme.common.entity.Category;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Component
+import java.util.List;
+
+@Controller
+@RequiredArgsConstructor
 public class MainController {
+
+    private final CategoryService categoryService;
+
     @GetMapping("")
-    public String viewHomePage() {
+    public String viewHomePage(Model model) {
+        List<Category> categories = categoryService.listNoChildrenCategories();
+        model.addAttribute("categories", categories);
+
         return "index";
     }
 }
