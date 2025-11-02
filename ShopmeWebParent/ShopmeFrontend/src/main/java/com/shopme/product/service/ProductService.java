@@ -1,0 +1,22 @@
+package com.shopme.product.service;
+
+import com.shopme.common.entity.Product;
+import com.shopme.product.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+@RequiredArgsConstructor
+@Service
+public class ProductService {
+    private final ProductRepository productRepository;
+    public static final int PRODUCTS_PER_PAGE = 10;
+
+    public Page<Product> findAllProductsByCategory(Integer prodCatId, int pageNumber) {
+        // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
+        Pageable pageable = PageRequest.of(pageNumber - 1, PRODUCTS_PER_PAGE);
+        return productRepository.findAll(prodCatId, pageable);
+    }
+}

@@ -51,6 +51,76 @@
     </nav>
 </div>
 
+<div th:fragment="pagination(path)"
+     th:with="entityName = ${entityName ?: path},
+     additionalSentence = ${additionalSentence ?: ''},
+     productForm = ${productForm ?: false}" th:remove="tag">
+
+    <div class="text-center m-1" th:if="${additionalSentence != ''}">
+        <span>
+            [[${additionalSentence}]]
+        </span>
+    </div>
+    <div class="text-center m-1" th:if="${totalItems > 0}">
+        <span>
+            Showing [[${entityName}]] # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]
+        </span>
+    </div>
+    <div class="text-center m-1" th:unless="${totalItems > 0}">
+        <span>No [[${entityName}]] found</span>
+    </div>
+
+    <div th:if="${totalPages > 1}"> <!-- hide pagination if it's only one page -->
+        <nav>
+            <ul class="pagination justify-content-center flex-wrap">
+                <li th:class="${currentPage > 1 ? 'page-item':'page-item disabled'}">
+                    <!-- We can do without defining productForm by checking if prodCatId is null directly -->
+                    <!-- ${prodCatId != null ? '&prodCatId=' + prodCatId : ''}} -->
+                    <a class="page-link"
+                       th:href="@{'/' + ${path} + '/page/1'
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
+                    >First</a>
+                </li>
+                <li th:class="${currentPage > 1 ? 'page-item':'page-item disabled'}">
+                    <a class="page-link"
+                       th:href="@{'/' + ${path} + '/page/' +  ${currentPage - 1}
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
+                    >Previous</a>
+                </li>
+
+                <li th:class="${currentPage != i ? 'page-item':'page-item active'}"
+                    th:each="i : ${#numbers.sequence(1, totalPages)}">
+
+                    <a class="page-link"
+                       th:href="@{'/' + ${path} + '/page/' + ${i}
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
+                       th:if="${currentPage != i}"
+                    >[[${i}]]</a>
+                    <span class="page-link" th:unless="${currentPage != i}">[[${i}]]</span>
+                </li>
+
+                <li th:class="${currentPage < totalPages ? 'page-item':'page-item disabled'}">
+                    <a class="page-link"
+                       th:href="@{'/' + ${path} + '/page/' + ${currentPage + 1}
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
+                    >Next</a>
+                </li>
+                <li th:class="${currentPage < totalPages ? 'page-item':'page-item disabled'}">
+                    <a class="page-link"
+                       th:href="@{'/' + ${path} + '/page/' + ${totalPages}
+                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
+                    >Last</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
 <div th:fragment="footer_navbar" class="footer_navbar">
     <div>
         <nav class="navbar navbar-expand-lg bg-dark navbar-dark">

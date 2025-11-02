@@ -138,4 +138,13 @@ public class Product {
             return name.substring(0, 70).concat("...");
         return name;
     }
+
+    @Transient
+    public float getDiscountPrice() {
+        if (discountPercent != null && discountPercent > 0) {
+            float discountAmount = (price * discountPercent) / 100;
+            return price - discountAmount;
+        }
+        return price;
+    }
 }

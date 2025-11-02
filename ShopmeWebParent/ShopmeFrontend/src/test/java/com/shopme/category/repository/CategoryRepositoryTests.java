@@ -28,4 +28,11 @@ public class CategoryRepositoryTests {
 
         assertThat(allEnabled).hasSizeGreaterThan(0);
     }
+
+    @Test
+    void CategoryRepository_FindByAliasAndEnabledIsTrue_ReturnCategory() {
+        Category category = categoryRepository.findByAliasAndEnabledIsTrue("electronics");
+        assertThat(category).isNotNull();
+        assertThat(category.isEnabled()).isTrue();
+    }
 }
