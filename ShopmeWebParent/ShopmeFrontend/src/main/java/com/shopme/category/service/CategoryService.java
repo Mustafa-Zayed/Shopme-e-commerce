@@ -2,6 +2,7 @@ package com.shopme.category.service;
 
 import com.shopme.category.repository.CategoryRepository;
 import com.shopme.common.entity.Category;
+import com.shopme.common.exception.CategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,11 @@ public class CategoryService {
                 .toList();
     }
 
-    public Category findByAlias(String alias) {
-        return categoryRepository.findByAliasAndEnabledIsTrue(alias);
+    public Category findByAlias(String alias) throws CategoryNotFoundException {
+        Category category = categoryRepository.findByAliasAndEnabledIsTrue(alias);
+        if (category == null)
+            throw new CategoryNotFoundException("Could not find any categories with alias: " + alias);
+        return category;
     }
 
     public List<Category> findAllParents(Category category) {
@@ -41,6 +45,7 @@ public class CategoryService {
     }
 
     public List<Category> findAllDirectChildrenCategories(Category category) {
-        return categoryRepository.findByParentEquals(category);
+        return categoryRepository.findByParentOrderByNameAsc(category);
+        // return category.getChildren().stream().toList(); // also works with adding @OrderBy("name ASC") to children field of Category entity
     }
 }

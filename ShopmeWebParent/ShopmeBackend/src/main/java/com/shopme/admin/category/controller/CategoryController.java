@@ -2,7 +2,7 @@ package com.shopme.admin.category.controller;
 
 import com.shopme.admin.category.export.CategoryCsvExporter;
 import com.shopme.admin.category.pagination.CategoryPageInfo;
-import com.shopme.admin.category.exception.CategoryNotFoundException;
+import com.shopme.common.exception.CategoryNotFoundException;
 import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.common.entity.Category;

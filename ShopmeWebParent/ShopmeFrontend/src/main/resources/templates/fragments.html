@@ -121,6 +121,34 @@
     </div>
 </div>
 
+<div th:fragment="breadcrumb(allCategoryParents)">
+<!--    <div th:if="${allCategoryParents != null && !#lists.isEmpty(allCategoryParents)}">-->
+        <div class="col">
+            <nav>
+                <ol class="breadcrumb bg-secondary-subtle p-3">
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/}" class="text-decoration-none link-primary">Home</a>
+                    </li>
+                    <th:block th:each="parent : ${allCategoryParents}">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{'/c/' + ${parent.alias}}"
+                               class="text-decoration-none link-primary">[[${parent.name}]]</a>
+                        </li>
+                    </th:block>
+
+                    <th:block th:if="${catBreadcrumb}">
+                        <li class="breadcrumb-item active">[[${category.name}]]</li>
+                    </th:block>
+
+                    <th:block th:if="${prodBreadcrumb}">
+                        <li class="breadcrumb-item active">[[${product.shortName}]]</li>
+                    </th:block>
+                </ol>
+            </nav>
+        </div>
+<!--    </div>-->
+</div>
+
 <div th:fragment="footer_navbar" class="footer_navbar">
     <div>
         <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
@@ -130,7 +158,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="footerNavbar">
-                <ul class="navbar-nav m-3">
+                <ul class="navbar-nav mx-3">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/}">About Us</a>
                     </li>
@@ -138,7 +166,7 @@
                         <a class="nav-link" th:href="@{/}">Privacy Notice</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Returns and Refunds</a>
+                        <a class="nav-link" th:href="@{/}">Returns & Refunds</a>
                     </li>
                 </ul>
             </div>

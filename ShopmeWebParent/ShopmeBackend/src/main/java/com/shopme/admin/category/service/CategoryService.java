@@ -1,7 +1,7 @@
 package com.shopme.admin.category.service;
 
 import com.shopme.admin.category.pagination.CategoryPageInfo;
-import com.shopme.admin.category.exception.CategoryNotFoundException;
+import com.shopme.common.exception.CategoryNotFoundException;
 import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.repository.CategoryRepository;
 import com.shopme.admin.utils.FileUploadUtil;

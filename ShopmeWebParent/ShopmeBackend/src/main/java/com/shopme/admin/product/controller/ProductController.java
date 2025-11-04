@@ -2,11 +2,10 @@ package com.shopme.admin.product.controller;
 
 import com.shopme.admin.brand.service.BrandService;
 import com.shopme.admin.category.service.CategoryService;
-import com.shopme.admin.product.exception.ProductNotFoundException;
+import com.shopme.common.exception.ProductNotFoundException;
 import com.shopme.admin.product.export.ProductCsvExporter;
 import com.shopme.admin.product.service.ProductService;
 import com.shopme.admin.security.ShopmeUserDetails;
-import com.shopme.admin.user.export.UserCsvExporter;
 import com.shopme.common.entity.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static com.shopme.admin.product.service.ProductService.PRODUCTS_PER_PAGE;

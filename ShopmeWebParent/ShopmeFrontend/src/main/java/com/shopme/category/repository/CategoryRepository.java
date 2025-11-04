@@ -13,5 +13,5 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
 
     Category findByAliasAndEnabledIsTrue(String alias);
 
-    List<Category> findByParentEquals(Category parent);
+    List<Category> findByParentOrderByNameAsc(Category parent);
 }

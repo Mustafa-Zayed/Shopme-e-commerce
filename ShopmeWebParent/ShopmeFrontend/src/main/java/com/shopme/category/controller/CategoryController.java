@@ -3,6 +3,7 @@ package com.shopme.category.controller;
 import com.shopme.category.service.CategoryService;
 import com.shopme.common.entity.Category;
 import com.shopme.common.entity.Product;
+import com.shopme.common.exception.CategoryNotFoundException;
 import com.shopme.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,16 +32,18 @@ public class CategoryController {
     public String viewCategory(@PathVariable("categoryAlias") String categoryAlias,
                                @PathVariable(name = "pageNumber") int pageNumber,
                                Model model) {
-        Category category = categoryService.findByAlias(categoryAlias);
-        if (category == null)
+        try {
+            Category category = categoryService.findByAlias(categoryAlias);
+
+            List<Category> allCategoryParents = categoryService.findAllParents(category); // for breadcrumb navigation
+            List<Category> directChildrenCategories = categoryService.findAllDirectChildrenCategories(category); // for displaying subcategories
+
+            addToModel(categoryAlias, category, allCategoryParents, directChildrenCategories, pageNumber, model);
+
+            return "categories/products_by_category";
+        } catch (CategoryNotFoundException e) {
             return "error/404";
-
-        List<Category> allCategoryParents = categoryService.findAllParents(category); // for breadcrumb navigation
-        List<Category> directChildrenCategories = categoryService.findAllDirectChildrenCategories(category); // for displaying subcategories
-
-        addToModel(categoryAlias, category, allCategoryParents, directChildrenCategories, pageNumber, model);
-
-        return "categories/products_by_category";
+        }
     }
 
     private void addToModel(String categoryAlias, Category category, List<Category> allCategoryParents,

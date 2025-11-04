@@ -39,6 +39,7 @@ public class Category {
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
+    // @OrderBy("name ASC")
     @ToString.Exclude
     private Set<Category> children;
 
