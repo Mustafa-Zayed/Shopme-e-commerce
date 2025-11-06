@@ -10,7 +10,20 @@
 
     <div class="row m-3">
         <div class="col-sm">
-            <img th:src="@{${product.mainImagePath}}" class="img-fluid" alt="Product image">
+            <div>
+                <img th:src="@{${product.mainImagePath}}" id="bigImage" class="img-fluid" index="0" alt="Product image">
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-auto m-2 p-1 border border-secondary">
+                    <img th:src="@{${product.mainImagePath}}" class="imgThumbnail" index="0" height="50" alt="Product image">
+                </div>
+                <th:block th:each="image, status : ${product.extraImages}">
+                    <div class="col-auto m-2 p-1 border border-secondary">
+                        <img th:src="@{${image.imagePath}}" class="imgThumbnail" th:index="${status.count}"
+                             height="50" alt="Product image">
+                    </div>
+                </th:block>
+            </div>
         </div>
         <div class="col-sm">
             <h2>[[${product.name}]]</h2>
@@ -64,7 +77,43 @@
             </div>
         </div>
     </div>
+
+    <div th:replace="~{fragments :: modal_carousel}"></div>
+
     <div th:replace="~{fragments :: footer_navbar}"></div>
 </div>
+<script>
+    let bigImage = $('#bigImage');
+
+    $(document).ready(function() {
+        $('.imgThumbnail').mouseover(function() {
+            let currentImageSrc = $(this).attr('src');
+            let currentIndex = $(this).attr('index');
+            bigImage.attr('src', currentImageSrc);
+            bigImage.attr('index', currentIndex);
+        });
+
+        $('#bigImage').mouseover(function() {
+            $(this).css('cursor', 'pointer');
+        });
+
+        $('#bigImage').click(function() {
+            const modalElement = $("#modalDialog");
+            const modalInstance = new bootstrap.Modal(modalElement); // Create a Bootstrap modal instance
+            modalInstance.show();
+
+            // Set the current image in the modal carousel
+            let currentIndex = parseInt(bigImage.attr('index'));
+            $("#carouselExampleIndicators").carousel(currentIndex);
+        });
+
+        // Handle modal carousel navigation
+        $("#carouselExampleIndicators").on("slide.bs.carousel", function (event) {
+            let currentIndex = $(event.relatedTarget).index();
+            bigImage.attr('src', $(event.relatedTarget).find("img").attr('src'));
+            bigImage.attr('index', currentIndex);
+        });
+    });
+</script>
 </body>
 </html>
