@@ -25,25 +25,7 @@
 
         <div class="row">
             <div class="col" th:each="product : ${listProducts}">
-                <a th:href="@{'/p/' + ${product.alias}}"
-                   class="text-decoration-none link-primary"
-                   th:title="${product.name}">
-                    <img th:src="@{${product.mainImagePath}}" alt="Product image" width="150">
-                    <br>
-                    <b>[[${product.shortName}]]</b>
-                </a>
-
-                <div th:if="${product.discountPercent == 0}">
-                    <span th:text="'$' + ${product.price}"></span>
-                </div>
-
-                <div th:if="${product.discountPercent > 0}">
-                    <span th:text="'$' + ${product.discountPrice}"
-                          class="fw-bold text-danger"></span>
-                    &nbsp;
-                    <span th:text="'$' + ${product.price}"
-                          class="text-decoration-line-through"></span>
-                </div>
+                <div th:replace="~{fragments :: product_info}"></div>
             </div>
         </div>
 

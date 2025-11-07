@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<body>
+<div class="container-fluid">
+    <div th:replace="~{fragments :: top_navbar}"></div>
+
+    <form class="row g-3 my-2 align-items-center" th:action="@{/search}" method="get">
+        <div class="col-auto">
+            <input type="search" name="keyword" th:value="${keyword}"
+                   class="form-control" placeholder="keyword" required>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-success">Search</button>
+        </div>
+    </form>
+
+    <th:block th:if="${totalItems > 0}">
+        <div>
+            <h2>Search Results for '[[${keyword}]]'</h2>
+            <br/>
+        </div>
+
+        <div>
+            <div class="row">
+                <div class="col" th:each="product : ${listResult}">
+                    <div th:replace="~{fragments :: product_info}"></div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <div th:unless="${totalItems > 0}">
+        <h3>No match found for keyword '[[${keyword}]]'</h3>
+    </div>
+
+    <div th:replace="~{fragments :: pagination(path = 'search', entityName = 'products')}"></div>
+
+    <div th:replace="~{fragments :: footer_navbar}"></div>
+
+</div>
+</body>
+</html>
