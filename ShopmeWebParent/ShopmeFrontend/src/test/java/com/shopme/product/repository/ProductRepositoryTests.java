@@ -1,6 +1,6 @@
 package com.shopme.product.repository;
 
-import com.shopme.common.entity.Product;
+import com.shopme.common.entity.product.Product;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

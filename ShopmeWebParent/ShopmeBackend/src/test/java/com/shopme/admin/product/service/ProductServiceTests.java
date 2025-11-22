@@ -1,9 +1,7 @@
 package com.shopme.admin.product.service;
 
 import com.shopme.admin.product.repository.ProductRepository;
-import com.shopme.admin.product.service.ProductService;
-import com.shopme.admin.product.repository.ProductRepository;
-import com.shopme.common.entity.Product;
+import com.shopme.common.entity.product.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

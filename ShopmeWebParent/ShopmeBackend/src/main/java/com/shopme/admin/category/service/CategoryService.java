@@ -4,7 +4,7 @@ import com.shopme.admin.category.pagination.CategoryPageInfo;
 import com.shopme.common.exception.CategoryNotFoundException;
 import com.shopme.admin.category.exception.HasChildrenException;
 import com.shopme.admin.category.repository.CategoryRepository;
-import com.shopme.admin.utils.FileUploadUtil;
+import com.shopme.admin.utility.FileUploadUtil;
 import com.shopme.common.entity.Category;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

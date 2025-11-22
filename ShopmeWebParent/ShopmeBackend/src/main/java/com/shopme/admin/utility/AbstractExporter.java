@@ -1,4 +1,4 @@
-package com.shopme.admin.utils;
+package com.shopme.admin.utility;
 
 import jakarta.servlet.http.HttpServletResponse;
 

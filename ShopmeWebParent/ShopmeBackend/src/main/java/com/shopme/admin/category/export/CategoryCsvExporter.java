@@ -1,8 +1,7 @@
 package com.shopme.admin.category.export;
 
-import com.shopme.admin.utils.AbstractExporter;
+import com.shopme.admin.utility.AbstractExporter;
 import com.shopme.common.entity.Category;
-import com.shopme.common.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;

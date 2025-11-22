@@ -1,6 +1,6 @@
 package com.shopme.admin.setting.repository;
 
-import com.shopme.common.entity.Currency;
+import com.shopme.common.entity.setting.Currency;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -43,6 +43,14 @@ public class CurrencyRepositoryTests {
     @Test
     public void CurrencyRepository_FindAll_ReturnAllCurrencies() {
         Iterable<Currency> currencies = currencyRepository.findAll();
+        currencies.forEach(System.out::println);
+        assertThat(currencies).isNotNull();
+        assertThat(currencies).size().isGreaterThan(0);
+    }
+
+    @Test
+    public void CurrencyRepository_FindAllOrderByName_ReturnAllCurrencies() {
+        List<Currency> currencies = currencyRepository.findAllByOrderByNameAsc();
         currencies.forEach(System.out::println);
         assertThat(currencies).isNotNull();
         assertThat(currencies).size().isGreaterThan(0);

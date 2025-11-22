@@ -1,4 +1,4 @@
-package com.shopme.common.entity;
+package com.shopme.common.entity.setting;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,7 +6,6 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -29,5 +28,10 @@ public class Currency {
         this.name = name;
         this.symbol = symbol;
         this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return name + " - " + code + " - " + symbol;
     }
 }

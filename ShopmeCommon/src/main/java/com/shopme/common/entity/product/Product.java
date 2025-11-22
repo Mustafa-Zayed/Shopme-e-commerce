@@ -1,5 +1,7 @@
-package com.shopme.common.entity;
+package com.shopme.common.entity.product;
 
+import com.shopme.common.entity.Brand;
+import com.shopme.common.entity.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -63,10 +65,10 @@ public class Product {
     private Brand brand;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ProductImage> extraImages = new HashSet<>(); // initialization is required here to avoid: A collection with cascade="all-delete-orphan" was no longer referenced by the owning entity instance: com.shopme.common.entity.Product.extraImages
+    private Set<ProductImage> extraImages = new HashSet<>(); // initialization is required here to avoid: A collection with cascade="all-delete-orphan" was no longer referenced by the owning entity instance: com.shopme.common.entity.product.Product.extraImages
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductDetail> productDetails = new ArrayList<>(); // initialization is required here to avoid: A collection with cascade="all-delete-orphan" was no longer referenced by the owning entity instance: com.shopme.common.entity.Product.productDetails
+    private List<ProductDetail> productDetails = new ArrayList<>(); // initialization is required here to avoid: A collection with cascade="all-delete-orphan" was no longer referenced by the owning entity instance: com.shopme.common.entity.product.Product.productDetails
 
     // convenient method to add an extra image
     public void addExtraImage(String imageName) {

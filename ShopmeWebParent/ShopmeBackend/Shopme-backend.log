@@ -98,7 +98,7 @@
 2025-04-10T07:03:35.181+02:00  INFO 9576 --- [ShopmeBackend] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
 2025-04-10T07:03:35.183+02:00  INFO 9576 --- [ShopmeBackend] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
 2025-04-10T07:03:35.449+02:00  WARN 9576 --- [ShopmeBackend] [http-nio-8080-exec-2] o.a.c.util.SessionIdGeneratorBase        : Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [220] milliseconds.
-2025-04-10T07:04:47.355+02:00  INFO 9576 --- [ShopmeBackend] [http-nio-8080-exec-7] com.shopme.admin.utils.FileUploadUtil    : Deleted 5 files
+2025-04-10T07:04:47.355+02:00  INFO 9576 --- [ShopmeBackend] [http-nio-8080-exec-7] com.shopme.admin.utility.FileUploadUtil    : Deleted 5 files
 2025-04-10T07:05:54.824+02:00  INFO 9576 --- [ShopmeBackend] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 2 deletions, 0 modifications)
 2025-04-10T07:05:56.224+02:00  INFO 9576 --- [ShopmeBackend] [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-04-10T07:05:58.465+02:00  INFO 9576 --- [ShopmeBackend] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
@@ -193,7 +193,7 @@
 2025-04-10T07:06:45.829+02:00  INFO 9576 --- [ShopmeBackend] [http-nio-8080-exec-2] o.a.c.c.C.[.[localhost].[/ShopmeAdmin]   : Initializing Spring DispatcherServlet 'dispatcherServlet'
 2025-04-10T07:06:45.829+02:00  INFO 9576 --- [ShopmeBackend] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
 2025-04-10T07:06:45.831+02:00  INFO 9576 --- [ShopmeBackend] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
-2025-04-10T07:06:55.890+02:00  INFO 9576 --- [ShopmeBackend] [http-nio-8080-exec-9] com.shopme.admin.utils.FileUploadUtil    : Deleted 5 files
+2025-04-10T07:06:55.890+02:00  INFO 9576 --- [ShopmeBackend] [http-nio-8080-exec-9] com.shopme.admin.utility.FileUploadUtil    : Deleted 5 files
 2025-04-10T07:15:15.747+02:00  INFO 9576 --- [ShopmeBackend] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-04-10T07:15:15.776+02:00  INFO 9576 --- [ShopmeBackend] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
 2025-04-10T07:15:15.844+02:00  INFO 9576 --- [ShopmeBackend] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.

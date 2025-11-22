@@ -1,6 +1,6 @@
 package com.shopme.admin.setting.repository;
 
-import com.shopme.common.entity.Setting;
+import com.shopme.common.entity.setting.Setting;
 import com.shopme.common.entity.SettingCategory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class SettingRepositoryTests {
     @Test
     public void SettingRepository_SaveAll_ReturnSavedGeneralSettings() {
         Setting siteLogo = new Setting("SITE_LOGO", "Shopme.png", SettingCategory.GENERAL);
-        Setting copyright = new Setting("COPYRIGHT", "Copyright (c) 2025 Shopme Ltd.", SettingCategory.GENERAL);
+        Setting copyright = new Setting("COPYRIGHT", "Copyright © 2025 Shopme Ltd.", SettingCategory.GENERAL);
         Iterable<Setting> settings = settingRepository.saveAll(List.of(siteLogo, copyright));
         assertThat(settings).isNotNull();
     }
@@ -59,4 +59,10 @@ public class SettingRepositoryTests {
         assertThat(settings).isNotNull();
     }
 
+    @Test
+    public void SettingRepository_FindByCategory_ReturnAllSettingsByCategory() {
+        List<Setting> settings = settingRepository.findByCategory(SettingCategory.GENERAL);
+        settings.forEach(System.out::println);
+        assertThat(settings).isNotNull();
+    }
 }

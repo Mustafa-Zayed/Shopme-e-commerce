@@ -1,6 +1,6 @@
 package com.shopme.admin.brand.export;
 
-import com.shopme.admin.utils.AbstractExporter;
+import com.shopme.admin.utility.AbstractExporter;
 import com.shopme.common.entity.Brand;
 import jakarta.servlet.http.HttpServletResponse;
 import org.supercsv.io.CsvBeanWriter;

@@ -1,4 +1,4 @@
-package com.shopme.admin.utils;
+package com.shopme.admin.utility;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

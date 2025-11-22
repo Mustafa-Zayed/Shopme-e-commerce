@@ -2,6 +2,9 @@ package com.shopme.admin.product.controller;
 
 import com.shopme.admin.brand.service.BrandService;
 import com.shopme.admin.category.service.CategoryService;
+import com.shopme.common.entity.product.Product;
+import com.shopme.common.entity.product.ProductDetail;
+import com.shopme.common.entity.product.ProductImage;
 import com.shopme.common.exception.ProductNotFoundException;
 import com.shopme.admin.product.export.ProductCsvExporter;
 import com.shopme.admin.product.service.ProductService;

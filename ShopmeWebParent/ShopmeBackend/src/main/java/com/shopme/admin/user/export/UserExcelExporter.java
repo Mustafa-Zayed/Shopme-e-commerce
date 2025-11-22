@@ -1,6 +1,6 @@
 package com.shopme.admin.user.export;
 
-import com.shopme.admin.utils.AbstractExporter;
+import com.shopme.admin.utility.AbstractExporter;
 import com.shopme.common.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Cell;

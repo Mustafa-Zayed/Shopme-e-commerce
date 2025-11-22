@@ -1,4 +1,4 @@
-package com.shopme.common.entity;
+package com.shopme.common.entity.product;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,8 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product_details")
-public class ProductDetail {
+@Table(name = "product_images")
+public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,10 +19,12 @@ public class ProductDetail {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String value;
-
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @Transient
+    public String getImagePath() {
+        return "/product-images/" + product.getId() + "/extras/" + name;
+    }
 }

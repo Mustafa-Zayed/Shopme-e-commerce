@@ -2,8 +2,8 @@ package com.shopme.admin.product.service;
 
 import com.shopme.common.exception.ProductNotFoundException;
 import com.shopme.admin.product.repository.ProductRepository;
-import com.shopme.admin.utils.FileUploadUtil;
-import com.shopme.common.entity.Product;
+import com.shopme.admin.utility.FileUploadUtil;
+import com.shopme.common.entity.product.Product;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -2,7 +2,7 @@ package com.shopme.admin.brand.service;
 
 import com.shopme.admin.brand.exception.BrandNotFoundException;
 import com.shopme.admin.brand.repository.BrandRepository;
-import com.shopme.admin.utils.FileUploadUtil;
+import com.shopme.admin.utility.FileUploadUtil;
 import com.shopme.common.entity.Brand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
