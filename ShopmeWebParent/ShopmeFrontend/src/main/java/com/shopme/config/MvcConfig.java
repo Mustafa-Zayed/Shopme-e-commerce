@@ -23,6 +23,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registerResourceHandler(registry, "category-photos", "../category-photos");
         registerResourceHandler(registry, "brand-logos", "../brand-logos");
         registerResourceHandler(registry, "product-images", "../product-images");
+        registerResourceHandler(registry, "site-logo", "../site-logo");
     }
 
     private void registerResourceHandler(ResourceHandlerRegistry registry, String dirName,

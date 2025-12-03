@@ -5,7 +5,7 @@
     <meta charset="UTF-8" content="text/html" http-equiv="Content-Type">
     <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0" name="viewport">
 
-    <title>[[${title}]]</title>
+    <title>[[${title}]] - [[${SITE_NAME}]]</title>
 
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" type="text/css"/>
 
@@ -17,7 +17,7 @@
     <nav th:fragment="top_navbar" class="navbar navbar-expand-lg bg-dark navbar-dark top_navbar">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">
-                <img th:src="@{/images/ShopmeAdminSmall.png}"/>
+                <img th:src="@{${SITE_LOGO}}"/>
             </a>
             <button aria-controls="topNavbar" aria-expanded="false" aria-label="Toggle navigation"
                     class="navbar-toggler"
@@ -188,30 +188,6 @@
     </div>
 </div>
 
-<div th:fragment="product_info">
-    <div>
-        <a th:href="@{'/p/' + ${product.alias}}"
-           class="text-decoration-none link-primary"
-           th:title="${product.name}">
-            <img th:src="@{${product.mainImagePath}}" alt="Product image" width="150">
-            <br>
-            <b>[[${product.shortName}]]</b>
-        </a>
-    </div>
-
-    <div th:if="${product.discountPercent == 0}">
-        <span th:text="'$' + ${product.price}"></span>
-    </div>
-
-    <div th:if="${product.discountPercent > 0}">
-                        <span th:text="'$' + ${product.discountPrice}"
-                              class="fw-bold text-danger"></span>
-        &nbsp;
-        <span th:text="'$' + ${product.price}"
-              class="text-decoration-line-through"></span>
-    </div>
-</div>
-
 <div th:fragment="footer_navbar" class="footer_navbar">
     <div>
         <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
@@ -236,12 +212,12 @@
         </nav>
     </div>
     <div class="text-center m-3">
-        <p>Shopme - Copyright &copy; Shopme Ltd.</p>
+        <p>[[${COPYRIGHT}]]</p>
     </div>
 </div>
 
 <div th:fragment="footer" class="text-center m-3">
-    <p>Shopme - Copyright &copy; Shopme Ltd.</p>
+    <p>[[${COPYRIGHT}]]</p>
 </div>
 </body>
 </html>

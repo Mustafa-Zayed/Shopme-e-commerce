@@ -32,15 +32,13 @@
                 <span th:text="|Brand: ${product.brand.name}|"></span>
             </div>
             <div th:if="${product.discountPercent == 0}">
-                <span th:text="'List Price: $' + ${product.price}"></span>
+                List Price: <span th:replace="~{products/fragments/product_price_fragment :: product_price(${product.price})}"></span>
             </div>
             <div th:if="${product.discountPercent > 0}">
-                List Price: <span th:text="'$' + ${product.price}"
-                      class="text-decoration-line-through"></span>
+                List Price: <div th:replace="~{products/fragments/product_price_fragment :: product_price(price=${product.price}, cssClass='text-decoration-line-through')}"></div>
                 <br>
-                Price: <span th:text="'$' + ${product.discountPrice}"
-                      class="fw-bold text-danger"></span>
-                <span th:text="'(' + ${product.discountPercent} + '% off)'"></span>
+                Price: <span th:replace="~{products/fragments/product_price_fragment :: product_price(price=${product.discountPrice}, cssClass='fw-bold text-danger')}"></span>
+                <span th:text="'(' + ${#numbers.formatDecimal(product.discountPercent, 1, THOUSANDS_POINT_TYPE, DECIMAL_DIGITS, DECIMAL_POINT_TYPE)} + '% off)'"></span>
             </div>
 
             <div>&nbsp;</div>
@@ -50,8 +48,12 @@
         <div class="col-sm-2">
             <span th:class="'fw-bold ' + ${product.inStock ? 'text-success' : 'text-danger'}"
                   th:text="${product.inStock ? 'In Stock' : 'Out of Stock'}"></span>
-            <div class="mt-2">
-                <input type="number" size="5" value="1" min="1" max="10"/>
+            <div class="input-group mt-2" style="width: 140px;">
+                <button class="btn btn-outline-primary" type="button" id="btn-minus">−</button>
+
+                <input type="number" class="form-control text-center" value="1" min="1" max="10" id="quantity">
+
+                <button class="btn btn-outline-primary" type="button" id="btn-plus">+</button>
             </div>
             <div class="mt-2">
                 <button class="btn btn-primary">Add to Cart</button>
@@ -112,6 +114,26 @@
             let currentIndex = $(event.relatedTarget).index();
             bigImage.attr('src', $(event.relatedTarget).find("img").attr('src'));
             bigImage.attr('index', currentIndex);
+        });
+
+        $("#btn-plus").click(function () {
+            let input = $("#quantity");
+            let current = parseInt(input.val());
+            let max = parseInt(input.attr("max"));
+
+            if (current < max) {
+                input.val(current + 1);
+            }
+        });
+
+        $("#btn-minus").click(function () {
+            let input = $("#quantity");
+            let current = parseInt(input.val());
+            let min = parseInt(input.attr("min"));
+
+            if (current > min) {
+                input.val(current - 1);
+            }
         });
     });
 </script>

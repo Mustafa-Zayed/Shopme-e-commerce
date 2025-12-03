@@ -1,0 +1,21 @@
+<div th:fragment="product_info">
+    <div>
+        <a th:href="@{'/p/' + ${product.alias}}"
+           class="text-decoration-none link-primary"
+           th:title="${product.name}">
+            <img th:src="@{${product.mainImagePath}}" alt="Product image" width="150">
+            <br>
+            <b>[[${product.shortName}]]</b>
+        </a>
+    </div>
+
+    <div th:if="${product.discountPercent == 0}">
+        <div th:replace="~{products/fragments/product_price_fragment :: product_price(${product.price})}"></div>
+    </div>
+
+    <div th:if="${product.discountPercent > 0}">
+        <div th:replace="~{products/fragments/product_price_fragment :: product_price(price=${product.discountPrice}, cssClass='fw-bold text-danger')}"></div>
+        &nbsp;
+        <div th:replace="~{products/fragments/product_price_fragment :: product_price(price=${product.price}, cssClass='text-decoration-line-through')}"></div>
+    </div>
+</div>

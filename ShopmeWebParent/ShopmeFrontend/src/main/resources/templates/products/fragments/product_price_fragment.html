@@ -1,0 +1,6 @@
+<div th:fragment="product_price(price)" th:with="cssClass = ${cssClass ?: ''}" th:remove="tag">
+    <span th:if="${CURRENCY_SYMBOL_POSITION == 'before'}"
+          th:text="${CURRENCY_SYMBOL} + ${#numbers.formatDecimal(price, 1, THOUSANDS_POINT_TYPE, DECIMAL_DIGITS, DECIMAL_POINT_TYPE)}" th:classappend="${cssClass}"></span>
+    <span th:if="${CURRENCY_SYMBOL_POSITION == 'after'}"
+          th:text="${#numbers.formatDecimal(price, 1, THOUSANDS_POINT_TYPE, DECIMAL_DIGITS, DECIMAL_POINT_TYPE)} + ${CURRENCY_SYMBOL}" th:classappend="${cssClass}"></span>
+</div>

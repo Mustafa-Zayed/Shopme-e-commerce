@@ -24,7 +24,7 @@
         <div>
             <div class="row">
                 <div class="col" th:each="product : ${listResult}">
-                    <div th:replace="~{fragments :: product_info}"></div>
+                    <div th:replace="~{products/fragments/product_info_fragment :: product_info}"></div>
                 </div>
             </div>
         </div>
