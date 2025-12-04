@@ -1,7 +1,7 @@
 package com.shopme.setting.repository;
 
-import com.shopme.common.entity.SettingCategory;
-import com.shopme.common.entity.setting.Setting;
+import com.shopme.common.entity.setting.general.SettingCategory;
+import com.shopme.common.entity.setting.general.Setting;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

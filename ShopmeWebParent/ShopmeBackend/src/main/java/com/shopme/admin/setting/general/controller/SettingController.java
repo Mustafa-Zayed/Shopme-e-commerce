@@ -1,11 +1,11 @@
-package com.shopme.admin.setting.controller;
+package com.shopme.admin.setting.general.controller;
 
-import com.shopme.admin.setting.repository.CurrencyRepository;
-import com.shopme.admin.setting.service.SettingService;
+import com.shopme.admin.setting.general.repository.CurrencyRepository;
+import com.shopme.admin.setting.general.service.SettingService;
 import com.shopme.admin.setting.utility.GeneralSettingBag;
 import com.shopme.admin.utility.FileUploadUtil;
-import com.shopme.common.entity.setting.Currency;
-import com.shopme.common.entity.setting.Setting;
+import com.shopme.common.entity.setting.general.Currency;
+import com.shopme.common.entity.setting.general.Setting;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 

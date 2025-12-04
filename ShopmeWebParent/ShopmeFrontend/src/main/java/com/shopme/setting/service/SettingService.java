@@ -2,8 +2,8 @@ package com.shopme.setting.service;
 
 import com.shopme.setting.repository.SettingRepository;
 
-import com.shopme.common.entity.SettingCategory;
-import com.shopme.common.entity.setting.Setting;
+import com.shopme.common.entity.setting.general.SettingCategory;
+import com.shopme.common.entity.setting.general.Setting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

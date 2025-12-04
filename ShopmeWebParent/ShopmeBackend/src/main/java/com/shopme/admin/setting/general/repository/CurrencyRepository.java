@@ -1,6 +1,6 @@
-package com.shopme.admin.setting.repository;
+package com.shopme.admin.setting.general.repository;
 
-import com.shopme.common.entity.setting.Currency;
+import com.shopme.common.entity.setting.general.Currency;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 

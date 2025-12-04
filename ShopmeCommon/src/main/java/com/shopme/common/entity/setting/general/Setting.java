@@ -1,6 +1,5 @@
-package com.shopme.common.entity.setting;
+package com.shopme.common.entity.setting.general;
 
-import com.shopme.common.entity.SettingCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
