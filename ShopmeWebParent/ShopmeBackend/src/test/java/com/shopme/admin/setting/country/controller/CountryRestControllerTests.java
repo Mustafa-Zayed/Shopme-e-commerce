@@ -75,7 +75,7 @@ public class CountryRestControllerTests {
                 .build();
 
         MvcResult result = mockMvc.perform(
-                    post("/countries/save")
+                    post("/settings/countries/save")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(country))
                     .with(csrf())) // CSRF token is required for any HTTP methods/requests that modify state (POST, PUT, DELETE, PATCH).
@@ -104,7 +104,7 @@ public class CountryRestControllerTests {
                 .build();
 
         MvcResult result = mockMvc.perform(
-                    post("/countries/save")
+                    post("/settings/countries/save")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(country))
                     .with(csrf()))
@@ -128,7 +128,7 @@ public class CountryRestControllerTests {
         int id = 3;
 
         mockMvc.perform(
-                    delete("/countries/delete/" + id)
+                    delete("/settings/countries/delete/" + id)
                     .with(csrf())
                 )
                 .andExpect(status().isOk())

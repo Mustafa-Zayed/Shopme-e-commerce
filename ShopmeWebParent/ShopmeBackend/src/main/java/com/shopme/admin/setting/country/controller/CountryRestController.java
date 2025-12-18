@@ -12,18 +12,18 @@ import java.util.List;
 public class CountryRestController {
     private final CountryService countryService;
 
-    @GetMapping("/countries")
+    @GetMapping("/settings/countries")
     public List<Country> listAllCountries() {
         return countryService.findAll();
     }
 
-    @PostMapping("/countries/save")
+    @PostMapping("/settings/countries/save")
     public Country saveCountry(@RequestBody Country country) {
         return countryService.save(country);
     }
 
 
-    @DeleteMapping("/countries/delete/{id}")
+    @DeleteMapping("/settings/countries/delete/{id}")
     public void deleteCountry(@PathVariable("id") Integer id) {
         countryService.delete(id);
     }

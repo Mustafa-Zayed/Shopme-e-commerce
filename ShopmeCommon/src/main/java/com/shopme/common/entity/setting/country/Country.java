@@ -25,7 +25,7 @@ public class Country {
     @Column(length = 5, nullable = false, unique = true)
     private String code;
 
-    @OneToMany(mappedBy = "country")
-    @ToString.Exclude
-    private Set<State> states;
+//    @OneToMany(mappedBy = "country")
+//    @ToString.Exclude
+//    private Set<State> states;
 }
