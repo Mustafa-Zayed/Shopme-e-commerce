@@ -1,9 +1,11 @@
-package com.shopme.admin.setting.country.controller;
+package com.shopme.admin.setting.state.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shopme.admin.setting.country.repository.CountryRepository;
+import com.shopme.admin.setting.state.dto.StateDTO;
+import com.shopme.admin.setting.state.repository.StateRepository;
 import com.shopme.common.entity.setting.country.Country;
+import com.shopme.common.entity.setting.state.State;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,7 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * {@link WebMvcTest} does not load: DataSource, MySQL connection nor Repositories.
@@ -32,9 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * If you want database access in tests, you must use:  @SpringBootTest + @AutoConfigureMockMvc
  */
 @SpringBootTest
-//@WebMvcTest(controllers = CountryRestController.class)
+//@WebMvcTest(controllers = StateRestController.class)
 @AutoConfigureMockMvc()
-public class CountryRestControllerTests {
+public class StateRestControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,41 +46,43 @@ public class CountryRestControllerTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private CountryRepository countryRepository;
+    private StateRepository stateRepository;
 
     @Test
-    @WithMockUser(username = "anyUser", password = "something", authorities  = "Admin")
-    public void CountryRestController_ListAllCountries_ReturnAllCountries() throws Exception {
-
-        MvcResult result = mockMvc.perform(get("/settings/countries"))
+    @WithMockUser(username = "anyUser", password = "something", authorities = "Admin")
+    public void StateRestController_ListAllStatesByCountry_ReturnAllStates() throws Exception {
+        int countryId = 66;
+        MvcResult result = mockMvc.perform(get("/settings/states/country/" + countryId)
+                        // .queryParam("countryId", "66")
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                // .andDo(print())
+                .andDo(print())
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        // Country[] countries = objectMapper.readValue(jsonResponse, Country[].class);
-        List<Country> countries = objectMapper.readValue(jsonResponse, new TypeReference<>() {
-        });
+//        StateDTO[] states = objectMapper.readValue(jsonResponse, StateDTO[].class);
+        List<StateDTO> states = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
 
-        // Arrays.stream(countries).forEach(System.out::println);
-        System.out.println(countries);
+//         Arrays.stream(states).forEach(System.out::println);
+        states.forEach(System.out::println);
 
-        assertThat(countries).hasSizeGreaterThan(0);
+        assertThat(states).hasSizeGreaterThan(0);
     }
 
     @Test
-    @WithMockUser(username = "anyUser", password = "something", authorities  = "Admin") // simulate a user logged in.
-    public void CountryRestController_SaveCountry_ReturnSavedCountry() throws Exception {
-        Country country = Country.builder()
-                .name("Spain")
-                .code("SP")
+    @WithMockUser(username = "anyUser", password = "something", authorities = "Admin") // simulate a user logged in.
+    public void StateRestController_SaveState_ReturnSavedState() throws Exception {
+        Integer countryID = 66; // Egypt
+        State state = State.builder()
+                .name("Cairo")
+                .country(Country.builder().id(countryID).build())
                 .build();
 
         MvcResult result = mockMvc.perform(
-                    post("/settings/countries/save")
+                    post("/settings/states/save")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(country))
+                    .content(objectMapper.writeValueAsString(state))
                     .with(csrf())) // CSRF token is required for any HTTP methods/requests that modify state (POST, PUT, DELETE, PATCH).
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -85,28 +90,24 @@ public class CountryRestControllerTests {
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        Country savedCountry = objectMapper.readValue(jsonResponse, Country.class);
+        StateDTO savedState = objectMapper.readValue(jsonResponse, StateDTO.class);
 
-        System.out.println(savedCountry);
+        System.out.println(savedState);
 
-        assertEquals(country.getName(), savedCountry.getName());
-        assertEquals(country.getCode(), savedCountry.getCode());
+        assertEquals(state.getName(), savedState.getName());
     }
 
     @Test
-    @WithMockUser(username = "anyUser", password = "something", authorities  = "Admin")
-    public void CountryRestController_UpdateCountry_ReturnUpdatedCountry() throws Exception {
-        Integer id = 5;
-        Country country = Country.builder()
-                .id(id)
-                .name("Germany")
-                .code("DE")
-                .build();
+    @WithMockUser(username = "anyUser", password = "something", authorities = "Admin")
+    public void StateRestController_UpdateState_ReturnUpdatedState() throws Exception {
+        Integer id = 307;
+        State state = stateRepository.findById(id).get();
+        state.setName("Cairo");
 
         MvcResult result = mockMvc.perform(
-                    post("/settings/countries/save")
+                    post("/settings/states/save")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(country))
+                    .content(objectMapper.writeValueAsString(state))
                     .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -114,27 +115,26 @@ public class CountryRestControllerTests {
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        Country savedCountry = objectMapper.readValue(jsonResponse, Country.class);
+        StateDTO savedState = objectMapper.readValue(jsonResponse, StateDTO.class);
 
-        System.out.println(savedCountry);
+        System.out.println(savedState);
 
-        assertEquals(country.getName(), savedCountry.getName());
-        assertEquals(country.getCode(), savedCountry.getCode());
+        assertEquals(state.getName(), savedState.getName());
     }
 
     @Test
-    @WithMockUser(username = "anyUser", password = "something", authorities  = "Admin")
-    public void CountryRestController_DeleteCountry_ReturnDeletedCountry() throws Exception {
-        int id = 3;
+    @WithMockUser(username = "anyUser", password = "something", authorities = "Admin")
+    public void StateRestController_DeleteState_ReturnDeletedState() throws Exception {
+        int StateId = 3;
 
         mockMvc.perform(
-                    delete("/settings/countries/delete/" + id)
+                    delete("/settings/states/delete/" + StateId)
                     .with(csrf())
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        Optional<Country> byId = countryRepository.findById(id);
+        Optional<State> byId = stateRepository.findById(StateId);
 
         assertFalse(byId.isPresent());
         assertThat(byId).isNotPresent();

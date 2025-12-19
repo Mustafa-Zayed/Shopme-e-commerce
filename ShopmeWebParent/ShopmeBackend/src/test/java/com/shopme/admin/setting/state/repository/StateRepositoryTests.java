@@ -1,5 +1,6 @@
 package com.shopme.admin.setting.state.repository;
 
+import com.shopme.admin.setting.state.dto.StateDTO;
 import com.shopme.common.entity.setting.country.Country;
 import com.shopme.common.entity.setting.state.State;
 import org.junit.jupiter.api.Test;
@@ -65,6 +66,16 @@ public class StateRepositoryTests {
         savedStates.forEach(System.out::println);
 
         assertThat(savedStates).hasSizeGreaterThan(0);
+    }
+
+    @Test
+    public void StateRepository_FindByCountryOrderByNameAsc_ReturnStates() {
+        Integer countryId = 14;
+        Country country = testEntityManager.find(Country.class, countryId);
+        List<StateDTO> states = stateRepository.findByCountryOrderByNameAsc(country);
+        states.forEach(System.out::println);
+
+        assertThat(states).hasSizeGreaterThan(0);
     }
 
     @Test
