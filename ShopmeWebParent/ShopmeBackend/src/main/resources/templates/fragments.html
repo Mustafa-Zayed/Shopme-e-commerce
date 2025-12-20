@@ -123,8 +123,17 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
                     <a class="nav-link" th:href="@{/menus}">Menus</a>
                 </li>
 
-                <li class="nav-item" sec:authorize="hasAuthority('Admin')">
-                    <a class="nav-link" th:href="@{/settings}">Settings</a>
+                <li class="nav-item dropdown" sec:authorize="hasAuthority('Admin')">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
+                       th:href="@{/settings}">Settings</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" th:href="@{/settings#general}">General</a>
+                            <a class="dropdown-item" th:href="@{/settings#countries}">Countries</a>
+                            <a class="dropdown-item" th:href="@{/settings#states}">States</a>
+                            <a class="dropdown-item" th:href="@{/settings#mailserver}">Mail Server</a>
+                            <a class="dropdown-item" th:href="@{/settings#mailtemplates}">Mail Templates</a>
+                            <a class="dropdown-item" th:href="@{/settings#payment}">Payment</a>
+                        </div>
                 </li>
             </ul>
 

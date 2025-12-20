@@ -11,6 +11,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+/**
+ * This filter used to intercept all requests and load general settings into the request attributes before
+ * the request handled by the controller. We can use these settings in the templates.<p>
+ * This avoid the need to load settings in each controller.
+ */
 @RequiredArgsConstructor
 @Component
 public class SettingFilter implements Filter {
