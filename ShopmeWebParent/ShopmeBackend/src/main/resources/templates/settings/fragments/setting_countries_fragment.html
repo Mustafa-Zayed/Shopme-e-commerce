@@ -17,22 +17,23 @@
         <select class="form-select p-2 mb-3" id="dropDownCountryList" size="3" style="height: 300px"></select>
     </div>
 
-    <form id="countryForm" class="row g-3">
-        <div class="col-md-6">
-            <label for="fieldCountryName" class="form-label" id="countryNameLabel">Country Name:</label>
-            <input type="text" class="form-control" id="fieldCountryName" />
-        </div>
-        <div class="col-md-4">
-            <label for="fieldCountryCode" class="form-label">Code:</label>
-            <input type="text" class="form-control" id="fieldCountryCode" />
+    <div id="countryForm" class="row align-items-center">
+        <div class="col-md-5 d-flex align-items-center gap-2">
+            <label for="fieldCountryName" class="form-label mb-0 text-nowrap">Country Name:</label>
+            <input type="text" class="form-control" id="fieldCountryName">
         </div>
 
-        <div class="col-md-12 mt-3 d-flex gap-2">
+        <div class="col-md-3 d-flex align-items-center gap-2">
+            <label for="fieldCountryCode" class="form-label mb-0 text-nowrap">Code:</label>
+            <input type="text" class="form-control" id="fieldCountryCode">
+        </div>
+
+        <div class="col-md-4 d-flex gap-2">
             <button type="button" class="btn btn-primary" id="buttonAddCountry">New</button>
             <button type="button" class="btn btn-secondary" id="buttonUpdateCountry" disabled>Update</button>
             <button type="button" class="btn btn-danger" id="buttonDeleteCountry" disabled>Delete</button>
         </div>
-    </form>
+    </div>
 
     <div class="mt-3">
         <div id="message" class="alert alert-info" style="display:none;"></div>

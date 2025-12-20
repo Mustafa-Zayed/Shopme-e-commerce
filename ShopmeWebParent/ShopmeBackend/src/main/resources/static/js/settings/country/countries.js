@@ -1,4 +1,4 @@
-let btnLoad;
+let buttonLoadCountries;
 let dropDownCountryList;
 let buttonAddCountry;
 let buttonUpdateCountry;
@@ -8,7 +8,7 @@ let fieldCountryCode;
 let countryNameLabel;
 
 $(document).ready(function() {
-    btnLoad = $('#buttonLoadCountries')
+    buttonLoadCountries = $('#buttonLoadCountries')
     dropDownCountryList = $('#dropDownCountryList')
     buttonAddCountry = $('#buttonAddCountry')
     buttonUpdateCountry = $('#buttonUpdateCountry')
@@ -17,7 +17,7 @@ $(document).ready(function() {
     fieldCountryCode = $('#fieldCountryCode')
     countryNameLabel = $('#countryNameLabel')
 
-    btnLoad.click(function() {
+    buttonLoadCountries.click(function() {
         loadCountries();
     });
 
@@ -26,13 +26,23 @@ $(document).ready(function() {
     })
 
     buttonAddCountry.click(function() {
-        if (buttonAddCountry.text() === "New")
+        if (buttonAddCountry.text() === "New") {
             changeFormStateToNew();
-        else
+        } else if (fieldCountryName.val().trim() === "") {
+            showMessage('Please enter a country name', "alert alert-danger");
+            fieldCountryName.focus();
+        } else if (fieldCountryCode.val().trim() === "") {
+            showMessage('Please enter a country code', "alert alert-danger");
+            fieldCountryCode.focus();
+        } else
             addCountry();
     });
 
     buttonUpdateCountry.click(function (){
+        if (fieldCountryName.val().trim() === "") {
+            showMessage('Please enter a country name', "alert alert-danger");
+            changeFormStateToNew();
+        }
         updateCountry();
     })
 
@@ -100,10 +110,10 @@ function loadCountries() {
             );
         });
     }).done(function() {
-        btnLoad.val("Refresh Country List");
+        buttonLoadCountries.val("Refresh Country List");
         showMessage('All countries have been loaded');
     }).fail(function() {
-        btnLoad.val("Load Country List");
+        buttonLoadCountries.val("Load Country List");
         showMessage('Error: Could not connect to server', "alert alert-danger");
     });
 }

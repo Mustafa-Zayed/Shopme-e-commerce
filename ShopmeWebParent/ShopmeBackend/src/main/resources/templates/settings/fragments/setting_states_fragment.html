@@ -1,0 +1,46 @@
+<div th:fragment="states">
+    <p>Use this page to manage states/provinces which will can be chosen by user in the customer registration form.
+        Click Load Country List first.</p>
+
+    <div class="mb-3">
+        <input class="btn btn-primary" id="buttonLoadCountries4StatesTab" type="button" value="Load Country List">
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label for="dropDownCountryList4StatesTab" class="form-label">Selected Country:</label>
+        </div>
+        <div class="col-md-10">
+            <select class="form-select" id="dropDownCountryList4StatesTab"></select>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label for="dropDownStateList" class="form-label">All States/Provinces:</label>
+        </div>
+        <div class="col-md-10">
+            <select class="form-select" id="dropDownStateList" size="3" style="height: 300px"></select>
+        </div>
+    </div>
+
+    <div id="stateForm" class="row ">
+        <div class="col-md-2">
+            <label for="fieldStateName" class="form-label" id="stateNameLabel">State Name:</label>
+        </div>
+        <div class="col-md-6">
+            <input type="text" class="form-control" id="fieldStateName" required/>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+            <button type="button" class="btn btn-primary" id="buttonAddState">New</button>
+            <button type="button" class="btn btn-secondary" id="buttonUpdateState" disabled>Update</button>
+            <button type="button" class="btn btn-danger" id="buttonDeleteState" disabled>Delete</button>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <div id="stateMessage" class="alert alert-info" style="display:none;"></div>
+    </div>
+</div>
+</body>
+</html>
