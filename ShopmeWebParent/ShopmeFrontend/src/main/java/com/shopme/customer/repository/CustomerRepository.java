@@ -1,0 +1,22 @@
+package com.shopme.customer.repository;
+
+import com.shopme.common.entity.Customer;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+public interface CustomerRepository extends CrudRepository<Customer, Integer>, PagingAndSortingRepository<Customer, Integer> {
+    Customer findByEmail(String email);
+    Customer findByVerificationCode(String code);
+
+    default Customer enable(Integer customerId) {
+        Customer customer = findById(customerId).get();
+        customer.setEnabled(true);
+        return save(customer);
+    }
+
+//    @Modifying
+//    @Query("UPDATE Customer c SET c.enabled = TRUE WHERE c.id = :customerId")
+//    void enable(Integer customerId);
+}
