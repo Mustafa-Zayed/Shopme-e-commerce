@@ -39,7 +39,7 @@
                         <a class="nav-link" th:href="@{/}">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Register</a>
+                        <a class="nav-link" th:href="@{/register}">Register</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/}">Contact</a>
@@ -183,6 +183,23 @@
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="modal_dialogue" class="modal" id="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="modalTitle" class="modal-title"></h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                <span id="modalBody"></span>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-bs-dismiss="modal" type="button">OK</button>
             </div>
         </div>
     </div>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<body>
+
+<div class="container-fluid">
+    <div th:replace="~{fragments :: top_navbar}"></div>
+
+    <div class="text-center mt-4">
+        <h2>Customer Registration</h2>
+    </div>
+
+    <div class="border border-secondary rounded p-3 mb-4"
+         style="max-width: 600px; margin: 0 auto;">
+        <form th:action="@{/templates/customers/register/save}"
+              th:object="${customer}"
+              onsubmit="return checkEmailUniqueness(this)"
+              id="customerForm"
+              method="post">
+
+            <!-- First Name -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="firstName">First Name:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{firstName}" class="form-control" minlength="2" maxlength="45"
+                           required>
+                </div>
+            </div>
+
+            <!-- Last Name -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="lastName">Last Name:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{lastName}" class="form-control" minlength="2" maxlength="45"
+                           required>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="email">E-mail:</label>
+                <div class="col-sm-8">
+                    <input type="email" th:field="*{email}" class="form-control" minlength="8" maxlength="45"
+                           required>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="password">Password:</label>
+                <div class="col-sm-8">
+                    <input type="password" th:field="*{password}" class="form-control" minlength="6" maxlength="15"
+                           oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"
+                           required>
+                </div>
+            </div>
+
+            <!-- Re-type Password -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="confirmPassword">Re-type Password:</label>
+                <div class="col-sm-8">
+                    <input type="password" id="confirmPassword" class="form-control" minlength="6" maxlength="15"
+                           oninput="checkPasswordMatch(this)"
+                           required>
+                </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="phoneNumber">Phone Number:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{phoneNumber}" class="form-control" minlength="8" maxlength="15"
+                           required>
+                </div>
+            </div>
+
+            <!-- Address Line 1 -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="addressLine1">Address Line 1:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{addressLine1}" class="form-control" minlength="3" maxlength="64"
+                           required>
+                </div>
+            </div>
+
+            <!-- Address Line 2 -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="addressLine2">Address Line 2:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{addressLine2}" class="form-control"
+                           placeholder="Address Line 2 is optional" minlength="3" maxlength="64">
+                </div>
+            </div>
+
+            <!-- City -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="city">City:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{city}" class="form-control" minlength="2" maxlength="45"
+                           required>
+                </div>
+            </div>
+
+            <!-- Country -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="countrySelect">Country:</label>
+                <div class="col-sm-8">
+                    <select id="countrySelect"
+                            th:field="*{country}"
+                            class="form-select"
+                            required>
+                        <option value="">-- Select Country --</option>
+                        <option th:each="c : ${countries}"
+                                th:value="${c.id}"
+                                th:text="${c.name}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- State (Editable Select) -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="state">State/Province:</label>
+                <div class="col-sm-8">
+                    <input list="stateList"
+                           th:field="*{state}"
+                           class="form-control"
+                           placeholder="Select or type a state"
+                           minlength="3" maxlength="45"
+                           required>
+
+                    <datalist id="stateList"></datalist>
+                </div>
+            </div>
+
+            <!-- Postal Code -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="postalCode">Postal Code:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{postalCode}" class="form-control" minlength="2" maxlength="10">
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">
+                    Create Account
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <div th:replace="~{fragments :: modal_dialogue}"></div>
+
+    <div th:replace="~{fragments :: footer_navbar}"></div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#countrySelect").on("change", function () {
+            const countryId = $(this).val();
+            $("#stateList").empty();
+            $("#state").val("");
+
+            if (!countryId) return;
+
+            let url = "[[@{/register/states_by_country/}]]" + countryId;
+            $.get(url, function (states) {
+                $.each(states, function (index, state) {
+                    $("#stateList").append(
+                        $("<option>").val(state.name).text(state.name)
+                    );
+                });
+            });
+        });
+    });
+
+    function checkEmailUniqueness(form) {
+        const customerEmail = $("#email").val();
+        const url = "[[@{/register/check_email_uniqueness}]]";
+        let csrfValue = $("input[name='_csrf']").val(); // the server generates a unique CSRF token and sends it to the client (e.g., embedded in the HTML or as part of a response header).
+        let params = {email: customerEmail, _csrf: csrfValue};
+
+        $.post(
+            url,
+            params,
+            function (response) {
+                if (response === true)
+                    form.submit();
+                else if (response === false)
+                    showWarningModal(`There is another customer having the email: <b>${customerEmail}</b>`);
+                else
+                    showErrorModal("Unknown response from the server.");
+            }
+        ).fail(function () { // in case it fails to connect to the server (i.e '/register/check_email_uniqueness' API)
+                showErrorModal("Could not connect to server.")
+            }
+        )
+
+        return false;
+    }
+
+    function checkPasswordMatch(confirmPassword) {
+        if (confirmPassword.value !== $("#password").val())
+            confirmPassword.setCustomValidity("Passwords do not match!");
+        else
+            confirmPassword.setCustomValidity("");
+    }
+</script>
+<script th:src="@{/js/common_form.js}" type="text/javascript"></script>
+</body>
+</html>

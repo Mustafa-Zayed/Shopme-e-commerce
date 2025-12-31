@@ -1,6 +1,6 @@
 package com.shopme.admin.setting.state.repository;
 
-import com.shopme.admin.setting.state.dto.StateDTO;
+import com.shopme.common.entity.setting.state.StateDTO;
 import com.shopme.common.entity.setting.country.Country;
 import com.shopme.common.entity.setting.state.State;
 import org.junit.jupiter.api.Test;

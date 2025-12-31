@@ -1,4 +1,4 @@
-package com.shopme.admin.setting.state.dto;
+package com.shopme.common.entity.setting.state;
 
 import lombok.*;
 
