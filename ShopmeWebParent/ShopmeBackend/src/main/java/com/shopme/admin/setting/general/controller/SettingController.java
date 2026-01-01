@@ -51,49 +51,11 @@ public class SettingController {
                                       @RequestPart("siteLogo") MultipartFile multipart,
                                       HttpServletRequest request) throws IOException {
 
-        GeneralSettingBag settingBag = settingService.getGeneralSettingBagObject();
-
-        updateSettingsFromForm(request, settingBag.findAll());
-
-        updateSiteLogo(multipart, settingBag);
-        updateCurrencySymbol(request, settingBag);
-
-        settingService.saveAll(settingBag.findAll());
+        settingService.saveGeneralSettings(multipart, request);
 
         String message ="General settings have been updated successfully!";
         redirectAttributes.addFlashAttribute("message", message);
 
         return "redirect:/settings";
-    }
-
-    private void updateSettingsFromForm(HttpServletRequest request, List<Setting> settings) {
-        for (Setting setting : settings) {
-            String value = request.getParameter(setting.getKey());
-            if (value != null) {
-                setting.setValue(value);
-            }
-        }
-    }
-
-    private void updateCurrencySymbol(HttpServletRequest request, GeneralSettingBag generalSettingBag) {
-        int currencyId = Integer.parseInt(request.getParameter("CURRENCY_ID"));
-        Optional<Currency> optionalCurrency = currencyRepository.findById(currencyId);
-        if (optionalCurrency.isPresent()) {
-            String currencySymbol = optionalCurrency.get().getSymbol();
-            generalSettingBag.updateCurrencySymbol(currencySymbol);
-        }
-
-    }
-
-    private void updateSiteLogo(MultipartFile multipart, GeneralSettingBag generalSettingBag) throws IOException {
-        if (multipart != null && !multipart.isEmpty()) {
-            String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipart.getOriginalFilename()));
-            String value = "/site-logo/" + originalFilename;
-
-            generalSettingBag.updateSiteLogo(value);
-
-            String uploadDir = "../site-logo/";
-            FileUploadUtil.saveFile(uploadDir, originalFilename, multipart);
-        }
     }
 }

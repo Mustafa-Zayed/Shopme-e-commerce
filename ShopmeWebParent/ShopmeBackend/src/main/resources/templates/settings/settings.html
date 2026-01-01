@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: page_head('Settings - Shopme Admin')}"></head>
+<head>
+    <head th:replace="~{fragments :: page_head(title = 'Settings - Shopme Admin', removeTag = 'tag')}"></head>
+
+    <link rel="stylesheet" th:href="@{/richtext/richtext.min.css}">
+    <script th:src="@{/richtext/jquery.richtext.min.js}" type="text/javascript"></script>
+</head>
 <body>
     <div class="container-fluid">
         <div th:replace="~{fragments :: top_navbar}"></div>
@@ -27,10 +32,10 @@
                     <a class="nav-link" href="#states" data-bs-toggle="tab" role="tab">States</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link" href="#mailserver" data-bs-toggle="tab" role="tab">Mail Server</a>
+                    <a class="nav-link" href="#mailServer" data-bs-toggle="tab" role="tab">Mail Server</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link" href="#mailtemplates" data-bs-toggle="tab" role="tab">Mail Templates</a>
+                    <a class="nav-link" href="#mailTemplates" data-bs-toggle="tab" role="tab">Mail Templates</a>
                 </li>
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" href="#payment" data-bs-toggle="tab" role="tab">Payment</a>
@@ -48,14 +53,15 @@
                 <div class="tab-pane" id="states" role="tabpanel" tabindex="0">
                     <div th:replace="~{settings/fragments/setting_states_fragment :: states}"></div>
                 </div>
-                <div class="tab-pane" id="mailserver" role="tabpanel" tabindex="0">
+                <div class="tab-pane" id="mailServer" role="tabpanel" tabindex="0">
+                    <div th:replace="~{settings/fragments/setting_mailServer_fragment :: mailServer}"></div>
                 </div>
-                <div class="tab-pane" id="mailtemplates" role="tabpanel" tabindex="0">
+                <div class="tab-pane" id="mailTemplates" role="tabpanel" tabindex="0">
+                    <div th:replace="~{settings/fragments/setting_mailTemplates_fragment :: mailTemplates}"></div>
                 </div>
                 <div class="tab-pane" id="payment" role="tabpanel" tabindex="0">
                 </div>
             </div>
-
 
         </div>
 
@@ -74,6 +80,11 @@
 
         const csrfHeaderName = "[[${_csrf.headerName}]]";
         const csrfValue = "[[${_csrf.token}]]";
+
+        $(document).ready(function () {
+            $("#customerVerifyContent").richText();
+            $("#orderConfirmContent").richText();
+        });
     </script>
 </body>
 </html>

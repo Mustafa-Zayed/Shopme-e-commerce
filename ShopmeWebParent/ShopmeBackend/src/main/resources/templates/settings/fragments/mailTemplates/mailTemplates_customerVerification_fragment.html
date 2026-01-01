@@ -1,0 +1,20 @@
+<div th:fragment="customerVerification" th:remove="tag">
+    <!-- Subject -->
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label" for="customerVerifySubject">E-mail Subject:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="CUSTOMER_VERIFY_SUBJECT"
+                   id="customerVerifySubject" th:value="${CUSTOMER_VERIFY_SUBJECT}" required />
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="row mb-4">
+        <label class="col-sm-2 col-form-label" for="customerVerifyContent">E-mail Content:</label>
+        <div class="col-sm-10">
+                    <textarea class="content" name="CUSTOMER_VERIFY_CONTENT" rows="5"
+                              id="customerVerifyContent" th:text="${CUSTOMER_VERIFY_CONTENT}">
+                    </textarea>
+        </div>
+    </div>
+</div>
