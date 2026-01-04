@@ -82,7 +82,7 @@ public class CustomerService {
 
         // replace placeholders with actual values
         String siteURL = EmailConfig.getSiteURL(request);
-        String verifyURL = siteURL + "/verify?code=" + customer.getVerificationCode();
+        String verifyURL = siteURL + "/register/verify?code=" + customer.getVerificationCode();
 
         content = content.replace("[[name]]", customer.getFullName());
         content = content.replace("[[URL]]", verifyURL);
@@ -92,4 +92,13 @@ public class CustomerService {
         mailSender.send(message);
     }
 
+    @Transactional // required if we use @Modifying approach
+    public boolean verifyCustomer(String verificationCode) {
+        Customer customer = customerRepository.findByVerificationCode(verificationCode);
+        if (customer == null || customer.isEnabled())
+            return false;
+
+        customerRepository.enable(customer.getId());
+        return true;
+    }
 }

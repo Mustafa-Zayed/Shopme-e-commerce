@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.UnsupportedEncodingException;
@@ -61,5 +62,18 @@ public class CustomerController {
         session.removeAttribute("REGISTRATION_SUCCESS");
 
         return "customers/register/register_success";
+    }
+
+    @GetMapping("/register/verify")
+    public String verifyCustomer(@RequestParam String code, Model model) {
+        boolean verified = customerService.verifyCustomer(code);
+        if (verified)
+            model.addAttribute("pageTitle", "Verification Succeeded!");
+        else
+            model.addAttribute("pageTitle", "Verification Failed!");
+
+        model.addAttribute("verified", verified);
+
+        return "customers/register/verification_result";
     }
 }

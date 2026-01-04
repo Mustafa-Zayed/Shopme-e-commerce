@@ -114,9 +114,9 @@ public class CustomerRepositoryTests {
     @Test
     public void CustomerRepository_EnableCustomer_ReturnCustomer() {
         Integer customerId = 1; // Assuming customer with ID 1 exists
-        Customer customer = customerRepository.enable(customerId);
-//        customerRepository.enable(customerId);
-//        Customer customer = customerRepository.findById(customerId).get();
+//        Customer customer = customerRepository.enable(customerId);
+        customerRepository.enable(customerId);
+        Customer customer = customerRepository.findById(customerId).get();
 
         assertThat(customer.isEnabled()).isTrue();
     }

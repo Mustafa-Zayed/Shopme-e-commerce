@@ -16,13 +16,14 @@ public interface CustomerRepository extends CrudRepository<Customer, Integer>, P
 
     Customer findByVerificationCode(String code);
 
-    default Customer enable(Integer customerId) {
-        Customer customer = findById(customerId).get();
-        customer.setEnabled(true);
-        return save(customer);
-    }
+//    default Customer enable(Integer customerId) {
+//        Customer customer = findById(customerId).get();
+//        customer.setEnabled(true);
+//        customer.setVerificationCode(null);
+//        return save(customer);
+//    }
 
-//    @Modifying
-//    @Query("UPDATE Customer c SET c.enabled = TRUE WHERE c.id = :customerId")
-//    void enable(Integer customerId);
+    @Modifying
+    @Query("UPDATE Customer c SET c.enabled = TRUE, c.verificationCode = null WHERE c.id = :customerId")
+    void enable(Integer customerId);
 }
