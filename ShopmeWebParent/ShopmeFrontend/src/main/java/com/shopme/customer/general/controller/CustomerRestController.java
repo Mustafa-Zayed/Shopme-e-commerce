@@ -15,4 +15,19 @@ public class CustomerRestController {
     public boolean checkEmailUniqueness(@RequestParam String email) {
         return customerService.checkEmailUniqueness(email);
     }
+
+    @PostMapping("/register/check_fullName_uniqueness")
+    public boolean checkFullNameUniqueness(@RequestParam String fullName) {
+        return customerService.checkFullNameUniqueness(fullName);
+    }
+
+    @PostMapping("/register/check_phoneNumber_uniqueness")
+    public boolean checkPhoneNumberUniqueness(@RequestParam String phoneNumber) {
+        return customerService.checkPhoneNumberUniqueness(phoneNumber);
+    }
+
+    @PostMapping("/register/check_phoneNumber_integrity")
+    public boolean checkPhoneNumberIntegrity(@RequestParam String phoneNumber) {
+        return phoneNumber.matches("^\\d{10,15}$");
+    }
 }

@@ -12,9 +12,9 @@
 
     <div class="border border-secondary rounded p-3 mb-4"
          style="max-width: 600px; margin: 0 auto;">
-        <form th:action="@{/templates/customers/register/save}"
+        <form th:action="@{/register/save}"
               th:object="${customer}"
-              onsubmit="return checkEmailUniqueness(this)"
+              onsubmit="event.preventDefault(); validateAndSubmit(this);"
               id="customerForm"
               method="post">
 
@@ -176,30 +176,128 @@
         });
     });
 
-    function checkEmailUniqueness(form) {
-        const customerEmail = $("#email").val();
-        const url = "[[@{/register/check_email_uniqueness}]]";
-        let csrfValue = $("input[name='_csrf']").val(); // the server generates a unique CSRF token and sends it to the client (e.g., embedded in the HTML or as part of a response header).
-        let params = {email: customerEmail, _csrf: csrfValue};
+    function checkEmailUniqueness() {
+        return new Promise((resolve, reject) => {
+            const customerEmail = $("#email").val();
+            const url = "[[@{/register/check_email_uniqueness}]]";
+            const csrfValue = $("input[name='_csrf']").val();
 
-        $.post(
-            url,
-            params,
-            function (response) {
-                if (response === true)
-                    form.submit();
-                else if (response === false)
-                    showWarningModal(`There is another customer having the email: <b>${customerEmail}</b>`);
-                else
-                    showErrorModal("Unknown response from the server.");
-            }
-        ).fail(function () { // in case it fails to connect to the server (i.e '/register/check_email_uniqueness' API)
-                showErrorModal("Could not connect to server.")
-            }
-        )
-
-        return false;
+            $.post(url, { email: customerEmail, _csrf: csrfValue })
+                .done(function (response) {
+                    if (response === true) {
+                        resolve(true);
+                    } else if (response === false) {
+                        showWarningModal(
+                            `There is another customer having the email: <b>${customerEmail}</b>`
+                        );
+                        resolve(false);
+                    } else {
+                        showErrorModal("Unknown response from the server.");
+                        reject();
+                    }
+                })
+                .fail(function () {
+                    showErrorModal("Could not connect to server.");
+                    reject();
+                });
+        });
     }
+
+    function checkFullNameUniqueness() {
+        return new Promise((resolve, reject) => {
+            const firstName = $("#firstName").val();
+            const lastName = $("#lastName").val();
+            const fullName = firstName + " " + lastName;
+
+            const url = "[[@{/register/check_fullName_uniqueness}]]";
+            const csrfValue = $("input[name='_csrf']").val();
+
+            $.post(url, { fullName: fullName, _csrf: csrfValue })
+                .done(function (response) {
+                    if (response === true) {
+                        resolve(true);
+                    } else if (response === false) {
+                        showWarningModal(
+                            `There is another customer having the full name: <b>${fullName}</b>`
+                        );
+                        resolve(false);
+                    } else {
+                        showErrorModal("Unknown response from the server.");
+                        reject();
+                    }
+                })
+                .fail(function () {
+                    showErrorModal("Could not connect to server.");
+                    reject();
+                });
+        });
+    }
+
+    function checkPhoneNumberIntegrity() {
+        return new Promise((resolve, reject) => {
+            const phoneNumber = $("#phoneNumber").val();
+            const url = "[[@{/register/check_phoneNumber_integrity}]]";
+            const csrfValue = $("input[name='_csrf']").val();
+
+            $.post(url, { phoneNumber: phoneNumber, _csrf: csrfValue })
+                .done(function (response) {
+                    if (response === true) {
+                        resolve(true);
+                    } else if (response === false) {
+                        showWarningModal(
+                            `This phone number is not valid: <b>${phoneNumber}</b>`
+                        );
+                        resolve(false);
+                    } else {
+                        showErrorModal("Unknown response from the server.");
+                        reject();
+                    }
+                })
+                .fail(function () {
+                    showErrorModal("Could not connect to server.");
+                    reject();
+                });
+        });
+    }
+
+    function checkPhoneNumberUniqueness() {
+        return new Promise((resolve, reject) => {
+            const phoneNumber = $("#phoneNumber").val();
+            const url = "[[@{/register/check_phoneNumber_uniqueness}]]";
+            const csrfValue = $("input[name='_csrf']").val();
+
+            $.post(url, { phoneNumber: phoneNumber, _csrf: csrfValue })
+                .done(function (response) {
+                    if (response === true) {
+                        resolve(true);
+                    } else if (response === false) {
+                        showWarningModal(
+                            `There is another customer having the phone number: <b>${phoneNumber}</b>`
+                        );
+                        resolve(false);
+                    } else {
+                        showErrorModal("Unknown response from the server.");
+                        reject();
+                    }
+                })
+                .fail(function () {
+                    showErrorModal("Could not connect to server.");
+                    reject();
+                });
+        });
+    }
+
+    async function validateAndSubmit(form) {
+
+        if (!await checkEmailUniqueness()) return;
+        if (!await checkFullNameUniqueness()) return;
+        if (!await checkPhoneNumberIntegrity()) return;
+        if (!await checkPhoneNumberUniqueness()) return;
+
+        // All checks passed
+        form.submit();
+    }
+
 
     function checkPasswordMatch(confirmPassword) {
         if (confirmPassword.value !== $("#password").val())

@@ -1,5 +1,6 @@
 package com.shopme.setting.service;
 
+import com.shopme.common.entity.setting.general.utility.EmailSettingBag;
 import com.shopme.setting.repository.SettingRepository;
 
 import com.shopme.common.entity.setting.general.SettingCategory;
@@ -16,5 +17,10 @@ public class SettingService {
 
     public List<Setting> findGeneralAndCurrencySettings() {
         return settingRepository.findByTwoCategories(SettingCategory.GENERAL, SettingCategory.CURRENCY);
+    }
+
+    public EmailSettingBag getEmailSettingsBag() {
+        List<Setting> settings = settingRepository.findByTwoCategories(SettingCategory.MAIL_SERVER, SettingCategory.MAIL_TEMPLATES);
+        return new EmailSettingBag(settings);
     }
 }

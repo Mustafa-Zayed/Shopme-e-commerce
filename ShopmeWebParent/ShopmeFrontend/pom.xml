@@ -36,6 +36,10 @@
     will inherit dependencies declared in its parent project, which is
     the ShopmeWebParent project-->
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

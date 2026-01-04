@@ -8,6 +8,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface CustomerRepository extends CrudRepository<Customer, Integer>, PagingAndSortingRepository<Customer, Integer> {
     Customer findByEmail(String email);
+
+    @Query("SELECT c FROM Customer c WHERE CONCAT(c.firstName, ' ', c.lastName) = :fullName")
+    Customer findByFullName(String fullName);
+
+    Customer findByPhoneNumber(String phoneNumber);
+
     Customer findByVerificationCode(String code);
 
     default Customer enable(Integer customerId) {

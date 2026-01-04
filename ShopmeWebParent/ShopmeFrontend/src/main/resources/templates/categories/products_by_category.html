@@ -24,7 +24,7 @@
         </div>
 
         <div class="row">
-            <div class="col" th:each="product : ${listProducts}">
+            <div class="col-md-2 col-sm-4 col-6" th:each="product : ${listProducts}">
                 <div th:replace="~{products/fragments/product_info_fragment :: product_info}"></div>
             </div>
         </div>

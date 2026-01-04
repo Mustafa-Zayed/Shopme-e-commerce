@@ -2,7 +2,7 @@ package com.shopme.admin.setting.general.service;
 
 import com.shopme.admin.setting.general.repository.CurrencyRepository;
 import com.shopme.admin.setting.general.repository.SettingRepository;
-import com.shopme.admin.setting.utility.GeneralSettingBag;
+import com.shopme.common.entity.setting.general.utility.GeneralSettingBag;
 import com.shopme.admin.utility.FileUploadUtil;
 import com.shopme.common.entity.setting.general.Currency;
 import com.shopme.common.entity.setting.general.SettingCategory;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.ArrayList;

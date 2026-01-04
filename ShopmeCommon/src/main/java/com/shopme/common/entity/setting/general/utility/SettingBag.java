@@ -1,5 +1,6 @@
-package com.shopme.common.entity.setting.general;
+package com.shopme.common.entity.setting.general.utility;
 
+import com.shopme.common.entity.setting.general.Setting;
 import lombok.AllArgsConstructor;
 
 import java.util.List;

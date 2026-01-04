@@ -1,12 +1,11 @@
-package com.shopme.admin.setting.utility;
+package com.shopme.common.entity.setting.general.utility;
 
 import com.shopme.common.entity.setting.general.Setting;
-import com.shopme.common.entity.setting.general.SettingBag;
 
 import java.util.List;
 
 /**
- * Utility class to update site logo and currency symbol
+ * Utility class to get general settings
  */
 public class GeneralSettingBag extends SettingBag {
     public GeneralSettingBag(List<Setting> settings) {

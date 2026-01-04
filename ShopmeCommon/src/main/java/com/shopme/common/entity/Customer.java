@@ -13,7 +13,12 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "customers")
+@Table(name = "customers", uniqueConstraints = {
+    @UniqueConstraint(
+            name = "uk_customer_full_name",
+            columnNames = {"first_name", "last_name"}
+    )
+})
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +30,10 @@ public class Customer {
     @Column(length = 64, nullable = false)
     private String password;
 
-    @Column(length = 45, unique = true, nullable = false)
+    @Column(length = 45, nullable = false)
     private String firstName;
 
-    @Column(length = 45, unique = true, nullable = false)
+    @Column(length = 45, nullable = false)
     private String lastName;
 
     @Column(length = 15, unique = true, nullable = false)
@@ -59,4 +64,8 @@ public class Customer {
 
     @Column(length = 64)
     private String verificationCode;
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }
