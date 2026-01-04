@@ -24,19 +24,21 @@
         </div>
     </div>
 
-    <div id="stateForm" class="row ">
-        <div class="col-md-2">
-            <label for="fieldStateName" class="form-label" id="stateNameLabel">State Name:</label>
+    <form id="stateForm">
+        <div class="row ">
+            <div class="col-md-2">
+                <label for="fieldStateName" class="form-label" id="stateNameLabel">State Name:</label>
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control" id="fieldStateName" minlength="3" maxlength="45"/>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="button" class="btn btn-primary" id="buttonAddState">New</button>
+                <button type="button" class="btn btn-secondary" id="buttonUpdateState" disabled>Update</button>
+                <button type="button" class="btn btn-danger" id="buttonDeleteState" disabled>Delete</button>
+            </div>
         </div>
-        <div class="col-md-6">
-            <input type="text" class="form-control" id="fieldStateName" required/>
-        </div>
-        <div class="col-md-4 d-flex gap-2">
-            <button type="button" class="btn btn-primary" id="buttonAddState">New</button>
-            <button type="button" class="btn btn-secondary" id="buttonUpdateState" disabled>Update</button>
-            <button type="button" class="btn btn-danger" id="buttonDeleteState" disabled>Delete</button>
-        </div>
-    </div>
+    </form>
 
     <div class="mt-3">
         <div id="stateMessage" class="alert alert-info" style="display:none;"></div>

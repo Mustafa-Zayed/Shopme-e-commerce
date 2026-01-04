@@ -32,6 +32,8 @@ $(document).ready(function() {
     })
 
     buttonAddState.click(function() {
+        if (!validateForm4StatesTab()) return;
+
         if (buttonAddState.text() === "New") {
             changeFormStateToNew4StatesTab();
         } else if (fieldStateName.val().trim() === "") {
@@ -45,6 +47,8 @@ $(document).ready(function() {
     });
 
     buttonUpdateState.click(function () {
+        if (!validateForm4StatesTab()) return;
+
         if (fieldStateName.val().trim() === "") {
             showMessage4StatesTab('Please enter a state name', "alert alert-danger");
             changeFormStateToNew4StatesTab();
@@ -144,6 +148,15 @@ function selectNewlyAddedState(response) {
     // $(`#dropDownStateList option[value="${optionValue}"]`).prop('selected', true);
 
     fieldStateName.val('').focus();
+}
+
+function validateForm4StatesTab(){
+    let stateForm = document.getElementById('stateForm');
+    if (!stateForm.checkValidity()) {
+        stateForm.reportValidity();
+        return false;
+    }
+    return true;
 }
 
 function addState() {
