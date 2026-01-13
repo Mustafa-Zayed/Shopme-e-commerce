@@ -160,14 +160,13 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
     </div>
 </nav>
 
-<div th:fragment="message_and_search_form(path)" th:with="productForm = ${productForm ?: false}"
-     th:remove="tag">
+<div th:fragment="message_and_search_form(path)" class="my-3" th:with="productForm = ${productForm ?: false}">
     <!-- || syntax (literal substitutions) and the Elvis operator (?:) to provide a default value -->
-    <div th:class="|alert alert-${resultClass ?: 'success'} text-center m-2|" th:if="${message != null}">
+    <div th:class="|alert alert-${resultClass ?: 'success'} text-center|" th:if="${message != null}">
         [[${message}]]
     </div>
 
-    <form class="row g-2 align-items-center m-3" th:action="@{'/' + ${path} + '/page/1'}" id="searchForm">
+    <form class="row g-2 align-items-center" th:action="@{'/' + ${path} + '/page/1'}" id="searchForm">
         <input class="form-control" name="sortField" th:value="${sortField}" type="hidden"/>
         <input class="form-control" name="sortDir" th:value="${sortDir}" type="hidden"/>
 

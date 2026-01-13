@@ -17,7 +17,7 @@
             <input th:field="*{id}" type="hidden"/>
 
             <div class="border border-secondary rounded p-3">
-                <div class="form-group row mb-3">
+                <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">E-mail:</label>
                     <div class="col-sm-8">
                         <input type="email" class="form-control" th:field="*{email}"
@@ -27,14 +27,14 @@
                         <!--                        </div>-->
                     </div>
                 </div>
-                <div class="form-group row mb-3">
+                <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">First Name:</label>
                     <div class="col-sm-8">
                         <input type="text" class="form-control" th:field="*{firstName}"
                                required minlength="2" maxlength="45" />
                     </div>
                 </div>
-                <div class="form-group row mb-3">
+                <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Last Name:</label>
                     <div class="col-sm-8">
                         <input type="text" class="form-control" th:field="*{lastName}"
@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <div class="form-group row mb-3">
+                <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Password:</label>
                     <div class="col-sm-8">
                         <input class="form-control" maxlength="20" minlength="8"
@@ -53,7 +53,7 @@
                     </div>
                 </div>
 
-                <div class="form-group row mb-3">
+                <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Roles:</label>
                     <div class="col-sm-8">
                         <th:block th:each="role : ${listRoles}">
@@ -65,14 +65,14 @@
                     </div>
                 </div>
 
-                <div class="form-group row mb-3">
+                <div class="row mb-3 align-items-center">
                     <label class="col-sm-4 col-form-label">Enabled:</label>
                     <div class="col-sm-8">
                         <input type="checkbox" th:field="*{enabled}" />
                     </div>
                 </div>
 
-                <div class="form-group row mb-3">
+                <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Photos:</label>
                     <div class="col-sm-8">
                         <!-- In the edit mode, If the user does not upload a new file, this hidden input ensures the original

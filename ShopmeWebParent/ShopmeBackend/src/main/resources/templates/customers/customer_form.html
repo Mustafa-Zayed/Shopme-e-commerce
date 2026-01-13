@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<body>
+
+<div class="container-fluid">
+    <div th:replace="~{fragments :: top_navbar}"></div>
+
+    <div class="text-center mt-4">
+        <h2>Manage Customer | [[${pageTitle}]]</h2>
+    </div>
+
+    <div class="border border-secondary rounded p-3 mb-4"
+         style="max-width: 600px; margin: 0 auto;">
+        <form th:action="@{/customers/save}"
+              th:object="${customer}"
+              onsubmit="event.preventDefault(); validateAndSubmit(this);"
+              id="customerForm"
+              method="post">
+
+            <input type="hidden" th:field="*{id}">
+
+            <!-- First Name -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="firstName">First Name:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{firstName}" class="form-control" minlength="2" maxlength="45"
+                           required>
+                </div>
+            </div>
+
+            <!-- Last Name -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="lastName">Last Name:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{lastName}" class="form-control" minlength="2" maxlength="45"
+                           required>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="email">E-mail:</label>
+                <div class="col-sm-8">
+                    <input type="email" th:field="*{email}" class="form-control" minlength="8" maxlength="45"
+                           required>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="password">Password:</label>
+                <div class="col-sm-8">
+                    <input type="password" th:field="*{password}" class="form-control" minlength="6" maxlength="15"
+                           placeholder="Leave blank if you don't want to change password">
+                </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="phoneNumber">Phone Number:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{phoneNumber}" class="form-control" minlength="8" maxlength="15"
+                           required>
+                </div>
+            </div>
+
+            <!-- Address Line 1 -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="addressLine1">Address Line 1:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{addressLine1}" class="form-control" minlength="3" maxlength="64"
+                           required>
+                </div>
+            </div>
+
+            <!-- Address Line 2 -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="addressLine2">Address Line 2:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{addressLine2}" class="form-control"
+                           placeholder="Address Line 2 is optional" minlength="3" maxlength="64">
+                </div>
+            </div>
+
+            <!-- City -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="city">City:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{city}" class="form-control" minlength="2" maxlength="45"
+                           required>
+                </div>
+            </div>
+
+            <!-- Country -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="countrySelect">Country:</label>
+                <div class="col-sm-8">
+                    <select id="countrySelect"
+                            th:field="*{country}"
+                            class="form-select"
+                            required>
+                        <option th:each="c : ${countries}"
+                                th:value="${c.id}"
+                                th:text="${c.name}"
+                                th:selected="${c.id == customer.country.id}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- State (Editable Select) -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="state">State/Province:</label>
+                <div class="col-sm-8">
+                    <input list="stateList"
+                           th:field="*{state}"
+                           class="form-control"
+                           placeholder="Select or type a state"
+                           minlength="3" maxlength="45"
+                           required>
+
+                    <datalist id="stateList"></datalist>
+                </div>
+            </div>
+
+            <!-- Postal Code -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label" for="postalCode">Postal Code:</label>
+                <div class="col-sm-8">
+                    <input type="text" th:field="*{postalCode}" class="form-control" minlength="2" maxlength="10">
+                </div>
+            </div>
+
+            <div class="text-center">
+                <input type="submit" value="Save" class="btn btn-primary m-3"/>
+                <a type="button"
+                   class="btn btn-secondary" id="buttonCancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <div th:replace="~{modal_fragments :: modal_dialog}"></div>
+
+    <div th:replace="~{fragments :: footer}"></div>
+</div>
+
+<script>
+    let moduleURL = "[[@{/customers}]]";
+
+    $(document).ready(function () {
+        let state = $("#state");
+        let stateValue = state.val();
+
+        fillStateList();
+        state.val(stateValue);
+
+        $("#countrySelect").on("change", function () {
+            fillStateList();
+            $("#state").val("").focus();
+        });
+    });
+
+    function fillStateList(){
+        const countryId = $("#countrySelect").val();
+
+        if (!countryId) return;
+
+        let url = "[[@{/customers/states_by_country/}]]" + countryId;
+        $.get(url, function (states) {
+            $("#stateList").empty();
+            $.each(states, function (index, state) {
+                $("#stateList").append(
+                    $("<option>").val(state.name).text(state.name)
+                );
+            });
+        });
+    }
+
+    function checkEmailUniqueness() {
+        return new Promise((resolve, reject) => {
+            const customerId = $("#id").val();
+            const customerEmail = $("#email").val();
+            const url = "[[@{/customers/check_email_uniqueness}]]";
+            const csrfValue = $("input[name='_csrf']").val();
+
+            $.post(url, { id: customerId, email: customerEmail, _csrf: csrfValue })
+                .done(function (response) {
+                    if (response === true) {
+                        resolve(true);
+                    } else if (response === false) {
+                        showWarningModal(
+                            `There is another customer having the email: <b>${customerEmail}</b>`
+                        );
+                        resolve(false);
+                    } else {
+                        showErrorModal("Unknown response from the server.");
+                        reject();
+                    }
+                })
+                .fail(function () {
+                    showErrorModal("Could not connect to server.");
+                    reject();
+                });
+        });
+    }
+
+    function checkFullNameUniqueness() {
+        return new Promise((resolve, reject) => {
+            const customerId = $("#id").val();
+            const firstName = $("#firstName").val();
+            const lastName = $("#lastName").val();
+            const fullName = firstName + " " + lastName;
+
+            const url = "[[@{/customers/check_fullName_uniqueness}]]";
+            const csrfValue = $("input[name='_csrf']").val();
+
+            $.post(url, { id: customerId, fullName: fullName, _csrf: csrfValue })
+                .done(function (response) {
+                    if (response === true) {
+                        resolve(true);
+                    } else if (response === false) {
+                        showWarningModal(
+                            `There is another customer having the full name: <b>${fullName}</b>`
+                        );
+                        resolve(false);
+                    } else {
+                        showErrorModal("Unknown response from the server.");
+                        reject();
+                    }
+                })
+                .fail(function () {
+                    showErrorModal("Could not connect to server.");
+                    reject();
+                });
+        });
+    }
+
+    function checkPhoneNumberIntegrity() {
+        return new Promise((resolve, reject) => {
+            const phoneNumber = $("#phoneNumber").val();
+            const url = "[[@{/customers/check_phoneNumber_integrity}]]";
+            const csrfValue = $("input[name='_csrf']").val();
+
+            $.post(url, { phoneNumber: phoneNumber, _csrf: csrfValue })
+                .done(function (response) {
+                    if (response === true) {
+                        resolve(true);
+                    } else if (response === false) {
+                        showWarningModal(
+                            `This phone number is not valid: <b>${phoneNumber}</b>`
+                        );
+                        resolve(false);
+                    } else {
+                        showErrorModal("Unknown response from the server.");
+                        reject();
+                    }
+                })
+                .fail(function () {
+                    showErrorModal("Could not connect to server.");
+                    reject();
+                });
+        });
+    }
+
+    function checkPhoneNumberUniqueness() {
+        return new Promise((resolve, reject) => {
+            const customerId = $("#id").val();
+            const phoneNumber = $("#phoneNumber").val();
+            const url = "[[@{/customers/check_phoneNumber_uniqueness}]]";
+            const csrfValue = $("input[name='_csrf']").val();
+
+            $.post(url, { id: customerId, phoneNumber: phoneNumber, _csrf: csrfValue })
+                .done(function (response) {
+                    if (response === true) {
+                        resolve(true);
+                    } else if (response === false) {
+                        showWarningModal(
+                            `There is another customer having the phone number: <b>${phoneNumber}</b>`
+                        );
+                        resolve(false);
+                    } else {
+                        showErrorModal("Unknown response from the server.");
+                        reject();
+                    }
+                })
+                .fail(function () {
+                    showErrorModal("Could not connect to server.");
+                    reject();
+                });
+        });
+    }
+
+    async function validateAndSubmit(form) {
+
+        if (!await checkEmailUniqueness()) return;
+        if (!await checkFullNameUniqueness()) return;
+        if (!await checkPhoneNumberIntegrity()) return;
+        if (!await checkPhoneNumberUniqueness()) return;
+
+        // All checks passed
+        form.submit();
+    }
+</script>
+<script th:src="@{/js/common_form.js}" type="text/javascript"></script>
+</body>
+</html>

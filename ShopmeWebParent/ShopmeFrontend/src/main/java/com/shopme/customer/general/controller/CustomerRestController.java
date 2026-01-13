@@ -28,6 +28,6 @@ public class CustomerRestController {
 
     @PostMapping("/register/check_phoneNumber_integrity")
     public boolean checkPhoneNumberIntegrity(@RequestParam String phoneNumber) {
-        return phoneNumber.matches("^\\d{10,15}$");
+        return phoneNumber.matches("^(?=(?:\\D*\\d){8,15}\\D*$)[\\d\\s\\-()]+$");
     }
 }

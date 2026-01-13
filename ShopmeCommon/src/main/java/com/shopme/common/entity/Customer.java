@@ -68,4 +68,8 @@ public class Customer {
     public String getFullName() {
         return firstName + " " + lastName;
     }
+
+    public String getCountryName() {
+        return country == null ? "" : country.getName();
+    }
 }

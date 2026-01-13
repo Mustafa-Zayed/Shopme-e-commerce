@@ -84,7 +84,7 @@
     </div>
 
     <div class="less-details">
-        <div class="row m-1" th:each="product : ${listProducts}">
+        <div class="row my-1" th:each="product : ${listProducts}">
             <div class="col-4">
                 <img alt="category image"
                      style="width: 100px"
@@ -117,7 +117,7 @@
     <!-- Details Modal -->
     <div class="modal fade" id="productDetailsModal">
         <div class="modal-dialog modal-xl">
-            <div class="modal-content">
+            <div class="modal-content" id="productDetailsModalContent">
             </div>
         </div>
     </div>
@@ -148,7 +148,8 @@
         const modalInstance = new bootstrap.Modal(modalElement);
 
         // Fetches url (like $.get(url)) and inserts its contents inside .modal-content
-        $(".modal-content").load(url, function () {
+        // Select using the id, not the class, as the class is used for multiple modals like delete_dialogue
+        $("#productDetailsModalContent").load(url, function () {
             modalInstance.show(); // Show after content is loaded
         });
     }

@@ -30,70 +30,70 @@
     <!-- Tab panes -->
     <div class="tab-content p-3" th:object="${product}">
         <div class="tab-pane active" id="overview" role="tabpanel" tabindex="0">
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">Product Name:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" th:value="*{name}" disabled/>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">Alias:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" th:value="*{alias}" disabled/>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">Brand:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" th:value="*{brand.name}" disabled/>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">Category:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" th:value="*{category.name}" disabled/>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">Enabled:</label>
                 <div class="col-sm-10">
                     <input type="checkbox" th:checked="*{enabled}" onclick="return false"/>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">In Stock:</label>
                 <div class="col-sm-10">
                     <input type="checkbox" th:checked="*{inStock}" onclick="return false"/>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">Cost:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" th:value="*{cost}" disabled/>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">Price:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" th:value="*{price}" disabled/>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">Discount:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" th:value="*{discountPercent}" disabled/>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 align-items-center">
                 <label class="col-sm-2 col-form-label">Updated Time:</label>
                 <div class="col-sm-10">
                     <span th:text="*{updatedTime} ?: *{createdTime}"></span>
