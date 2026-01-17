@@ -5,10 +5,11 @@ import com.shopme.admin.user.service.UserService;
 import com.shopme.admin.user.export.UserCsvExporter;
 import com.shopme.admin.user.export.UserExcelExporter;
 import com.shopme.admin.user.export.UserPDFExporter;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingParam;
 import com.shopme.common.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,60 +19,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.List;
 
-import static com.shopme.admin.user.service.UserService.USERS_PER_PAGE;
-
 @RequiredArgsConstructor
 @Controller
 public class UserController {
     private final UserService userService;
 
     @GetMapping("/users")
-    public String listFirstPage(Model model) {
-        return listByPageWithSorting(1, "firstName", "asc", "", model);
+    public String listFirstPage() {
+        return "redirect:/users/page/1?sortField=firstName&sortDir=asc";
+        // return listByPageWithSorting(helper, 1); // not working, PagingAndSortingArgumentResolver expects URL has "?sortField=&sortDir="
     }
-
-//    @GetMapping("/users/page/{pageNumber}")
-//    public String listByPage(@PathVariable int pageNumber, Model model) {
-//        Page<User> usersPage = userService.listByPage(pageNumber);
-//        return addToModel(pageNumber, usersPage, model, "id", "asc");
-//    }
 
     @GetMapping("/users/page/{pageNumber}")
     public String listByPageWithSorting(
-            @PathVariable int pageNumber,
-            @RequestParam(name = "sortField", defaultValue = "firstName") String sortField,
-            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
-            @RequestParam(name = "keyword", defaultValue = "") String keyword,
-            Model model) {
-        Page<User> usersPage = userService.listByPageWithSorting(pageNumber, sortField, sortDir, keyword);
-        return addToModel(pageNumber, usersPage, sortField, sortDir, keyword, model);
-    }
-
-    private String addToModel(@PathVariable int pageNumber, Page<User> usersPage,
-                              String sortField, String sortDir, String keyword, Model model) {
-        List<User> listUsers = usersPage.getContent();
-        int totalPages = usersPage.getTotalPages();
-        long totalItems = usersPage.getTotalElements();
-
-        long startCount = ((long) (pageNumber - 1) * USERS_PER_PAGE) + 1;
-        long endCount = (startCount + USERS_PER_PAGE) - 1;
-        if (endCount > totalItems) endCount = totalItems;
-        model.addAttribute("startCount", startCount);
-        model.addAttribute("endCount", endCount);
-
-        model.addAttribute("listUsers", listUsers);
-        model.addAttribute("currentPage", pageNumber);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("totalItems", totalItems);
-
-        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
-
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reverseSortDir", reverseSortDir);
-
-        model.addAttribute("keyword", keyword);
-
+            @PagingAndSortingParam(listItemsName = "listUsers", pathURL = "users") PagingAndSortingHelper helper,
+            @PathVariable int pageNumber) {
+        userService.listByPageWithSorting(pageNumber, helper);
         return "users/users";
     }
 

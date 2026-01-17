@@ -2,6 +2,8 @@ package com.shopme.admin.product.controller;
 
 import com.shopme.admin.brand.service.BrandService;
 import com.shopme.admin.category.service.CategoryService;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingParam;
 import com.shopme.common.entity.product.Product;
 import com.shopme.common.entity.product.ProductDetail;
 import com.shopme.common.entity.product.ProductImage;
@@ -39,52 +41,21 @@ public class ProductController {
     private final CategoryService categoryService;
 
     @GetMapping("/products")
-    public String listFirstPage(Model model) {
-        return listByPageWithSorting(1, "name", "asc", "", 0, model);
+    public String listFirstPage() {
+        return "redirect:/products/page/1?sortField=name&sortDir=asc";
     }
 
     @GetMapping("/products/page/{pageNumber}")
     public String listByPageWithSorting(
+            @PagingAndSortingParam(listItemsName = "listProducts", pathURL = "products") PagingAndSortingHelper helper,
             @PathVariable int pageNumber,
-            @RequestParam(name = "sortField", defaultValue = "name") String sortField,
-            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
-            @RequestParam(name = "keyword", defaultValue = "") String keyword,
             @RequestParam(name = "prodCatId", defaultValue = "0") Integer prodCatId,
             Model model) {
+        productService.listByPageWithSorting(pageNumber, helper, prodCatId);
 
-        Page<Product> productsPage = productService
-                .listByPageWithSorting(pageNumber, sortField, sortDir, keyword, prodCatId);
-        return addToModel(pageNumber, productsPage, sortField, sortDir, keyword, prodCatId, model);
-    }
-
-    private String addToModel(@PathVariable int pageNumber, Page<Product> productsPage,
-                              String sortField, String sortDir, String keyword, Integer prodCatId, Model model) {
-        List<Product> listProducts = productsPage.getContent();
-        int totalPages = productsPage.getTotalPages();
-        long totalItems = productsPage.getTotalElements();
-
-        long startCount = ((long) (pageNumber - 1) * PRODUCTS_PER_PAGE) + 1;
-        long endCount = (startCount + PRODUCTS_PER_PAGE) - 1;
-        if (endCount > totalItems) endCount = totalItems;
-        model.addAttribute("startCount", startCount);
-        model.addAttribute("endCount", endCount);
-
-        model.addAttribute("listProducts", listProducts);
-        model.addAttribute("listCategories",
-                categoryService.listCategoriesUsedInFormListApproach(Sort.by("name").ascending()));
-
-        model.addAttribute("currentPage", pageNumber);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("totalItems", totalItems);
-
-        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
-
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reverseSortDir", reverseSortDir);
-
-        model.addAttribute("keyword", keyword);
+        List<Category> listCategories = categoryService.listCategoriesUsedInFormListApproach(Sort.by("name").ascending());
         model.addAttribute("prodCatId", prodCatId);
+        model.addAttribute("listCategories", listCategories);
 
         return "products/products";
     }
@@ -124,7 +95,8 @@ public class ProductController {
         // so Spring is receiving the uploaded file and trying to bind it to product.mainImage, because
         // both the request part and the model attribute are sharing the same field name — mainImage
 
-        if (loggedUser.hasRole("Salesperson")) // userRole.equals("Salesperson")
+        if (loggedUser.hasRole("Salesperson") &&
+                !loggedUser.hasRole("Admin") && !loggedUser.hasRole("Editor") ) // userRole.equals("Salesperson")
             productService.save(product, redirectAttributes);
         else
             productService.save(product, redirectAttributes, mainImageMultipart, extraImageMultiparts,

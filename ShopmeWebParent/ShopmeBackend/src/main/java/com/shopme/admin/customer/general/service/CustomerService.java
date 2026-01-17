@@ -2,6 +2,7 @@ package com.shopme.admin.customer.general.service;
 
 import com.shopme.admin.customer.general.repository.CustomerRepository;
 import com.shopme.admin.setting.country.service.CountryService;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.setting.country.Country;
 import com.shopme.common.exception.CustomerNotFoundException;
@@ -32,18 +33,8 @@ public class CustomerService {
         return (List<Customer>) customerRepository.findAll(Sort.by("id").ascending());
     }
 
-    public Page<Customer> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
-                                               String keyword) {
-        Sort sort = Sort.by(sortField);
-        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-
-        // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
-        Pageable pageable = PageRequest.of(pageNumber - 1, CUSTOMERS_PER_PAGE, sort);
-
-        if (keyword.isEmpty())
-            return customerRepository.findAll(pageable);
-
-        return customerRepository.findAll(keyword, pageable);
+    public void listByPageWithSorting(int pageNumber, PagingAndSortingHelper helper) {
+        helper.listByPageWithSorting(pageNumber, CUSTOMERS_PER_PAGE, customerRepository);
     }
 
     public Customer findById(int id) throws CustomerNotFoundException {
@@ -58,13 +49,16 @@ public class CustomerService {
 
     public Customer save(Customer customer,
                         RedirectAttributes redirectAttributes) throws IOException {
+        Customer customerInDB = customerRepository.findById(customer.getId()).get();
+
         if (customer.getPassword().isEmpty()) {
-            Customer customerInDB = customerRepository.findById(customer.getId()).get();
             customer.setPassword(customerInDB.getPassword());
         } else
             encodePassword(customer);
 
-        customer.setCreatedTime(new Date());
+        customer.setCreatedTime(customerInDB.getCreatedTime());
+        customer.setEnabled(customerInDB.isEnabled());
+        customer.setVerificationCode(customerInDB.getVerificationCode());
 
         Customer savedCustomer = customerRepository.save(customer);
 

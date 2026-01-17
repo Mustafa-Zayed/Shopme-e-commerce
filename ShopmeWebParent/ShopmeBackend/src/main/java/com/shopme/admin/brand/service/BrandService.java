@@ -3,6 +3,7 @@ package com.shopme.admin.brand.service;
 import com.shopme.admin.brand.exception.BrandNotFoundException;
 import com.shopme.admin.brand.repository.BrandRepository;
 import com.shopme.admin.utility.FileUploadUtil;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
 import com.shopme.common.entity.Brand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,18 +30,8 @@ public class BrandService {
         return brandRepository.findAll(sort);
     }
 
-    public Page<Brand> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
-                                            String keyword) {
-        Sort sort = Sort.by(sortField);
-        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-
-        // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
-        Pageable pageable = PageRequest.of(pageNumber - 1, BRANDS_PER_PAGE, sort);
-
-        if (keyword.isEmpty())
-            return brandRepository.findAll(pageable);
-
-        return brandRepository.findAll(keyword, pageable);
+    public void listByPageWithSorting(int pageNumber, PagingAndSortingHelper helper) {
+        helper.listByPageWithSorting(pageNumber, BRANDS_PER_PAGE, brandRepository);
     }
 
     public Brand save(Brand brand) {

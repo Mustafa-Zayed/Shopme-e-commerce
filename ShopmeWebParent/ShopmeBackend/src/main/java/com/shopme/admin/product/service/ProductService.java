@@ -1,5 +1,6 @@
 package com.shopme.admin.product.service;
 
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
 import com.shopme.common.exception.ProductNotFoundException;
 import com.shopme.admin.product.repository.ProductRepository;
 import com.shopme.admin.utility.FileUploadUtil;
@@ -28,22 +29,24 @@ public class ProductService {
         return (List<Product>) productRepository.findAll(Sort.by("id").ascending());
     }
 
-    public Page<Product> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
-                                               String keyword, Integer prodCatId) {
-        Sort sort = Sort.by(sortField);
-        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+    public void listByPageWithSorting(int pageNumber, PagingAndSortingHelper helper, Integer prodCatId) {
+        String keyword = helper.keyword();
+        keyword = (keyword == null || keyword.isEmpty()) ? "" : keyword; // set a default value if keyword is null or empty for the sake of the condition below
 
-        // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
-        Pageable pageable = PageRequest.of(pageNumber - 1, PRODUCTS_PER_PAGE, sort);
+        Pageable pageable = helper.createPageable(pageNumber, PRODUCTS_PER_PAGE);
+        Page<Product> page;
 
-        if (keyword.isEmpty() && prodCatId.equals(0))
-            return productRepository.findAll(pageable);
+        if (keyword.isEmpty() && prodCatId.equals(0)) {
+            page = productRepository.findAll(pageable);
+        } else if (prodCatId.equals(0))
+            page = productRepository.findAll(keyword, pageable);
+        else
+            page = productRepository.findAll(keyword, prodCatId, pageable);
 
-        if (prodCatId.equals(0))
-            return productRepository.findAll(keyword, pageable);
-
-        return productRepository.findAll(keyword, prodCatId, pageable);
+        helper.addToModel(page, pageNumber);
     }
+
+
 
     public Product save(Product product) {
         return productRepository.save(product);

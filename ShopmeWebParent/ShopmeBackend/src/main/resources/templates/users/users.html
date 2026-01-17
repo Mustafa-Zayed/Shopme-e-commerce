@@ -21,7 +21,7 @@
            th:href="@{/users/export/pdf}"></a>
     </div>
 
-    <div th:replace="~{fragments :: message_and_search_form('users')}"></div>
+    <div th:replace="~{fragments :: message_and_search_form()}"></div>
 
     <div class="full-details">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
@@ -30,16 +30,16 @@
                 <th class="hideable-column">
                     <!-- This th tag will be removed using th:remove, and replaced with the above th.
                     We using this approach, as we can't use class attribute with th:replace -->
-                    <th th:replace="~{fragments::column_link('users', 'id', 'User ID', 'tag')}"></th>
+                    <th th:replace="~{fragments::column_link('id', 'User ID', 'tag')}"></th>
                 </th>
                 <th>Photos</th>
                 <th class="hideable-column">
-                    <th th:replace="~{fragments::column_link('users', 'email', 'Email', 'tag')}"></th>
+                    <th th:replace="~{fragments::column_link('email', 'Email', 'tag')}"></th>
                 </th>
-                <th th:replace="~{fragments::column_link('users', 'firstName', 'First Name', 'none')}"></th>
-                <th th:replace="~{fragments::column_link('users', 'lastName', 'Last Name', 'none')}"></th>
+                <th th:replace="~{fragments::column_link('firstName', 'First Name', 'none')}"></th>
+                <th th:replace="~{fragments::column_link('lastName', 'Last Name', 'none')}"></th>
                 <th>Roles</th>
-                <th th:replace="~{fragments::column_link('users', 'enabled', 'Enabled', 'none')}"></th>
+                <th th:replace="~{fragments::column_link('enabled', 'Enabled', 'none')}"></th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -60,12 +60,12 @@
                 <td>[[${user.lastName}]]</td>
                 <td>[[${user.roles}]]</td>
                 <td>
-                    <th:block th:replace="~{fragments :: status('users', ${user.id}, ${user.enabled}, 'user')}"></th:block>
+                    <th:block th:replace="~{fragments :: status(${user.id}, ${user.enabled}, 'user')}"></th:block>
                 </td>
                 <td>
-                    <th:block th:replace="~{fragments :: edit_entity('users', ${user.id}, 'user')}"></th:block>
+                    <th:block th:replace="~{fragments :: edit_entity(${user.id}, 'user')}"></th:block>
                     &nbsp;
-                    <th:block th:replace="~{fragments :: delete_entity('users', ${user.id}, 'user', true)}"></th:block>
+                    <th:block th:replace="~{fragments :: delete_entity(${user.id}, 'user', true)}"></th:block>
                 </td>
             </tr>
             </tbody>
@@ -87,11 +87,11 @@
                 <div> [[${user.fullName}]]</div>
                 <div> [[${user.roles}]]</div>
                 <div class="mt-2">
-                    <th:block th:replace="~{fragments :: status('users', ${user.id}, ${user.enabled}, 'user')}"></th:block>
+                    <th:block th:replace="~{fragments :: status(${user.id}, ${user.enabled}, 'user')}"></th:block>
                     &nbsp;
-                    <th:block th:replace="~{fragments :: edit_entity('users', ${user.id}, 'user')}"></th:block>
+                    <th:block th:replace="~{fragments :: edit_entity(${user.id}, 'user')}"></th:block>
                     &nbsp;
-                    <th:block th:replace="~{fragments :: delete_entity('users', ${user.id}, 'user', true)}"></th:block>
+                    <th:block th:replace="~{fragments :: delete_entity(${user.id}, 'user', true)}"></th:block>
                 </div>
             </div>
 
@@ -100,7 +100,7 @@
         </div>
     </div>
 
-    <div th:replace="~{fragments :: pagination('users')}"></div>
+    <div th:replace="~{fragments :: pagination()}"></div>
 
     <div th:replace="~{fragments :: delete_dialogue}"></div>
 

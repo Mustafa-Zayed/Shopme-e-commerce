@@ -2,6 +2,8 @@ package com.shopme.admin.customer.general.controller;
 
 import com.shopme.admin.customer.general.export.CustomerCsvExporter;
 import com.shopme.admin.customer.general.service.CustomerService;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingParam;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.exception.CustomerNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,49 +27,15 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping("/customers")
-    public String listFirstPage(Model model) {
-        return listByPageWithSorting(1, "firstName", "asc", "", model);
+    public String listFirstPage() {
+        return "redirect:/customers/page/1?sortField=firstName&sortDir=asc";
     }
 
     @GetMapping("/customers/page/{pageNumber}")
     public String listByPageWithSorting(
-            @PathVariable int pageNumber,
-            @RequestParam(name = "sortField", defaultValue = "firstName") String sortField,
-            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
-            @RequestParam(name = "keyword", defaultValue = "") String keyword,
-            Model model) {
-
-        Page<Customer> customersPage = customerService
-                .listByPageWithSorting(pageNumber, sortField, sortDir, keyword);
-        return addToModel(pageNumber, customersPage, sortField, sortDir, keyword, model);
-    }
-
-    private String addToModel(int pageNumber, Page<Customer> customersPage,
-                              String sortField, String sortDir, String keyword, Model model) {
-        List<Customer> listCustomers = customersPage.getContent();
-        int totalPages = customersPage.getTotalPages();
-        long totalItems = customersPage.getTotalElements();
-
-        long startCount = ((long) (pageNumber - 1) * CUSTOMERS_PER_PAGE) + 1;
-        long endCount = (startCount + CUSTOMERS_PER_PAGE) - 1;
-        if (endCount > totalItems) endCount = totalItems;
-        model.addAttribute("startCount", startCount);
-        model.addAttribute("endCount", endCount);
-
-        model.addAttribute("listCustomers", listCustomers);
-
-        model.addAttribute("currentPage", pageNumber);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("totalItems", totalItems);
-
-        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
-
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reverseSortDir", reverseSortDir);
-
-        model.addAttribute("keyword", keyword);
-
+            @PagingAndSortingParam(listItemsName = "listCustomers", pathURL = "customers") PagingAndSortingHelper helper,
+            @PathVariable int pageNumber) {
+        customerService.listByPageWithSorting(pageNumber, helper);
         return "customers/customers";
     }
 

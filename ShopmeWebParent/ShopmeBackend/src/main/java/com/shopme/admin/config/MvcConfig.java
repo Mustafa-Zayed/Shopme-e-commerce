@@ -1,10 +1,13 @@
 package com.shopme.admin.config;
 
+import com.shopme.admin.utility.paging_and_sorting.resolver.PagingAndSortingArgumentResolver;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * This class configures Spring MVC to expose (allow the clients to access) a specific directory
@@ -32,5 +35,14 @@ public class MvcConfig implements WebMvcConfigurer {
         Path path = Path.of(directoryPath);
         registry.addResourceHandler("/" + dirName + "/**")
                 .addResourceLocations("file:/" + path.toFile().getAbsolutePath() + "/");
+    }
+
+    /**
+     * Adds custom argument resolvers to the list of resolvers used by Spring MVC.
+     * @param resolvers
+     */
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new PagingAndSortingArgumentResolver());
     }
 }

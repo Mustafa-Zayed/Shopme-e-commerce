@@ -4,6 +4,7 @@ import com.shopme.admin.user.repository.RoleRepository;
 import com.shopme.admin.user.exception.UserNotFoundException;
 import com.shopme.admin.user.repository.UserRepository;
 import com.shopme.admin.utility.FileUploadUtil;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
 import com.shopme.common.entity.Role;
 import com.shopme.common.entity.User;
 import jakarta.transaction.Transactional;
@@ -39,18 +40,8 @@ public class UserService {
         return (List<User>) userRepository.findAll(Sort.by("firstName").ascending());
     }
 
-    public Page<User> listByPageWithSorting(int pageNumber, String sortField, String sortDir,
-                                            String keyword) {
-        Sort sort = Sort.by(sortField);
-        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-
-        // page number is a 0-based index, but sent from the client as a 1-based index, so we need to subtract 1.
-        Pageable pageable = PageRequest.of(pageNumber - 1, USERS_PER_PAGE, sort);
-
-        if (keyword.isEmpty())
-            return userRepository.findAll(pageable);
-
-        return userRepository.findAll(keyword, pageable);
+    public void listByPageWithSorting(int pageNumber, PagingAndSortingHelper helper) {
+        helper.listByPageWithSorting(pageNumber, USERS_PER_PAGE, userRepository);
     }
 
     public List<Role> listRoles() {

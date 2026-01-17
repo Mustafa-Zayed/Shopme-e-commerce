@@ -4,10 +4,11 @@ import com.shopme.admin.brand.exception.BrandNotFoundException;
 import com.shopme.admin.brand.export.BrandCsvExporter;
 import com.shopme.admin.brand.service.BrandService;
 import com.shopme.admin.category.service.CategoryService;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
+import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingParam;
 import com.shopme.common.entity.Brand;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,8 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.List;
 
-import static com.shopme.admin.brand.service.BrandService.BRANDS_PER_PAGE;
-
 @RequiredArgsConstructor
 @Controller
 public class BrandController {
@@ -28,48 +27,15 @@ public class BrandController {
     private final CategoryService categoryService;
 
     @GetMapping("/brands")
-    public String listFirstPage(Model model) {
-        return listByPageWithSorting(1, "asc", "", model);
+    public String listFirstPage() {
+        return "redirect:/brands/page/1?&sortField=name&sortDir=asc";
     }
 
     @GetMapping("/brands/page/{pageNumber}")
     public String listByPageWithSorting(
-            @PathVariable int pageNumber,
-            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
-            @RequestParam(name = "keyword", defaultValue = "") String keyword,
-            Model model) {
-
-        // default sort field
-        String sortField = "name";
-        Page<Brand> brandsPage = brandService.listByPageWithSorting(pageNumber, sortField, sortDir, keyword);
-        return addToModel(pageNumber, brandsPage, sortField, sortDir, keyword, model);
-    }
-
-    private String addToModel(@PathVariable int pageNumber, Page<Brand> brandsPage,
-                              String sortField, String sortDir, String keyword, Model model) {
-        List<Brand> listBrands = brandsPage.getContent();
-        int totalPages = brandsPage.getTotalPages();
-        long totalItems = brandsPage.getTotalElements();
-
-        long startCount = ((long) (pageNumber - 1) * BRANDS_PER_PAGE) + 1;
-        long endCount = (startCount + BRANDS_PER_PAGE) - 1;
-        if (endCount > totalItems) endCount = totalItems;
-        model.addAttribute("startCount", startCount);
-        model.addAttribute("endCount", endCount);
-
-        model.addAttribute("listBrands", listBrands);
-        model.addAttribute("currentPage", pageNumber);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("totalItems", totalItems);
-
-        String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
-
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reverseSortDir", reverseSortDir);
-
-        model.addAttribute("keyword", keyword);
-
+            @PagingAndSortingParam(listItemsName = "listBrands", pathURL = "brands") PagingAndSortingHelper helper,
+            @PathVariable int pageNumber) {
+        brandService.listByPageWithSorting(pageNumber, helper);
         return "brands/brands";
     }
 

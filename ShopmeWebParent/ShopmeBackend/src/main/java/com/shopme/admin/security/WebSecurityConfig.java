@@ -1,5 +1,6 @@
 package com.shopme.admin.security;
 
+import com.shopme.admin.security.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,8 @@ public class WebSecurityConfig {
                                     .hasAnyAuthority("Admin", "Editor", "Salesperson")
                                 .requestMatchers("/products/*/enabled/*", "/products/new", "/products/delete/**")
                                     .hasAnyAuthority("Admin", "Editor")
+//                                .requestMatchers("/products/new")
+//                                    .access(new AnyRoleOFAllowedRolesAndNotOtherAuthorizationManager("Admin", "Editor"))
 
                                 .requestMatchers("/customers/**").hasAnyAuthority("Admin", "Salesperson")
                                 .requestMatchers("/shipping/**").hasAnyAuthority("Admin", "Salesperson")
@@ -74,5 +77,10 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityUtil securityUtil() {
+        return new SecurityUtil();
     }
 }

@@ -14,7 +14,7 @@
            th:href="@{/brands/export/csv}"></a>
     </div>
 
-    <div th:replace="~{fragments :: message_and_search_form('brands')}"></div>
+    <div th:replace="~{fragments :: message_and_search_form()}"></div>
 
     <div class="full-details">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
@@ -22,7 +22,7 @@
             <tr>
                 <th class="hideable-column">ID</th>
                 <th>Logo</th>
-                <th th:replace="~{fragments::column_link('brands', 'name', 'Brand Name', 'none')}"></th>
+                <th th:replace="~{fragments::column_link('name', 'Brand Name', 'none')}"></th>
                 <th>Categories</th>
                 <th>Actions</th>
             </tr>
@@ -43,9 +43,9 @@
                     </span>
                 </td>
                 <td>
-                    <th:block th:replace="~{fragments :: edit_entity('brands', ${brand.id}, 'brand')}"></th:block>
+                    <th:block th:replace="~{fragments :: edit_entity(${brand.id}, 'brand')}"></th:block>
                     &nbsp;
-                    <th:block th:replace="~{fragments :: delete_entity('brands', ${brand.id}, 'brand', true)}"></th:block>
+                    <th:block th:replace="~{fragments :: delete_entity(${brand.id}, 'brand', true)}"></th:block>
                 </td>
             </tr>
             </tbody>
@@ -63,9 +63,9 @@
             <div class="col-8">
                 <div> [[${brand.name}]]</div>
                 <div class="mt-2">
-                    <th:block th:replace="~{fragments :: edit_entity('brands', ${brand.id}, 'brand')}"></th:block>
+                    <th:block th:replace="~{fragments :: edit_entity(${brand.id}, 'brand')}"></th:block>
                     &nbsp;
-                    <th:block th:replace="~{fragments :: delete_entity('brands', ${brand.id}, 'brand', true)}"></th:block>
+                    <th:block th:replace="~{fragments :: delete_entity(${brand.id}, 'brand', true)}"></th:block>
                 </div>
             </div>
 
@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    <div th:replace="~{fragments :: pagination(path = 'brands')}"></div>
+    <div th:replace="~{fragments :: pagination()}"></div>
 
     <div th:replace="~{fragments :: delete_dialogue}"></div>
 

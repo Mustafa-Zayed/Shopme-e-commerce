@@ -8,6 +8,7 @@
 
     <div>
         <h2>Manage Products</h2>
+        <!-- <th:block sec:authorize="@securityUtil.hasAnyRoleOFAllowedRolesAndNotOther('Admin','Editor')"> -->
         <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
             <a class="fa-solid fa-folder-plus fa-2x text-decoration-none link-secondary me-2"
                th:href="@{/products/new}"></a>
@@ -17,29 +18,29 @@
         </th:block>
     </div>
 
-    <div th:replace="~{fragments :: message_and_search_form(path = 'products', productForm = true)}"></div>
+    <div th:replace="~{fragments :: message_and_search_form(productForm = true)}"></div>
 
     <div class="full-details">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
             <thead class="table-dark">
             <tr>
                 <th class="hideable-column">
-                    <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'id',
+                    <th th:replace="~{fragments::column_link(sortFieldName = 'id',
                         columnLabel = 'ID', removeTag = 'tag', productForm = true)}">ID</th>
                 </th>
                 <th>Main Image</th>
-                <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'name',
+                <th th:replace="~{fragments::column_link(sortFieldName = 'name',
                     columnLabel = 'Product Name', removeTag ='none', productForm = true)}"></th>
                 <th class="hideable-column">
-                    <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'brand.name',
+                    <th th:replace="~{fragments::column_link(sortFieldName = 'brand.name',
                         columnLabel = 'Brand', removeTag ='tag', productForm = true)}"></th>
                 </th>
                 <th class="hideable-column">
-                    <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'category.name',
+                    <th th:replace="~{fragments::column_link(sortFieldName = 'category.name',
                         columnLabel = 'Category', removeTag ='tag', productForm = true)}"></th>
                 </th>
                 <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
-                    <th th:replace="~{fragments::column_link(path = 'products', sortFieldName = 'enabled',
+                    <th th:replace="~{fragments::column_link(sortFieldName = 'enabled',
                         columnLabel = 'Enabled',removeTag ='none', productForm = true)}"></th>
                 </th:block>
                 <th>Actions</th>
@@ -63,7 +64,7 @@
                 <td class="hideable-column">[[${product.brand.name}]]</td>
                 <td class="hideable-column">[[${product.category.name}]]</td>
                 <td sec:authorize="hasAnyAuthority('Admin', 'Editor')">
-                    <th:block th:replace="~{fragments :: status('products', ${product.id}, ${product.enabled}, 'product')}"></th:block>
+                    <th:block th:replace="~{fragments :: status(${product.id}, ${product.enabled}, 'product')}"></th:block>
                 </td>
                 <td>
                     <a class="fa-solid fa-file-alt fa-2x text-decoration-none link-success link-detail"
@@ -71,11 +72,11 @@
                        title="View details of this product"></a>
                     &nbsp;
                     <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor', 'Salesperson')">
-                        <th:block th:replace="~{fragments :: edit_entity('products', ${product.id}, 'product')}"></th:block>
+                        <th:block th:replace="~{fragments :: edit_entity(${product.id}, 'product')}"></th:block>
                     </th:block>
                     &nbsp;
                     <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
-                        <th:block th:replace="~{fragments :: delete_entity('products', ${product.id}, 'product', true)}"></th:block>
+                        <th:block th:replace="~{fragments :: delete_entity(${product.id}, 'product', true)}"></th:block>
                     </th:block>
                 </td>
             </tr>
@@ -103,9 +104,9 @@
                        th:href="@{'/products/details/' + ${product.id}}"
                        title="View details of this product"></a>
                     &nbsp;
-                    <th:block th:replace="~{fragments :: edit_entity('products', ${product.id}, 'product')}"></th:block>
+                    <th:block th:replace="~{fragments :: edit_entity(${product.id}, 'product')}"></th:block>
                     &nbsp;
-                    <th:block th:replace="~{fragments :: delete_entity('products', ${product.id}, 'product', true)}"></th:block>
+                    <th:block th:replace="~{fragments :: delete_entity(${product.id}, 'product', true)}"></th:block>
                 </div>
             </div>
 
@@ -122,7 +123,7 @@
         </div>
     </div>
 
-    <div th:replace="~{fragments :: pagination(path = 'products', productForm = true)}"></div>
+    <div th:replace="~{fragments :: pagination(productForm = true)}"></div>
 
     <div th:replace="~{fragments :: delete_dialogue}"></div>
 

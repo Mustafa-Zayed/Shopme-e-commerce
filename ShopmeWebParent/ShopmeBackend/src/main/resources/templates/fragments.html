@@ -23,7 +23,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
 <!== th:href="@{/users/page/{pageNumber}( pageNumber=${currentPage}, sortField=${sortFieldName}, sortDir=${sortField == sortFieldName ? reverseSortDir : 'asc'}, keyword=${keyword})}"==>
 -->
 
-<th th:fragment="column_link(path, sortFieldName, columnLabel, removeTag)"
+<th th:fragment="column_link(sortFieldName, columnLabel, removeTag)"
     th:with="productForm = ${productForm ?: false}" th:remove="${removeTag}">
 
     <!-- We can do without defining productForm by checking if prodCatId is null directly -->
@@ -32,7 +32,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
        th:href="@{'/' + ${path} + '/page/' + ${currentPage}
            + '?sortField=' + ${sortFieldName}
            + '&sortDir=' + ${sortField == sortFieldName ? reverseSortDir : 'asc'}
-           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+           + ${keyword != null && !keyword.isEmpty() ? '&keyword=' + keyword : ''}
            + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
     >[[${columnLabel}]]</a>
 
@@ -91,6 +91,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                            th:href="@{/products}">Products</a>
 
+                        <!-- sec:authorize="@securityUtil.hasAnyRoleOFAllowedRolesAndNotOther('Admin', 'Editor')" -->
                         <div class="dropdown-menu">
                             <a class="dropdown-item" th:href="@{/products/new}"
                                 sec:authorize="hasAnyAuthority('Admin', 'Editor')">Create New</a>
@@ -160,7 +161,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
     </div>
 </nav>
 
-<div th:fragment="message_and_search_form(path)" class="my-3" th:with="productForm = ${productForm ?: false}">
+<div th:fragment="message_and_search_form()" class="my-3" th:with="productForm = ${productForm ?: false}">
     <!-- || syntax (literal substitutions) and the Elvis operator (?:) to provide a default value -->
     <div th:class="|alert alert-${resultClass ?: 'success'} text-center|" th:if="${message != null}">
         [[${message}]]
@@ -209,7 +210,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
     </form>
 </div>
 
-<th:block th:fragment="status(path, id, status, title)">
+<th:block th:fragment="status(id, status, title)">
     <!--send status as a request parameter-->
     <!--th:href="@{/users/{id}/enabled(id=${user.id}, status=${user.enabled})}"-->
     <a class="fa-solid fa-circle-check fa-2x text-decoration-none link-success"
@@ -225,13 +226,13 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
     ></a>
 </th:block>
 
-<th:block th:fragment="edit_entity(path, id, title)">
+<th:block th:fragment="edit_entity(id, title)">
     <a class="fa-solid fa-edit fa-2x text-decoration-none link-primary"
        th:href="@{'/' + ${path} + '/edit/' + ${id}}"
        th:title="|Edit this ${title}|"></a>
 </th:block>
 
-<th:block th:fragment="delete_entity(path, id, title, condition)">
+<th:block th:fragment="delete_entity(id, title, condition)">
     <!--Approach one-->
     <!--<a class="fas fa-trash fa-2x text-decoration-none icon-red"
        th:data-user-id="${user.id}"
@@ -276,7 +277,7 @@ like `&keyword=`. Instead, we need to append the keyword only when it is not emp
 
 <!-- entityName is an optional additional variable. If not explicitly provided, it defaults to
 the value of the path variable. additionalSentence is the same -->
-<div th:fragment="pagination(path)"
+<div th:fragment="pagination()"
      th:with="entityName = ${entityName ?: path},
      additionalSentence = ${additionalSentence ?: ''},
      productForm = ${productForm ?: false}" th:remove="tag">
@@ -305,7 +306,7 @@ the value of the path variable. additionalSentence is the same -->
                        th:href="@{'/' + ${path} + '/page/1'
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${keyword != null && !keyword.isEmpty() ? '&keyword=' + keyword : ''}
                            + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                     >First</a>
                 </li>
@@ -314,7 +315,7 @@ the value of the path variable. additionalSentence is the same -->
                        th:href="@{'/' + ${path} + '/page/' +  ${currentPage - 1}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${keyword != null && !keyword.isEmpty() ? '&keyword=' + keyword : ''}
                            + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                     >Previous</a>
                 </li>
@@ -326,7 +327,7 @@ the value of the path variable. additionalSentence is the same -->
                        th:href="@{'/' + ${path} + '/page/' + ${i}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${keyword != null && !keyword.isEmpty() ? '&keyword=' + keyword : ''}
                            + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                        th:if="${currentPage != i}"
                     >[[${i}]]</a>
@@ -338,7 +339,7 @@ the value of the path variable. additionalSentence is the same -->
                        th:href="@{'/' + ${path} + '/page/' + ${currentPage + 1}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${keyword != null && !keyword.isEmpty() ? '&keyword=' + keyword : ''}
                            + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                     >Next</a>
                 </li>
@@ -347,7 +348,7 @@ the value of the path variable. additionalSentence is the same -->
                        th:href="@{'/' + ${path} + '/page/' + ${totalPages}
                            + '?sortField=' + ${sortField}
                            + '&sortDir=' + ${sortDir}
-                           + ${!keyword.isEmpty() ? '&keyword=' + keyword : ''}
+                           + ${keyword != null && !keyword.isEmpty() ? '&keyword=' + keyword : ''}
                            + ${productForm ? '&prodCatId=' + prodCatId : ''}}"
                     >Last</a>
                 </li>
