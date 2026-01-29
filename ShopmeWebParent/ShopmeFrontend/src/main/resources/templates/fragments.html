@@ -8,9 +8,12 @@
     <title>[[${title}]] - [[${SITE_NAME}]]</title>
 
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/fontawesome/all.css}" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/style.css}" type="text/css">
 
     <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}" type="text/javascript"></script>
+    <script th:src="@{/js/common.js}" type="text/javascript"></script>
 </head>
 <body>
 <div>
@@ -36,7 +39,7 @@
                         <a class="nav-link" th:href="@{/}">Shipping &amp; Delivery</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Login</a>
+                        <a class="nav-link" th:href="@{/login}">Login</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/register}">Register</a>
@@ -49,6 +52,60 @@
 
         </div>
     </nav>
+</div>
+
+<div th:fragment="search_nav" class="row">
+    <div class="col">
+        <nav class="navbar navbar-expand-lg bg-secondary-subtle">
+            <div class="container-fluid">
+                <button aria-controls="searchNavbar" aria-expanded="false" aria-label="Toggle navigation"
+                        class="navbar-toggler"
+                        data-bs-target="#searchNavbar" data-bs-toggle="collapse" type="button">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="searchNavbar">
+                    <form class="row g-3 my-below-lg" th:action="@{/search}" method="get">
+                        <div class="col-auto">
+                            <input type="search" name="keyword" th:value="${keyword}"
+                                   class="form-control" placeholder="keyword" required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-outline-success">Search</button>
+                        </div>
+                    </form>
+                    <th:block sec:authorize="isAuthenticated()">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <b><a class="nav-link link-success" th:href="@{/account}"
+                                      sec:authentication="principal.fullName"></a></b>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link-success" href="">Addresses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link-success" href="">Questions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link-success" href="">Reviews</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link-success" href="">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link-success" href="">Cart</a>
+                            </li>
+                            <li class="nav-item">
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="nav-link link-success">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </th:block>
+                </div>
+            </div>
+        </nav>
+    </div>
 </div>
 
 <div th:fragment="pagination(path)"

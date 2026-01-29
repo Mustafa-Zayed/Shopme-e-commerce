@@ -1,4 +1,4 @@
-package com.shopme.admin.utility.paging_and_sorting;
+package com.shopme.admin.utility.paging_and_sorting.annotation;
 
 import com.shopme.admin.utility.paging_and_sorting.resolver.PagingAndSortingArgumentResolver;
 import java.lang.annotation.ElementType;

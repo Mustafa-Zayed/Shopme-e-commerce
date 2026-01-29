@@ -1,3 +1,11 @@
+$(document).ready(function () {
+    $("#buttonCancel").on("click", function () {
+        // we define the moduleURL in the html page, as it's a thymeleaf variable
+        // and this js file cannot identify its syntax
+        window.location = moduleURL;
+    });
+    })
+
 function showModalDialog(title, message) {
     $("#modalTitle").text(title);
     $("#modalBody").html(message); // Use .html() to allow HTML tags in the message

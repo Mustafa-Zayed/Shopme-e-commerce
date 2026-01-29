@@ -1,6 +1,6 @@
 package com.shopme.admin.user.repository;
 
-import com.shopme.admin.utility.paging_and_sorting.SearchRepository;
+import com.shopme.admin.utility.paging_and_sorting.repository.SearchRepository;
 import com.shopme.common.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

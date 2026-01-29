@@ -3,12 +3,11 @@ package com.shopme.admin.customer.general.controller;
 import com.shopme.admin.customer.general.export.CustomerCsvExporter;
 import com.shopme.admin.customer.general.service.CustomerService;
 import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
-import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingParam;
+import com.shopme.admin.utility.paging_and_sorting.annotation.PagingAndSortingParam;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.exception.CustomerNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import static com.shopme.admin.customer.general.service.CustomerService.CUSTOMERS_PER_PAGE;
 
 @RequiredArgsConstructor
 @Controller

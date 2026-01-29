@@ -1,7 +1,7 @@
 package com.shopme.admin.utility.paging_and_sorting.resolver;
 
 import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
-import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingParam;
+import com.shopme.admin.utility.paging_and_sorting.annotation.PagingAndSortingParam;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.bind.WebDataBinder;

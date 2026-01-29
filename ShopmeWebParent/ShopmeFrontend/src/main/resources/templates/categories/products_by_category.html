@@ -5,6 +5,8 @@
     <div class="container-fluid">
         <div th:replace="~{fragments :: top_navbar}"></div>
 
+        <th:block th:replace="~{fragments :: search_nav}"></th:block>
+
         <div th:replace="~{fragments :: breadcrumb(allCategoryParents = ${allCategoryParents}, catBreadcrumb = true)}"></div>
 
 

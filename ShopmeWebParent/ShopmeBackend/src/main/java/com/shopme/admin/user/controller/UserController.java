@@ -6,7 +6,7 @@ import com.shopme.admin.user.export.UserCsvExporter;
 import com.shopme.admin.user.export.UserExcelExporter;
 import com.shopme.admin.user.export.UserPDFExporter;
 import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
-import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingParam;
+import com.shopme.admin.utility.paging_and_sorting.annotation.PagingAndSortingParam;
 import com.shopme.common.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

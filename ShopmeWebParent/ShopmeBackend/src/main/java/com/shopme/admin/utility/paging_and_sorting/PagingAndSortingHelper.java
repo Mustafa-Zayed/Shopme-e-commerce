@@ -1,5 +1,6 @@
 package com.shopme.admin.utility.paging_and_sorting;
 
+import com.shopme.admin.utility.paging_and_sorting.repository.SearchRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

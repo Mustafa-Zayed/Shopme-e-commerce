@@ -5,15 +5,7 @@
 <div class="container-fluid">
     <div th:replace="~{fragments :: top_navbar}"></div>
 
-    <form class="row g-3 my-2 align-items-center" th:action="@{/search}" method="get">
-        <div class="col-auto">
-            <input type="search" name="keyword" th:value="${keyword}"
-                   class="form-control" placeholder="keyword" required>
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-outline-success">Search</button>
-        </div>
-    </form>
+    <th:block th:replace="~{fragments :: search_nav}"></th:block>
 
     <th:block th:if="${totalItems > 0}">
         <div>

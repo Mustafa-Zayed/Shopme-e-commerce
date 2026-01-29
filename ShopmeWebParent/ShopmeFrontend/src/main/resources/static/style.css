@@ -55,3 +55,10 @@
         display: table-cell;
     }
 }
+
+@media (max-width: 992px) {
+    .my-below-lg {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+}

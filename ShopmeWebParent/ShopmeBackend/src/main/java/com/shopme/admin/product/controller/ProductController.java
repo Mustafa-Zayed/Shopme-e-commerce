@@ -3,7 +3,7 @@ package com.shopme.admin.product.controller;
 import com.shopme.admin.brand.service.BrandService;
 import com.shopme.admin.category.service.CategoryService;
 import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingHelper;
-import com.shopme.admin.utility.paging_and_sorting.PagingAndSortingParam;
+import com.shopme.admin.utility.paging_and_sorting.annotation.PagingAndSortingParam;
 import com.shopme.common.entity.product.Product;
 import com.shopme.common.entity.product.ProductDetail;
 import com.shopme.common.entity.product.ProductImage;
@@ -14,7 +14,6 @@ import com.shopme.admin.security.ShopmeUserDetails;
 import com.shopme.common.entity.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -29,8 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import static com.shopme.admin.product.service.ProductService.PRODUCTS_PER_PAGE;
 
 @RequiredArgsConstructor
 @Controller
