@@ -65,6 +65,10 @@ public class Customer {
     @Column(length = 64)
     private String verificationCode;
 
+    @Column(length = 10)
+    @Enumerated(EnumType.STRING)
+    private AuthenticationType authenticationType;
+
     public String getFullName() {
         return firstName + " " + lastName;
     }

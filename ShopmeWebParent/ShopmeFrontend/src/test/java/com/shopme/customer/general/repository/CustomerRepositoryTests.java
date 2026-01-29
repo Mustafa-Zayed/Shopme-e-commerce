@@ -1,5 +1,6 @@
 package com.shopme.customer.general.repository;
 
+import com.shopme.common.entity.AuthenticationType;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.setting.country.Country;
 import org.junit.jupiter.api.Test;
@@ -119,5 +120,13 @@ public class CustomerRepositoryTests {
         Customer customer = customerRepository.findById(customerId).get();
 
         assertThat(customer.isEnabled()).isTrue();
+    }
+
+    @Test
+    public void CustomerRepository_UpdateAuthenticationType_ReturnCustomer() {
+        customerRepository.updateAuthenticationType(37, AuthenticationType.GOOGLE);
+        Customer customer = customerRepository.findById(37).get();
+
+        assertThat(customer.getAuthenticationType()).isEqualTo(AuthenticationType.GOOGLE);
     }
 }

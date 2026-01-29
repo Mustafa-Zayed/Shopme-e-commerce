@@ -1,5 +1,6 @@
 package com.shopme.customer.general.repository;
 
+import com.shopme.common.entity.AuthenticationType;
 import com.shopme.common.entity.Customer;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,8 @@ public interface CustomerRepository extends CrudRepository<Customer, Integer>, P
     @Modifying
     @Query("UPDATE Customer c SET c.enabled = TRUE, c.verificationCode = null WHERE c.id = :customerId")
     void enable(Integer customerId);
+
+    @Modifying
+    @Query("UPDATE Customer c SET c.authenticationType = ?2 WHERE c.id = ?1")
+    void updateAuthenticationType(Integer customerId, AuthenticationType authenticationType);
 }

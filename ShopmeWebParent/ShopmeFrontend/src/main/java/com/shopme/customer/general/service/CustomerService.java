@@ -1,5 +1,6 @@
 package com.shopme.customer.general.service;
 
+import com.shopme.common.entity.AuthenticationType;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.setting.general.utility.EmailSettingBag;
 import com.shopme.customer.general.repository.CustomerRepository;
@@ -100,5 +101,13 @@ public class CustomerService {
 
         customerRepository.enable(customer.getId());
         return true;
+    }
+
+    @Transactional
+    public void updateAuthenticationType(Customer customer, AuthenticationType authenticationType) {
+        if (customer.getAuthenticationType().equals(authenticationType))
+            return;
+
+        customerRepository.updateAuthenticationType(customer.getId(), authenticationType);
     }
 }
