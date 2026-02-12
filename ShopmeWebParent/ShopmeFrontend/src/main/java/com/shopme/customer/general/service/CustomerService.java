@@ -3,6 +3,7 @@ package com.shopme.customer.general.service;
 import com.shopme.common.entity.AuthenticationType;
 import com.shopme.common.entity.Customer;
 import com.shopme.common.entity.setting.general.utility.EmailSettingBag;
+import com.shopme.customer.country.repository.CountryRepository;
 import com.shopme.customer.general.repository.CustomerRepository;
 import com.shopme.setting.service.SettingService;
 import com.shopme.utitlity.EmailConfig;
@@ -27,6 +28,7 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final SettingService settingService;
     private final PasswordEncoder passwordEncoder;
+    private final CountryRepository countryRepository;
 
     public boolean checkEmailUniqueness(String email) {
         return customerRepository.findByEmail(email) == null;
@@ -47,6 +49,7 @@ public class CustomerService {
         // disable customer by default
         customer.setEnabled(false);
         customer.setCreatedTime(new Date());
+        customer.setAuthenticationType(AuthenticationType.DATABASE); // default authentication type
 
         // generate random verification code
         String randomCode = UUID.randomUUID().toString(); // RandomString.make(64);
@@ -110,4 +113,44 @@ public class CustomerService {
 
         customerRepository.updateAuthenticationType(customer.getId(), authenticationType);
     }
+
+    public Customer findByEmail(String email){
+        return customerRepository.findByEmail(email);
+    }
+
+    public void saveCustomerUponOAuth2Login(String name, String email, String countryCode,
+                                            AuthenticationType authenticationType){
+        Customer customer = Customer.builder()
+                .email(email)
+                .authenticationType(authenticationType)
+                .enabled(true)
+                .createdTime(new Date())
+                .password("")
+                .addressLine1("")
+                .addressLine2("")
+                .phoneNumber("")
+                .postalCode("")
+                .city("")
+                .state("")
+                .country(countryRepository.findByCode(countryCode)) // country code is extracted from locale, not accurate, but for now it is the best we can do.
+                .build();
+
+        setFirstAndLastName(customer, name);
+
+        customerRepository.save(customer);
+    }
+
+    private void setFirstAndLastName(Customer customer, String name) {
+        String[] nameParts = name.split(" ");
+        if (nameParts.length < 2) {
+            customer.setFirstName(name);
+            customer.setLastName("");
+        } else {
+            String firstName = nameParts[0];
+            String lastName = name.replaceFirst(firstName, "");
+            customer.setFirstName(firstName);
+            customer.setLastName(lastName);
+        }
+    }
 }
+

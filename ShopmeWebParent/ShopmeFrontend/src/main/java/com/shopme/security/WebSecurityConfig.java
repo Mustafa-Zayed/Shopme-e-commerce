@@ -1,5 +1,7 @@
 package com.shopme.security;
 
+import com.shopme.security.oauth2.CustomerOAuth2UserService;
+import com.shopme.security.oauth2.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
 
     private final ShopmeCustomerUserDetailsService customerUserDetailsService;
+    private final CustomerOAuth2UserService customerOAuth2UserService;
+    // circular dependency issue, so we will inject them as method parameters in filterChain method.
+//    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+//    private final DatabaseLoginSuccessHandler databaseLoginSuccessHandler;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -24,7 +30,9 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler,
+                                           DatabaseLoginSuccessHandler databaseLoginSuccessHandler) throws Exception {
         http
                 .authorizeHttpRequests(
                         (requests) -> requests
@@ -40,7 +48,19 @@ public class WebSecurityConfig {
                                 .loginPage("/login")
                                 .loginProcessingUrl("/authenticateCustomer")
                                 .usernameParameter("email")
+                                .successHandler(databaseLoginSuccessHandler)
                                 .permitAll()
+                )
+                .oauth2Login(
+                        (oauth2) -> oauth2
+                                .loginPage("/login")
+                                .userInfoEndpoint(
+                                        (userInfo) -> userInfo
+                                                .userService(customerOAuth2UserService)
+                                )
+                                .successHandler(
+                                        oAuth2LoginSuccessHandler
+                                )
                 )
                 .logout(
                         (logout) -> logout.permitAll()
