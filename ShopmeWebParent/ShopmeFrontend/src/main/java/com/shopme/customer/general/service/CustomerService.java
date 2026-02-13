@@ -128,7 +128,6 @@ public class CustomerService {
                 .password("")
                 .addressLine1("")
                 .addressLine2("")
-                .phoneNumber("")
                 .postalCode("")
                 .city("")
                 .state("")
@@ -137,19 +136,33 @@ public class CustomerService {
 
         setFirstAndLastName(customer, name);
 
+        if (!checkPhoneNumberUniqueness("")) {
+            customer.setPhoneNumber("rd" + System.currentTimeMillis()/1000);
+        } else {
+            customer.setPhoneNumber("");
+        }
         customerRepository.save(customer);
     }
 
     private void setFirstAndLastName(Customer customer, String name) {
         String[] nameParts = name.split(" ");
         if (nameParts.length < 2) {
-            customer.setFirstName(name);
+            StringBuilder firstName = new StringBuilder(name);
+            boolean uniqueness = checkFullNameUniqueness(String.valueOf(firstName));
+            if (!uniqueness) {
+                firstName.append(System.currentTimeMillis());
+            }
+            customer.setFirstName(String.valueOf(firstName));
             customer.setLastName("");
         } else {
             String firstName = nameParts[0];
-            String lastName = name.replaceFirst(firstName, "");
+            StringBuilder lastName = new StringBuilder(name.replaceFirst(firstName + " ", ""));
+            boolean uniqueness = checkFullNameUniqueness(firstName + " " + lastName);
+            if (!uniqueness) {
+                lastName.append(System.currentTimeMillis());
+            }
             customer.setFirstName(firstName);
-            customer.setLastName(lastName);
+            customer.setLastName(String.valueOf(lastName));
         }
     }
 }

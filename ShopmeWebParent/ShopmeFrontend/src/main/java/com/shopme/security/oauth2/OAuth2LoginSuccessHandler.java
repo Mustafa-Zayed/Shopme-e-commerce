@@ -27,15 +27,28 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         String email = customerOAuth2User.getEmail();
         String countryCode = request.getLocale().getCountry();
 
- System.out.println("customerOAuth2User.getEmail(): " + customerOAuth2User.getEmail());
- System.out.println("customerOAuth2User.getFullName(): " + customerOAuth2User.getFullName());
+        String clientName = customerOAuth2User.clientName();
+        AuthenticationType authenticationType = getAuthenticationType(clientName);
+
         Customer byEmail = customerService.findByEmail(email);
         if (byEmail == null) {
-            customerService.saveCustomerUponOAuth2Login(name, email, countryCode, AuthenticationType.GOOGLE);
+            customerService.saveCustomerUponOAuth2Login(name, email, countryCode, authenticationType);
         } else {
-            customerService.updateAuthenticationType(byEmail, AuthenticationType.GOOGLE);
+            customerService.updateAuthenticationType(byEmail, authenticationType);
         }
 
         super.onAuthenticationSuccess(request, response, authentication);
+    }
+
+    private AuthenticationType getAuthenticationType(String clientName) {
+        AuthenticationType authenticationType;
+        if (clientName.equals("Google")) {
+            authenticationType = AuthenticationType.GOOGLE;
+        } else if (clientName.equals("Facebook")) {
+            authenticationType = AuthenticationType.FACEBOOK;
+        } else {
+            throw new IllegalArgumentException("Invalid client name: " + clientName);
+        }
+        return authenticationType;
     }
 }
