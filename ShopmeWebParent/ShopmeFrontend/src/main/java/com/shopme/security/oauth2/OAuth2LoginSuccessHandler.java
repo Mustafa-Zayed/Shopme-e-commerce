@@ -34,6 +34,9 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         if (byEmail == null) {
             customerService.saveCustomerUponOAuth2Login(name, email, countryCode, authenticationType);
         } else {
+            // Show the full name of the principal from database instead of from OAuth2User
+            // If we don't do this, the full name of the last logged in user will be displayed, not the current one.
+            customerOAuth2User.setFullName(byEmail.getFullName());
             customerService.updateAuthenticationType(byEmail, authenticationType);
         }
 
@@ -47,7 +50,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         } else if (clientName.equals("Facebook")) {
             authenticationType = AuthenticationType.FACEBOOK;
         } else {
-            throw new IllegalArgumentException("Invalid client name: " + clientName);
+            authenticationType = AuthenticationType.DATABASE;
         }
         return authenticationType;
     }

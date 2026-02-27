@@ -38,7 +38,7 @@ public class WebSecurityConfig {
                         (requests) -> requests
 //                                .requestMatchers("/*.css", "/images/**", "/js/**", "/webjars/**", "/fontawesome/**", "/webfonts/**")
 //                                .permitAll()
-                                .requestMatchers("/account")
+                                .requestMatchers("/account/**")
                                 .authenticated()
                                 .anyRequest()
                                 .permitAll()

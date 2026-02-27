@@ -16,6 +16,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.UUID;
 
@@ -34,12 +35,22 @@ public class CustomerService {
         return customerRepository.findByEmail(email) == null;
     }
 
-    public boolean checkFullNameUniqueness(String fullName) {
-        return customerRepository.findByFullName(fullName) == null;
+    public boolean checkFullNameUniqueness(String fullName, Integer id) {
+        Customer byFullName = customerRepository.findByFullName(fullName);
+        if (byFullName == null)
+            return true;
+
+        // Check if the email belongs to the edited customer (i.e. edited customer needn't change the full name)
+        // If new customer case, returns false as the id param is null
+        return byFullName.getId().equals(id);
     }
 
-    public boolean checkPhoneNumberUniqueness(String phoneNumber) {
-        return customerRepository.findByPhoneNumber(phoneNumber) == null;
+    public boolean checkPhoneNumberUniqueness(String phoneNumber, Integer id) {
+        Customer byPhoneNumber = customerRepository.findByPhoneNumber(phoneNumber);
+        if (byPhoneNumber == null)
+            return true;
+
+        return byPhoneNumber.getId().equals(id);
     }
 
     @Transactional
@@ -136,7 +147,7 @@ public class CustomerService {
 
         setFirstAndLastName(customer, name);
 
-        if (!checkPhoneNumberUniqueness("")) {
+        if (!checkPhoneNumberUniqueness("", null)) {
             customer.setPhoneNumber("rd" + System.currentTimeMillis()/1000);
         } else {
             customer.setPhoneNumber("");
@@ -148,7 +159,7 @@ public class CustomerService {
         String[] nameParts = name.split(" ");
         if (nameParts.length < 2) {
             StringBuilder firstName = new StringBuilder(name);
-            boolean uniqueness = checkFullNameUniqueness(String.valueOf(firstName));
+            boolean uniqueness = checkFullNameUniqueness(String.valueOf(firstName), null);
             if (!uniqueness) {
                 firstName.append(System.currentTimeMillis());
             }
@@ -157,13 +168,32 @@ public class CustomerService {
         } else {
             String firstName = nameParts[0];
             StringBuilder lastName = new StringBuilder(name.replaceFirst(firstName + " ", ""));
-            boolean uniqueness = checkFullNameUniqueness(firstName + " " + lastName);
+            boolean uniqueness = checkFullNameUniqueness(firstName + " " + lastName, null);
             if (!uniqueness) {
                 lastName.append(System.currentTimeMillis());
             }
             customer.setFirstName(firstName);
             customer.setLastName(String.valueOf(lastName));
         }
+    }
+
+    @Transactional
+    public void updateCustomerAccountDetails(Customer customer, RedirectAttributes redirectAttributes) {
+        Customer customerInDB = customerRepository.findById(customer.getId()).get();
+        if (customer.getPassword() == null || customer.getPassword().isEmpty()) // set password = "" to avoid null check
+            customer.setPassword(customerInDB.getPassword());
+        else
+            encodePassword(customer);
+
+
+        customer.setCreatedTime(customerInDB.getCreatedTime());
+        customer.setVerificationCode(customerInDB.getVerificationCode());
+        customer.setEnabled(customerInDB.isEnabled());
+        customer.setAuthenticationType(customerInDB.getAuthenticationType());
+
+        String message = "Your Account details have been updated successfully!";
+        redirectAttributes.addFlashAttribute("message", message);
+        customerRepository.save(customer);
     }
 }
 

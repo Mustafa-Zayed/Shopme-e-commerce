@@ -17,13 +17,15 @@ public class CustomerRestController {
     }
 
     @PostMapping("/register/check_fullName_uniqueness")
-    public boolean checkFullNameUniqueness(@RequestParam String fullName) {
-        return customerService.checkFullNameUniqueness(fullName);
+    public boolean checkFullNameUniqueness(@RequestParam String fullName,
+                                           @RequestParam(defaultValue = "") Integer id) {
+        return customerService.checkFullNameUniqueness(fullName, id);
     }
 
     @PostMapping("/register/check_phoneNumber_uniqueness")
-    public boolean checkPhoneNumberUniqueness(@RequestParam String phoneNumber) {
-        return customerService.checkPhoneNumberUniqueness(phoneNumber);
+    public boolean checkPhoneNumberUniqueness(@RequestParam String phoneNumber,
+                                              @RequestParam(defaultValue = "") Integer id) {
+        return customerService.checkPhoneNumberUniqueness(phoneNumber, id);
     }
 
     @PostMapping("/register/check_phoneNumber_integrity")

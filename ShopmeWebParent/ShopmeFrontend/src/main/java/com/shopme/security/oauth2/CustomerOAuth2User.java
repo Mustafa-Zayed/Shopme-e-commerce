@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Map;
 
 public record CustomerOAuth2User(OAuth2User oAuth2User, String clientName) implements OAuth2User {
+    static String fullName;
+
     @Override
     public Map<String, Object> getAttributes() {
         return oAuth2User.getAttributes();
@@ -27,6 +29,11 @@ public record CustomerOAuth2User(OAuth2User oAuth2User, String clientName) imple
     }
 
     public String getFullName() {
-        return oAuth2User.getAttribute("name");
+//        return oAuth2User.getAttribute("name");
+        return CustomerOAuth2User.fullName == null ? oAuth2User.getAttribute("name") : CustomerOAuth2User.fullName;
+    }
+
+    public void setFullName(String fullName) {
+        CustomerOAuth2User.fullName = fullName;
     }
 }

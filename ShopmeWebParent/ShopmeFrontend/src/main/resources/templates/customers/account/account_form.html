@@ -1,22 +1,44 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: page_head(${'Account Details'})}"></head>
 <body>
-
 <div class="container-fluid">
     <div th:replace="~{fragments :: top_navbar}"></div>
 
+    <th:block th:replace="~{fragments :: search_nav}"></th:block>
+
+    <div class="alert alert-success text-center my-3" th:if="${message != null}">
+        [[${message}]]
+    </div>
+
     <div class="text-center mt-4">
-        <h2>Customer Registration</h2>
+        <h2>Your Account Details</h2>
     </div>
 
     <div class="border border-secondary rounded p-3 mb-4"
          style="max-width: 600px; margin: 0 auto;">
-        <form th:action="@{/register/save}"
+        <form th:action="@{/account/update}"
+              onsubmit="event.preventDefault(); validateAndSubmitAccountForm(this);"
               th:object="${customer}"
-              onsubmit="event.preventDefault(); validateAndSubmit(this);"
               id="customerForm"
-              method="post">
+              method="post"
+        >
+            <input th:field="*{id}" type="hidden"/>
+
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label">Authentication Type:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" th:value="*{authenticationType}" type="text" disabled/>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <input th:field="*{email}" type="hidden">
+                <label class="col-sm-4 col-form-label">E-mail:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" th:value="*{email}" type="email" disabled/>
+                </div>
+            </div>
 
             <!-- First Name -->
             <div class="row mb-3">
@@ -36,34 +58,26 @@
                 </div>
             </div>
 
-            <!-- Email -->
-            <div class="row mb-3">
-                <label class="col-sm-4 col-form-label" for="email">E-mail:</label>
-                <div class="col-sm-8">
-                    <input type="email" th:field="*{email}" class="form-control" minlength="8" maxlength="45"
-                           required>
-                </div>
-            </div>
-
             <!-- Password -->
-            <div class="row mb-3">
-                <label class="col-sm-4 col-form-label" for="password">Password:</label>
-                <div class="col-sm-8">
-                    <input type="password" th:field="*{password}" class="form-control" minlength="6" maxlength="15"
-                           oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"
-                           required>
+            <th:block th:if="${customer.authenticationType.name() == 'DATABASE'}">
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label" for="password">Password:</label>
+                    <div class="col-sm-8">
+                        <input type="password" th:field="*{password}" class="form-control" minlength="6" maxlength="15"
+                               oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"
+                               placeholder="Leave this field blank if you don't want to change password">
+                    </div>
                 </div>
-            </div>
 
-            <!-- Re-type Password -->
-            <div class="row mb-3">
-                <label class="col-sm-4 col-form-label" for="confirmPassword">Re-type Password:</label>
-                <div class="col-sm-8">
-                    <input type="password" id="confirmPassword" class="form-control" minlength="6" maxlength="15"
-                           oninput="checkPasswordMatch(this)"
-                           required>
+                <!-- Re-type Password -->
+                <div class="row mb-3">
+                    <label class="col-sm-4 col-form-label" for="confirmPassword">Re-type Password:</label>
+                    <div class="col-sm-8">
+                        <input type="password" id="confirmPassword" class="form-control" minlength="6" maxlength="15"
+                               oninput="checkPasswordMatch(this)">
+                    </div>
                 </div>
-            </div>
+            </th:block>
 
             <!-- Phone -->
             <div class="row mb-3">
@@ -109,10 +123,10 @@
                             th:field="*{country}"
                             class="form-select"
                             required>
-                        <option value="">-- Select Country --</option>
                         <option th:each="c : ${countries}"
                                 th:value="${c.id}"
-                                th:text="${c.name}">
+                                th:text="${c.name}"
+                                th:selected="${c.id == customer.country.id}">
                         </option>
                     </select>
                 </div>
@@ -141,13 +155,10 @@
                 </div>
             </div>
 
-            <!-- Submit -->
             <div class="text-center">
-                <button type="submit" class="btn btn-primary">
-                    Create Account
-                </button>
+                <input class="btn btn-primary m-3" type="submit" value="Update"/>
+                <input class="btn btn-secondary" id="buttonCancel" type="button" value="Cancel"/>
             </div>
-
         </form>
     </div>
 
@@ -155,12 +166,22 @@
 
     <div th:replace="~{fragments :: footer_navbar}"></div>
 </div>
-<script>
+<script type="text/javascript">
+    const moduleURL = "[[@{/}]]";
     const statesByCountryUrl = "[[@{/register/states_by_country/}]]";
     const checkEmailUniquenessUrl = "[[@{/register/check_email_uniqueness}]]";
     const checkFullNameUniquenessUrl = "[[@{/register/check_fullName_uniqueness}]]";
     const checkPhoneNumberIntegrityUrl = "[[@{/register/check_phoneNumber_integrity}]]";
     const checkPhoneNumberUniquenessUrl = "[[@{/register/check_phoneNumber_uniqueness}]]";
+
+    async function validateAndSubmitAccountForm(form) {
+        if (!await checkFullNameUniqueness()) return;
+        if (!await checkPhoneNumberIntegrity()) return;
+        if (!await checkPhoneNumberUniqueness()) return;
+
+        // All checks passed
+        form.submit();
+    }
 </script>
 <script th:src="@{/js/common_customer_form.js}" type="text/javascript"></script>
 <script th:src="@{/js/common_form.js}" type="text/javascript"></script>
