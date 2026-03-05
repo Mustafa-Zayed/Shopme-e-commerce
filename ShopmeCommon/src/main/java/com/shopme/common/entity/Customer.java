@@ -69,6 +69,9 @@ public class Customer {
     @Enumerated(EnumType.STRING)
     private AuthenticationType authenticationType;
 
+    @Column(length = 64)
+    private String resetPasswordToken;
+
     public String getFullName() {
         return firstName + " " + lastName;
     }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: page_head(${'Reset Password'})}"></head>
+<body>
+<div class="container-fluid text-center">
+    <div th:replace="~{fragments :: top_navbar}"></div>
+
+    <h2 class="text-center my-2">Reset Your Password</h2>
+
+    <div th:if="${param.success}">
+        <p class="text-success">
+            You have successfully reset your password.
+        </p>
+    </div>
+
+    <div class="my-3">
+        <form method="post" style="max-width: 350px; margin: 0 auto"
+              th:action="@{/forgot_password/save}"
+              th:object="${customer}">
+            <input type="hidden" th:field="*{id}"/>
+            <div class="border border-secondary rounded p-3">
+                <div class="mb-3">
+                    <input type="password" class="form-control" th:field="*{password}"
+                           placeholder="Enter your new password" required minlength="6" maxlength="15"
+                           oninput="checkPasswordMatch(document.getElementById('confirmPassword'))"/>
+                </div>
+                <div class="mb-3">
+                    <input type="password" id="confirmPassword" class="form-control"
+                           placeholder="Confirm your new password" required minlength="6" maxlength="15"
+                           oninput="checkPasswordMatch(this)"/>
+                </div>
+                <div>
+                    <input class="btn btn-primary" type="submit" value="Change Password"/>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div th:replace="~{fragments :: footer_navbar}"></div>
+
+</div>
+<script th:src="@{/js/common_customer_form.js}" type="text/javascript"></script>
+</body>
+</html>

@@ -31,4 +31,10 @@ public interface CustomerRepository extends CrudRepository<Customer, Integer>, P
     @Modifying
     @Query("UPDATE Customer c SET c.authenticationType = ?2 WHERE c.id = ?1")
     void updateAuthenticationType(Integer customerId, AuthenticationType authenticationType);
+
+    Customer findByResetPasswordToken(String token);
+
+    @Modifying
+    @Query("UPDATE Customer c SET c.password = ?2, c.resetPasswordToken = null WHERE c.id = ?1")
+    void updateNewPasswordAndClearResetPasswordToken(Integer customerId, String encodedPassword);
 }

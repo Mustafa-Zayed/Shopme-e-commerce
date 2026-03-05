@@ -60,6 +60,7 @@ public class CustomerService {
         customer.setEnabled(customerInDB.isEnabled());
         customer.setVerificationCode(customerInDB.getVerificationCode());
         customer.setAuthenticationType(customerInDB.getAuthenticationType());
+        customer.setResetPasswordToken(customerInDB.getResetPasswordToken());
 
         Customer savedCustomer = customerRepository.save(customer);
 
