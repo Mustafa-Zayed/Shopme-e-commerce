@@ -58,7 +58,8 @@ public class ProductController {
     }
 
     @GetMapping("/products/new")
-    public String newProduct(Model model) {
+    public String newProduct(Model model,
+                             @AuthenticationPrincipal ShopmeUserDetails userDetails) {
         Product product = Product.builder()
                 .enabled(true)
                 .inStock(true)
@@ -72,6 +73,10 @@ public class ProductController {
         model.addAttribute("product", product);
         model.addAttribute("listBrands", listBrands);
         model.addAttribute("pageTitle", "Create New Product");
+
+        HasAuthority result = getHasAuthority(userDetails);
+        model.addAttribute("hasAdminOrEditor", result.adminOrEditor());
+        model.addAttribute("hasSalesperson", result.salesperson());
 
         return "products/product_form";
     }
@@ -114,7 +119,8 @@ public class ProductController {
     }
 
     @GetMapping("/products/edit/{id}")
-    public String editProduct(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
+    public String editProduct(@PathVariable int id, Model model, RedirectAttributes redirectAttributes,
+                              @AuthenticationPrincipal ShopmeUserDetails userDetails) {
         try {
             Product product = productService.findById(id);
             List<Brand> listBrands = brandService.listAll(Sort.by("name").ascending());
@@ -126,6 +132,10 @@ public class ProductController {
             model.addAttribute("pageTitle", "Edit Product (ID: " + id + ")");
             model.addAttribute("extraImages", extraImages);
             model.addAttribute("productDetails", productDetails);
+
+            HasAuthority result = getHasAuthority(userDetails);
+            model.addAttribute("hasAdminOrEditor", result.adminOrEditor());
+            model.addAttribute("hasSalesperson", result.salesperson());
 
             return "products/product_form";
         } catch (ProductNotFoundException ex) {
@@ -203,4 +213,20 @@ public class ProductController {
         List<Product> productList = productService.listAll();
         csvExporter.export(productList, response);
     }
+
+    private static HasAuthority getHasAuthority(ShopmeUserDetails userDetails) {
+        Set<String> allowed = Set.of("Admin", "Editor");
+        boolean hasAdminOrEditor = userDetails.getAuthorities().stream().anyMatch(
+                grantedAuthority -> allowed.contains(grantedAuthority.getAuthority())
+        );
+
+        boolean hasSalesperson = userDetails.getAuthorities().stream().anyMatch(
+                grantedAuthority -> grantedAuthority.getAuthority().contains("Salesperson")
+        );
+
+        return new HasAuthority(hasAdminOrEditor, hasSalesperson);
+    }
+
+    private record HasAuthority(boolean adminOrEditor, boolean salesperson) { }
+
 }

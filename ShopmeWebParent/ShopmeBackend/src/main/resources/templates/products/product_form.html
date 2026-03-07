@@ -62,50 +62,42 @@
                     </div>
                     <div class="tab-pane" id="description" role="tabpanel" tabindex="0">
                         <!-- <th:block th:if="${@securityUtil.hasAnyRoleOFAllowedRolesAndNotOther('Admin','Editor')}"> -->
-                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
+                        <th:block th:if="${hasAdminOrEditor}">
                             <div th:replace="~{products/fragments/product_description_fragment :: description}"></div>
                         </th:block>
 
                         <!-- if the user is any role than Admin or Editor, some users can Salesperson and Editor together -->
                         <!-- Also @securityUtil is better than this, but it doesn't serve project logic -->
                         <!-- <th:block th:if="${!@securityUtil.hasAnyRoleOFAllowedRolesAndNotOther('Admin','Editor')}"> -->
-                        <th:block th:if="${#authorization.expression('hasAuthority(''Salesperson'')')}">
-                            <th:block th:if="${!#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
-                                <div th:replace="~{products/fragments/readonly/product_description_read_only :: description}"></div>
-                            </th:block>
+                        <th:block th:if="${hasSalesperson && !hasAdminOrEditor}">
+                            <div th:replace="~{products/fragments/readonly/product_description_read_only :: description}"></div>
                         </th:block>
                     </div>
                     <div class="tab-pane" id="images" role="tabpanel" tabindex="0">
-                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
+                        <th:block th:if="${hasAdminOrEditor}">
                             <div th:replace="~{products/fragments/product_images_fragment :: images}"></div>
                         </th:block>
 
-                        <th:block th:if="${#authorization.expression('hasAuthority(''Salesperson'')')}">
-                            <th:block th:if="${!#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
-                                <div th:replace="~{products/fragments/readonly/product_images_read_only :: images}"></div>
-                            </th:block>
+                        <th:block th:if="${hasSalesperson && !hasAdminOrEditor}">
+                            <div th:replace="~{products/fragments/readonly/product_images_read_only :: images}"></div>
                         </th:block>
                     </div>
                     <div class="tab-pane" id="details" role="tabpanel" tabindex="0">
-                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
+                        <th:block th:if="${hasAdminOrEditor}">
                             <div th:replace="~{products/fragments/product_details_fragment :: details}"></div>
                         </th:block>
 
-                        <th:block th:if="${#authorization.expression('hasAuthority(''Salesperson'')')}">
-                            <th:block th:if="${!#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
-                                <div th:replace="~{products/fragments/readonly/product_details_read_only :: details}"></div>
-                            </th:block>
+                        <th:block th:if="${hasSalesperson && !hasAdminOrEditor}">
+                            <div th:replace="~{products/fragments/readonly/product_details_read_only :: details}"></div>
                         </th:block>
                     </div>
                     <div class="tab-pane" id="shipping" role="tabpanel" tabindex="0">
-                        <th:block th:if="${#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
+                        <th:block th:if="${hasAdminOrEditor}">
                             <div th:replace="~{products/fragments/product_shipping_fragment :: shipping}"></div>
                         </th:block>
 
-                        <th:block th:if="${#authorization.expression('hasAuthority(''Salesperson'')')}">
-                            <th:block th:if="${!#authorization.expression('hasAnyAuthority(''Admin'', ''Editor'')')}">
-                                <div th:replace="~{products/fragments/readonly/product_shipping_read_only :: shipping}"></div>
-                            </th:block>
+                        <th:block th:if="${hasSalesperson && !hasAdminOrEditor}">
+                            <div th:replace="~{products/fragments/readonly/product_shipping_read_only :: shipping}"></div>
                         </th:block>
                     </div>
                 </div>

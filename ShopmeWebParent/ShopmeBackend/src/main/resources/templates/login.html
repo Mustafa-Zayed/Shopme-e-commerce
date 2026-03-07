@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" type="text/css"/>
-    <link rel="stylesheet" th:href="@{/fontawesome/all.css}" type="text/css"/>
-    <link rel="stylesheet" th:href="@{/style.css}" type="text/css">
-
-    <title>Login - Shopme Admin</title>
-</head>
+<head th:replace="~{fragments :: page_head(${'Login - Shopme Admin'})}"></head>
 <body>
 <div class="container-fluid text-center">
 
